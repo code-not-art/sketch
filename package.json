@@ -1,0 +1,54 @@
+{
+  "name": "sketch",
+  "version": "1.0.0",
+  "description": "Quick start framework for HTML Canvas sketches",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel src/public/index.html",
+    "build": "parcel build src/public/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/code-not-art/sketch.git"
+  },
+  "keywords": [
+    "canvas",
+    "generative",
+    "art",
+    "Typescript",
+    "React",
+    "ReactJS",
+    "template",
+    "makecodenotart",
+    "code-not-art"
+  ],
+  "type": "module",
+  "author": "Jon Eubank <joneubank@gmail.com>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/code-not-art/sketch/issues"
+  },
+  "homepage": "https://github.com/code-not-art/sketch#readme",
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0",
+    "styled-components": "^5.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^16.7.10",
+    "@types/react": "^17.0.19",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-helmet": "^6.1.2",
+    "@types/styled-components": "^5.1.13",
+    "parcel-bundler": "^1.12.5",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.2"
+  },
+  "prettier": {
+    "trailingComma": "all",
+    "singleQuote": true,
+    "arrowFunctionParentheses": "always"
+  }
+}
