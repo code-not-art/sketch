@@ -1,17 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+
 import Page from './components/Page';
-
-import Sketch from './sketch';
-
-const emptySketch: Sketch = {
-  config: {},
-  params: {},
-  init: ({}) => {},
-  draw: ({}) => {},
-  loop: ({}) => {},
-  reset: () => {},
-};
+import art from './art';
 
 const App = () => {
   return (
@@ -20,7 +11,7 @@ const App = () => {
         <title>Make Code Sketch</title>
         <meta name="description" content="Canvas sketch made by code" />
       </Helmet>
-      <Page sketch={emptySketch}></Page>
+      <Page sketch={art}></Page>
     </>
   );
 };

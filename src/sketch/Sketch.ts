@@ -1,14 +1,14 @@
-import Params from './Params';
-import Config from './Config';
-// import { Canvas, Random } from 'core';
+import { Params } from './Params';
+import { Config } from './Config';
+import { Canvas, Random } from '@code-not-art/core';
 
-type SketchProps = {
-  // canvas: Canvas; // TODO need to import from linked core lib.
-  // rng: Random;
+export type SketchProps = {
+  canvas: Canvas;
+  rng: Random;
 };
 
 interface Sketch {
-  reset: () => void;
+  reset: (props: SketchProps) => void;
   init: (props: SketchProps) => void;
   draw: (props: SketchProps) => void;
   loop: (props: SketchProps, time: number) => void;

@@ -6,6 +6,8 @@ This can be used as a template library, ready to be cloned and run, missing only
 
 ## Quick Start
 
+> **TEMP WARNING**: not documented in the steps, you need to locally link the [core library](https://github.com/code-not-art/core) or this won't run. Build that library then `npm link` in that library, then `npm link @code-not-art/core` in this repo. Should build fine after.
+
 To use this library as a sketch template, here are steps you can follow to run this project on your own machine.
 
 > **NOTE**: You likely want to [fork this repository](https://docs.github.com/en/get-started/quickstart/fork-a-repo) and clone that fork instead of working against this repo.

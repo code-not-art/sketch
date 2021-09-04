@@ -1,2 +1,2 @@
-type Params = {};
-export default Params;
+export type Params = {};
+export default (): Params => ({});

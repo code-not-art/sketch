@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
+import { Canvas, Random } from '@code-not-art/core';
+
 import Sketch from '../sketch';
 
 const FullscreenWrapper = styled.div`
@@ -30,40 +32,46 @@ const ShadowFrameCanvas = styled.canvas`
 `;
 
 const Page = (props: { sketch: Sketch }) => {
-  let canvas: HTMLCanvasElement;
+  let canvas: Canvas;
+  let rng: Random;
+
+  const config = props.sketch.config;
 
   // Event Handlers
   let windowResizeHandler: () => void;
 
   const resize = () => {
-    const width = 2048;
-    const height = 1024;
-    const canvasAspectRatio = width / height;
+    const canvasAspectRatio = config.width / config.height;
 
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
     const windowAspectRatio = windowWidth / windowHeight;
 
-    let newHeight = height;
-    let newWidth = width;
+    let newHeight = config.height;
+    let newWidth = config.width;
 
     // Always render the canvas within the dimensions of the window
     if (windowAspectRatio > canvasAspectRatio) {
       const maxDim = window.innerHeight - 50;
-      if (height > maxDim) {
+      if (config.height > maxDim) {
         newHeight = maxDim;
-        newWidth = (newHeight / height) * width;
+        newWidth = (newHeight / config.height) * config.width;
       }
     } else {
       const maxDim = window.innerWidth - 50;
-      if (width > maxDim) {
+      if (config.width > maxDim) {
         newWidth = maxDim;
-        newHeight = (newWidth / width) * height;
+        newHeight = (newWidth / config.width) * config.height;
       }
     }
+    canvas.canvas.style.height = newHeight + 'px';
+    canvas.canvas.style.width = newWidth + 'px';
+  };
 
-    canvas.style.height = newHeight + 'px';
-    canvas.style.width = newWidth + 'px';
+  const redraw = () => {
+    canvas.set.size(config.width, config.height);
+    props.sketch.init({ canvas, rng });
+    props.sketch.draw({ canvas, rng });
   };
 
   // Page Load Effect
@@ -72,7 +80,13 @@ const Page = (props: { sketch: Sketch }) => {
     console.log('Sketch Page Loading - Hello!');
 
     // Grab our canvas
-    canvas = document.getElementById('sketch-canvas') as HTMLCanvasElement;
+    const pageCanvas = document.getElementById(
+      'sketch-canvas',
+    ) as HTMLCanvasElement;
+    canvas = new Canvas(pageCanvas);
+
+    // Intialize random generator
+    rng = new Random('sketch page');
 
     // Set the canvas size, attach
     resize();
@@ -86,6 +100,8 @@ const Page = (props: { sketch: Sketch }) => {
       resize();
     };
     window.addEventListener('resize', windowResizeHandler, true);
+
+    redraw();
   }, []);
   return (
     <FullscreenWrapper>
