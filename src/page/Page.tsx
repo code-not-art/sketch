@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
-import { Canvas, Random } from '@code-not-art/core';
+import { Canvas } from '@code-not-art/core';
 
 import Sketch from '../sketch';
 import KeyboardHandler from './KeyboardHandler';
@@ -38,9 +38,8 @@ const Page = (props: { sketch: Sketch }) => {
   const config = sketch.config;
 
   let canvas: Canvas;
-  let rng: Random;
 
-  const state = PageState({});
+  const state = new PageState(config.seed);
 
   const resize = () => {
     const canvasAspectRatio = config.width / config.height;
@@ -68,20 +67,29 @@ const Page = (props: { sketch: Sketch }) => {
     }
     canvas.canvas.style.height = newHeight + 'px';
     canvas.canvas.style.width = newWidth + 'px';
+    canvas.set.size(config.width, config.height);
   };
 
   const redraw = () => {
-    canvas.set.size(config.width, config.height);
-    props.sketch.init({ canvas, rng });
-    props.sketch.draw({ canvas, rng });
+    resize();
+    props.sketch.init({
+      canvas,
+      rng: state.getImageRng(),
+      colorRng: state.getColorRng(),
+    });
+    props.sketch.draw({
+      canvas,
+      rng: state.getImageRng(),
+      colorRng: state.getColorRng(),
+    });
   };
 
   const regenerate = () => {
     redraw();
   };
 
-  const download = (filename: string) => {
-    const saveas = filename ? `${filename}.png` : `${document.title}.png`;
+  const download = () => {
+    const saveas = `${state.getImage()} - ${state.getColor()}.png`;
     const downloadLink = document.getElementById('canvas-downloader');
     if (downloadLink) {
       const image = canvas.canvas.toDataURL('image/png');
@@ -127,9 +135,6 @@ const Page = (props: { sketch: Sketch }) => {
       'sketch-canvas',
     ) as HTMLCanvasElement;
     canvas = new Canvas(pageCanvas);
-
-    // Intialize random generator
-    rng = new Random('sketch page');
 
     // Set dimensions for window
     resize();

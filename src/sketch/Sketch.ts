@@ -5,6 +5,7 @@ import { Canvas, Random } from '@code-not-art/core';
 export type SketchProps = {
   canvas: Canvas;
   rng: Random;
+  colorRng: Random;
 };
 
 interface Sketch {
