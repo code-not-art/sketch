@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { Canvas, Random } from '@code-not-art/core';
 
 import Sketch from '../sketch';
+import KeyboardHandler from './KeyboardHandler';
+import PageState from './PageState';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
@@ -11,7 +13,7 @@ const FullscreenWrapper = styled.div`
   position: fixed;
   top: 0px;
   left: 0px;
-  background: #e2d1d9;
+  background: #888;
 
   display: flex;
   justify-content: center;
@@ -32,13 +34,13 @@ const ShadowFrameCanvas = styled.canvas`
 `;
 
 const Page = (props: { sketch: Sketch }) => {
+  const sketch = props.sketch;
+  const config = sketch.config;
+
   let canvas: Canvas;
   let rng: Random;
 
-  const config = props.sketch.config;
-
-  // Event Handlers
-  let windowResizeHandler: () => void;
+  const state = PageState({});
 
   const resize = () => {
     const canvasAspectRatio = config.width / config.height;
@@ -74,6 +76,47 @@ const Page = (props: { sketch: Sketch }) => {
     props.sketch.draw({ canvas, rng });
   };
 
+  const regenerate = () => {
+    redraw();
+  };
+
+  const download = (filename: string) => {
+    const saveas = filename ? `${filename}.png` : `${document.title}.png`;
+    const downloadLink = document.getElementById('canvas-downloader');
+    if (downloadLink) {
+      const image = canvas.canvas.toDataURL('image/png');
+      downloadLink.setAttribute('href', image);
+      downloadLink.setAttribute('download', saveas);
+      downloadLink.click();
+    }
+  };
+
+  // ===== Event Handlers =====
+  const eventHandlers: any = {};
+  const keyboardHandler = KeyboardHandler(sketch, state, regenerate, download);
+
+  const resetEventHandlers = () => {
+    // ===== Remove existing handlers to handle hotloading duplication
+    if (!!eventHandlers.resize) {
+      window.removeEventListener('resize', eventHandlers.resize);
+    }
+    if (!!eventHandlers.keydown) {
+      window.removeEventListener('keydown', eventHandlers.keydown);
+    }
+
+    // ===== Create Functions to attach to event handlers
+    eventHandlers.resize = function () {
+      resize();
+    };
+    eventHandlers.keydown = function (event: KeyboardEvent) {
+      keyboardHandler(event);
+    };
+
+    // ===== Attach Event handlers to events
+    window.addEventListener('resize', eventHandlers.resize, true);
+    window.addEventListener('keydown', eventHandlers.keydown, false);
+  };
+
   // Page Load Effect
   useEffect(() => {
     // TODO: Log formatter
@@ -88,19 +131,13 @@ const Page = (props: { sketch: Sketch }) => {
     // Intialize random generator
     rng = new Random('sketch page');
 
-    // Set the canvas size, attach
+    // Set dimensions for window
     resize();
-    if (!!windowResizeHandler) {
-      // Due to hot reloading when running as dev it is possible to enter this effect multiple times, if so we want to remove the existing handler
-      window.removeEventListener('resize', windowResizeHandler);
-    }
 
-    // event handlers should be defined as functions (not anonymous) so we can remove the event listeners in the future.
-    windowResizeHandler = function () {
-      resize();
-    };
-    window.addEventListener('resize', windowResizeHandler, true);
+    // Attach event handlers
+    resetEventHandlers();
 
+    // Initial draw
     redraw();
   }, []);
   return (

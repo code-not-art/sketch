@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 
-import Page from './components/Page';
+import Page from './page';
 import art from './art';
 
 const App = () => {

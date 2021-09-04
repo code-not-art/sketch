@@ -11,6 +11,8 @@ const draw = ({ canvas }: SketchProps) => {
   const width = canvas.get.width();
   const height = canvas.get.height();
 
+  canvas.fill(new Color());
+
   canvas.draw.circle({
     origin: new Vec2(width, height).scale(0.5),
     radius: Math.min(canvas.get.minDim() / 3),
