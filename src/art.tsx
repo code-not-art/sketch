@@ -11,16 +11,16 @@ const params = Params();
 
 const init = ({}: SketchProps) => {};
 
-const draw = ({ canvas, rng }: SketchProps) => {
+const draw = ({ canvas, rng, colorRng }: SketchProps) => {
   const width = canvas.get.width();
   const height = canvas.get.height();
 
-  canvas.fill(new Color({ rng }));
+  canvas.fill(new Color({ rng: colorRng }));
 
   canvas.draw.circle({
-    origin: new Vec2(width, height).scale(0.5),
-    radius: Math.min(canvas.get.minDim() / 3),
-    fill: new Color({ rng }),
+    origin: new Vec2(rng.int(0, width), rng.int(0, height)),
+    radius: rng.float(0.2, 1) * Math.min(canvas.get.minDim() / 3),
+    fill: new Color({ rng: colorRng }),
   });
 };
 

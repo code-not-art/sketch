@@ -72,6 +72,7 @@ const Page = (props: { sketch: Sketch }) => {
 
   const redraw = () => {
     resize();
+    console.log(state.getImage(), '-', state.getColor());
     props.sketch.init({
       canvas,
       rng: state.getImageRng(),
