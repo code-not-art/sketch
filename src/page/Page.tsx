@@ -6,6 +6,7 @@ import { Canvas } from '@code-not-art/core';
 import Sketch from '../sketch';
 import KeyboardHandler from './KeyboardHandler';
 import PageState from './PageState';
+import Palette from '../sketch/Palette';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
@@ -73,15 +74,15 @@ const Page = (props: { sketch: Sketch }) => {
   const redraw = () => {
     resize();
     console.log(state.getImage(), '-', state.getColor());
-    props.sketch.init({
-      canvas,
-      rng: state.getImageRng(),
-      colorRng: state.getColorRng(),
-    });
+    // props.sketch.init({
+    //   canvas,
+    //   rng: state.getImageRng(),
+    //   colorRng: state.getColorRng(),
+    // });
     props.sketch.draw({
       canvas,
       rng: state.getImageRng(),
-      colorRng: state.getColorRng(),
+      palette: new Palette(state.getColorRng()),
     });
   };
 

@@ -1,14 +1,5 @@
 import { Random } from '../../../core/dist';
-
-function seedPhrase(rng: Random) {
-  const joiner = ' ';
-  const hasAdjective = rng.bool(0.75);
-  const hasAdverb = hasAdjective && rng.bool(0.4);
-  const adjective = rng.bool(0.75) ? `${rng.word('adjective')}${joiner}` : '';
-  const adverb =
-    hasAdjective && rng.bool(0.4) ? `${rng.word('adverb')}${joiner}` : '';
-  return `${adverb}${adjective}${rng.word('noun')}`;
-}
+import phrase from '../utils/phrase';
 
 export default class PageState {
   _rng: Random;
@@ -45,12 +36,12 @@ export default class PageState {
   }
 
   randomImage() {
-    const imageSeed = seedPhrase(this._imageSeedGenerator);
+    const imageSeed = phrase(this._imageSeedGenerator);
     this.imageSeeds.push(imageSeed);
     this.activeImage = this.imageSeeds.length - 1;
   }
   randomColor() {
-    const colorSeed = seedPhrase(this._colorSeedGenerator);
+    const colorSeed = phrase(this._colorSeedGenerator);
     this.colorSeeds.push(colorSeed);
     this.activeColor = this.colorSeeds.length - 1;
   }
