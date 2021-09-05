@@ -1,13 +1,17 @@
-export type Config = {
-  width: number;
-  height: number;
+export type ConfigInput = {
+  width?: number;
+  height?: number;
   seed?: string;
 };
 
-export default (values: Partial<Config>): Config => {
-  return {
-    width: values.width || 1080,
-    height: values.height || 1080,
-    seed: values.seed,
-  };
-};
+export default class Config {
+  width: number;
+  height: number;
+  seed: string;
+
+  constructor(input: ConfigInput) {
+    this.width = input.width || 1080;
+    this.height = input.height || 1080;
+    this.seed = input.seed || new Date().toISOString();
+  }
+}
