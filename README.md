@@ -20,7 +20,7 @@ To use this library as a sketch template, here are steps you can follow to run t
    npm ci
    ```
 
-   > **NOTE**: This is untested with `yarn` but almost certainly works. If you find issues please raise an issue.
+   > **NOTE**: This is untested with `yarn` but almost certainly works. If you find issues please [raise an issue](https://github.com/code-not-art/sketch/issues).
 
 1. Start development server:
 
