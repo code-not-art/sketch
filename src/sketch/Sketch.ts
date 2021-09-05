@@ -3,7 +3,7 @@ import Config, { ConfigInput } from './Config';
 import SketchProps from './SketchProps';
 import FrameData from './FrameData';
 
-type SketchDefinition = {
+export type SketchDefinition = {
   reset?: (props: SketchProps) => void;
   init?: (props: SketchProps) => void;
   draw: (props: SketchProps) => void;
