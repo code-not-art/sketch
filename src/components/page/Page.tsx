@@ -9,6 +9,8 @@ import PageState from './PageState';
 import Palette from '../../sketch/Palette';
 import SketchProps from '../../sketch/SketchProps';
 
+import Menu from '../menu';
+
 const FullscreenWrapper = styled.div`
   height: 100%;
   width: 100%;
@@ -164,6 +166,7 @@ const Page = (props: { sketch: Sketch }) => {
   }, []);
   return (
     <FullscreenWrapper>
+      <Menu params={{}} />
       <CanvasWrapper>
         <ShadowFrameCanvas
           data-download="placeholder"
