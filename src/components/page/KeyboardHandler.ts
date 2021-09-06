@@ -1,4 +1,3 @@
-import Sketch from '../sketch';
 import PageState from './PageState';
 
 const keyActionDescriptions: { [key: string]: string } = {
@@ -15,7 +14,6 @@ const keyActionDescriptions: { [key: string]: string } = {
 };
 
 export default function KeyboardHandler(
-  sketch: Sketch,
   state: PageState,
   regenerate: () => void,
   download: () => void,
@@ -25,7 +23,7 @@ export default function KeyboardHandler(
     const actionDescriptionLog = keyActionDescriptions[event.code]
       ? ` - ${keyActionDescriptions[event.code]}`
       : '';
-    console.log(`[Page] Handling Key: ${event.code}${actionDescriptionLog}`);
+    console.log(`[Page] Key: ${event.code}${actionDescriptionLog}`);
     switch (event.code) {
       // ===== Save
       case 'KeyS':

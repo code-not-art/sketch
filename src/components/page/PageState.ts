@@ -1,5 +1,5 @@
-import { Random } from '../../../core/dist';
-import phrase from '../utils/phrase';
+import { Random } from '@code-not-art/core';
+import phrase from '../../utils/phrase';
 
 export default class PageState {
   _rng: Random;

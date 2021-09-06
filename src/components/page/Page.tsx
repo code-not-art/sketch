@@ -3,10 +3,11 @@ import styled from 'styled-components';
 
 import { Canvas } from '@code-not-art/core';
 
-import Sketch from '../sketch';
+import Sketch from '../../sketch';
 import KeyboardHandler from './KeyboardHandler';
 import PageState from './PageState';
-import Palette from '../sketch/Palette';
+import Palette from '../../sketch/Palette';
+import SketchProps from '../../sketch/SketchProps';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
@@ -39,6 +40,7 @@ const Page = (props: { sketch: Sketch }) => {
   const config = sketch.config;
 
   let canvas: Canvas;
+  let sketchProps: SketchProps;
 
   const state = new PageState(config.seed);
 
@@ -68,17 +70,23 @@ const Page = (props: { sketch: Sketch }) => {
     }
     canvas.canvas.style.height = newHeight + 'px';
     canvas.canvas.style.width = newWidth + 'px';
-    canvas.set.size(config.width, config.height);
   };
 
-  const redraw = () => {
-    resize();
+  const updateSketchProps = () => {
+    sketchProps = {
+      canvas,
+      rng: state.getImageRng(),
+      palette: new Palette(state.getColorRng()),
+    };
+  };
+
+  const draw = () => {
+    // Note: This size update is done pre-draw based on config props for the size.
+    //      when this is run, the canvas bitmap content is lost, so do not do this in the resize loop.
+    canvas.set.size(config.width, config.height);
+
+    // TODO: Improve the state logging.
     console.log(state.getImage(), '-', state.getColor());
-    // props.sketch.init({
-    //   canvas,
-    //   rng: state.getImageRng(),
-    //   colorRng: state.getColorRng(),
-    // });
     props.sketch.draw({
       canvas,
       rng: state.getImageRng(),
@@ -87,7 +95,10 @@ const Page = (props: { sketch: Sketch }) => {
   };
 
   const regenerate = () => {
-    redraw();
+    // Reset, generate the new sketch props, draw
+    sketch.reset(sketchProps);
+    updateSketchProps();
+    draw();
   };
 
   const download = () => {
@@ -103,7 +114,7 @@ const Page = (props: { sketch: Sketch }) => {
 
   // ===== Event Handlers =====
   const eventHandlers: any = {};
-  const keyboardHandler = KeyboardHandler(sketch, state, regenerate, download);
+  const keyboardHandler = KeyboardHandler(state, regenerate, download);
 
   const resetEventHandlers = () => {
     // ===== Remove existing handlers to handle hotloading duplication
@@ -144,8 +155,12 @@ const Page = (props: { sketch: Sketch }) => {
     // Attach event handlers
     resetEventHandlers();
 
+    // Initialize SketchProps
+    updateSketchProps();
+
     // Initial draw
-    redraw();
+    props.sketch.init(sketchProps);
+    draw();
   }, []);
   return (
     <FullscreenWrapper>
