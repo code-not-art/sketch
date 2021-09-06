@@ -2,11 +2,12 @@ import { Random } from '@code-not-art/core';
 /**
  * Generate a short phrase, has the form `adverb adjective noun` where at least the noun will generate and optionally the adverb and adjective will.
  * Some example phrases:
- *  - tantric bateleurs
+ *  - unlikable sociograms
  *  - casually burnable archdiocese
- *  - presumably convocate
  *  - pakthongs
  *  - hypnotically much preinviting
+ *  - phlegmatically disappointing outfits
+ *  - unionized anthropologist
  *
  * NOTE: Phrases won't always be gramtically correct, sometimes non-nouns get classified as nouns
  * @param rng Random generator to use for this phrase generation
