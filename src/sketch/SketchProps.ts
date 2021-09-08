@@ -5,6 +5,7 @@ type SketchProps = {
   canvas: Canvas;
   palette: Palette;
   rng: Random;
+  params: { [key: string]: any };
 };
 
 export default SketchProps;
