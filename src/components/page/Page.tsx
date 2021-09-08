@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Canvas } from '@code-not-art/core';
 
-import Sketch from '../../sketch';
+import Sketch, { Params } from '../../sketch';
 import KeyboardHandler from './KeyboardHandler';
 import PageState from './PageState';
 import Palette from '../../sketch/Palette';
@@ -41,10 +41,10 @@ const Page = (props: { sketch: Sketch }) => {
   const sketch = props.sketch;
   const config = sketch.config;
 
+  const [state, setState] = useState<PageState>(new PageState(config.seed));
+
   let canvas: Canvas;
   let sketchProps: SketchProps;
-
-  const state = new PageState(config.seed);
 
   const resize = () => {
     const canvasAspectRatio = config.width / config.height;
@@ -89,10 +89,17 @@ const Page = (props: { sketch: Sketch }) => {
 
     // TODO: Improve the state logging.
     console.log(state.getImage(), '-', state.getColor());
+
+    const params: { [key: string]: any } = {};
+    sketch.params.forEach((p) => {
+      params[p.key] = p.value;
+    });
+
     props.sketch.draw({
       canvas,
       rng: state.getImageRng(),
       palette: new Palette(state.getColorRng()),
+      params,
     });
   };
 
@@ -163,7 +170,7 @@ const Page = (props: { sketch: Sketch }) => {
     // Initial draw
     props.sketch.init(sketchProps);
     draw();
-  }, []);
+  });
   return (
     <FullscreenWrapper>
       <Menu params={{}} />
