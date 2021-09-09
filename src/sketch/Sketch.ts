@@ -10,6 +10,7 @@ export type SketchDefinition = {
   loop?: (props: SketchProps, frameData: FrameData) => void;
   params?: Params;
   config?: ConfigInput;
+  id: number;
 };
 
 const defaultInit = (props: SketchProps) => {
@@ -29,6 +30,7 @@ class Sketch {
   reset: (props: SketchProps) => void;
   params: Params;
   config: Config;
+  id: number;
 
   constructor(input: SketchDefinition) {
     this.config = new Config(input.config || {});
@@ -39,6 +41,8 @@ class Sketch {
     this.loop = input.loop || defaultLoop;
 
     this.draw = input.draw;
+
+    this.id = input.id;
   }
 }
 

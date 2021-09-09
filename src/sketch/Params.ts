@@ -1,6 +1,7 @@
 export interface Parameter {
   key: string;
-  value: any;
+  label?: string;
+  value?: any;
   min?: number;
   max?: number;
   step?: number;

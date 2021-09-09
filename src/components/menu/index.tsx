@@ -41,14 +41,23 @@ const Menu = (props: {
       <>
         {props.sketchParameters.map((p, i) => {
           const elementKey = `${i}-${p.key}`;
+
           switch (typeof p.value) {
+            case 'undefined':
+              // No key provided, if there is a label then display a header
+              if (p.label) {
+                return <SectionHeader>{p.label}</SectionHeader>;
+              }
+              return null;
             case 'boolean':
-              return <Checkbox key={elementKey} label={p.key}></Checkbox>;
+              return (
+                <Checkbox key={elementKey} label={p.label || p.key}></Checkbox>
+              );
             case 'number':
               return (
                 <Range
                   key={elementKey}
-                  label={p.key}
+                  label={p.label || p.key}
                   min={p.min || Math.min(0, p.value)}
                   max={p.max || Math.max(1, p.value)}
                   step={p.step || 0.01}
@@ -59,7 +68,7 @@ const Menu = (props: {
                 return (
                   <Interval
                     key={elementKey}
-                    label={p.key}
+                    label={p.label || p.key}
                     min={p.min || Math.min(0, p.value[0])}
                     max={p.max || Math.max(1, p.value[1])}
                     step={p.step || 0.01}
@@ -93,7 +102,7 @@ const Menu = (props: {
         <SectionHeader>Custom Seeds</SectionHeader>
         <Text label="image"></Text>
         <Text label="color"></Text>
-        <SectionHeader>Sketch Parameters!</SectionHeader>
+        <SectionHeader>Parameters</SectionHeader>
         {renderParams()}
       </ControlPanel>
     </FixedPositionWrapper>

@@ -10,6 +10,7 @@ import Palette from '../../sketch/Palette';
 
 import Menu from '../menu';
 import StringMap from 'types/StringMap';
+import SketchProps from 'src/sketch/SketchProps';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
@@ -57,6 +58,16 @@ const Page = (props: { sketch: Sketch }) => {
   const [params] = useState<StringMap<any>>(convertSketchParameters());
 
   let canvas: Canvas;
+  let sketchProps: SketchProps;
+
+  const updateSketchProps = () => {
+    sketchProps = {
+      canvas,
+      params,
+      rng: state.getImageRng(),
+      palette: new Palette(state.getColorRng()),
+    };
+  };
 
   const resize = () => {
     const canvasAspectRatio = config.width / config.height;
@@ -103,12 +114,8 @@ const Page = (props: { sketch: Sketch }) => {
 
     // TODO: Improve the state logging.
     console.log(state.getImage(), '-', state.getColor());
-    props.sketch.draw({
-      canvas,
-      params,
-      rng: state.getImageRng(),
-      palette: new Palette(state.getColorRng()),
-    });
+    updateSketchProps();
+    sketch.draw(sketchProps);
   };
 
   const download = () => {
@@ -123,14 +130,16 @@ const Page = (props: { sketch: Sketch }) => {
   };
 
   // ===== Event Handlers =====
-  const setEventHandlers = () => {
+  const resetEventHandlers = () => {
     // ===== Window Resize
+    window.removeEventListener('resize', eventHandlers.resize);
     eventHandlers.resize = function () {
       resize();
     };
     window.addEventListener('resize', eventHandlers.resize, true);
 
     // ===== Keydown
+    document.removeEventListener('keydown', eventHandlers.keydown);
     eventHandlers.keydown = (event: KeyboardEvent) => {
       KeyboardHandler(state, draw, download)(event);
     };
@@ -151,6 +160,9 @@ const Page = (props: { sketch: Sketch }) => {
    * Run once on page load
    */
   useEffect(() => {
+    // ===== Attach event handlers
+    resetEventHandlers();
+
     // ===== Draw Sketch
     initialized && draw();
 
@@ -164,8 +176,6 @@ const Page = (props: { sketch: Sketch }) => {
         rng: state.getImageRng(),
         palette: new Palette(state.getColorRng()),
       });
-      // ===== Attach event handlers
-      setEventHandlers();
 
       setInitialized(true);
     }
@@ -177,6 +187,7 @@ const Page = (props: { sketch: Sketch }) => {
         sketchParameters={sketch.params}
         params={params}
         updateHandler={controlPanelUpdateHandler}
+        debounce={config.menuDelay}
       />
       <CanvasWrapper>
         <ShadowFrameCanvas
