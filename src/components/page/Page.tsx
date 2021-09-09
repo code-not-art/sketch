@@ -3,13 +3,13 @@ import styled from 'styled-components';
 
 import { Canvas } from '@code-not-art/core';
 
-import Sketch, { Params } from '../../sketch';
+import Sketch from '../../sketch';
 import KeyboardHandler from './KeyboardHandler';
 import PageState from './PageState';
 import Palette from '../../sketch/Palette';
-import SketchProps from '../../sketch/SketchProps';
 
 import Menu from '../menu';
+import StringMap from 'types/StringMap';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
@@ -38,13 +38,25 @@ const ShadowFrameCanvas = styled.canvas`
 `;
 
 const Page = (props: { sketch: Sketch }) => {
+  // Expand inputs for convenience
   const sketch = props.sketch;
   const config = sketch.config;
 
-  const [state, setState] = useState<PageState>(new PageState(config.seed));
+  // Converter needed to initialize state
+  const convertSketchParameters = () => {
+    const output: StringMap<any> = {};
+    sketch.params.forEach((p) => {
+      output[p.key] = p.value;
+    });
+    return output;
+  };
+
+  const [initialized, setInitialized] = useState<boolean>(false);
+  const [state] = useState<PageState>(new PageState(config.seed));
+  const [eventHandlers] = useState<any>({});
+  const [params] = useState<StringMap<any>>(convertSketchParameters());
 
   let canvas: Canvas;
-  let sketchProps: SketchProps;
 
   const resize = () => {
     const canvasAspectRatio = config.width / config.height;
@@ -74,40 +86,29 @@ const Page = (props: { sketch: Sketch }) => {
     canvas.canvas.style.width = newWidth + 'px';
   };
 
-  const updateSketchProps = () => {
-    sketchProps = {
-      canvas,
-      rng: state.getImageRng(),
-      palette: new Palette(state.getColorRng()),
-    };
-  };
-
   const draw = () => {
+    // Grab our canvas
+    const pageCanvas = document.getElementById(
+      'sketch-canvas',
+    ) as HTMLCanvasElement;
+    canvas = new Canvas(pageCanvas);
+    // updateSketchProps();
+
+    // Set dimensions for window
+    resize();
+
     // Note: This size update is done pre-draw based on config props for the size.
     //      when this is run, the canvas bitmap content is lost, so do not do this in the resize loop.
     canvas.set.size(config.width, config.height);
 
     // TODO: Improve the state logging.
     console.log(state.getImage(), '-', state.getColor());
-
-    const params: { [key: string]: any } = {};
-    sketch.params.forEach((p) => {
-      params[p.key] = p.value;
-    });
-
     props.sketch.draw({
       canvas,
+      params,
       rng: state.getImageRng(),
       palette: new Palette(state.getColorRng()),
-      params,
     });
-  };
-
-  const regenerate = () => {
-    // Reset, generate the new sketch props, draw
-    sketch.reset(sketchProps);
-    updateSketchProps();
-    draw();
   };
 
   const download = () => {
@@ -122,62 +123,66 @@ const Page = (props: { sketch: Sketch }) => {
   };
 
   // ===== Event Handlers =====
-  const eventHandlers: any = {};
-  const keyboardHandler = KeyboardHandler(state, regenerate, download);
-
-  const resetEventHandlers = () => {
-    // ===== Remove existing handlers to handle hotloading duplication
-    if (!!eventHandlers.resize) {
-      window.removeEventListener('resize', eventHandlers.resize);
-    }
-    if (!!eventHandlers.keydown) {
-      window.removeEventListener('keydown', eventHandlers.keydown);
-    }
-
-    // ===== Create Functions to attach to event handlers
+  const setEventHandlers = () => {
+    // ===== Window Resize
     eventHandlers.resize = function () {
       resize();
     };
-    eventHandlers.keydown = function (event: KeyboardEvent) {
-      keyboardHandler(event);
-    };
-
-    // ===== Attach Event handlers to events
     window.addEventListener('resize', eventHandlers.resize, true);
-    window.addEventListener('keydown', eventHandlers.keydown, false);
+
+    // ===== Keydown
+    eventHandlers.keydown = (event: KeyboardEvent) => {
+      KeyboardHandler(state, draw, download)(event);
+    };
+    document.addEventListener('keydown', eventHandlers.keydown, false);
   };
 
-  // Page Load Effect
-  useEffect(() => {
-    // TODO: Log formatter
-    console.log('Sketch Page Loading - Hello!');
-
-    // Grab our canvas
-    const pageCanvas = document.getElementById(
-      'sketch-canvas',
-    ) as HTMLCanvasElement;
-    canvas = new Canvas(pageCanvas);
-
-    // Set dimensions for window
-    resize();
-
-    // Attach event handlers
-    resetEventHandlers();
-
-    // Initialize SketchProps
-    updateSketchProps();
-
-    // Initial draw
-    props.sketch.init(sketchProps);
+  const controlPanelUpdateHandler = (
+    property: string,
+    value: any,
+    updatedState: StringMap<any>,
+  ) => {
+    params[property] = value;
     draw();
+    // regenerate();
+  };
+
+  /**
+   * Run once on page load
+   */
+  useEffect(() => {
+    // ===== Draw Sketch
+    initialized && draw();
+
+    // ===== Run once only!
+    if (!initialized) {
+      console.log('### ===== Sketch! ===== ###');
+      // ===== Initialize Sketch
+      sketch.init({
+        canvas,
+        params,
+        rng: state.getImageRng(),
+        palette: new Palette(state.getColorRng()),
+      });
+      // ===== Attach event handlers
+      setEventHandlers();
+
+      setInitialized(true);
+    }
   });
+
   return (
     <FullscreenWrapper>
-      <Menu params={{}} />
+      <Menu
+        sketchParameters={sketch.params}
+        params={params}
+        updateHandler={controlPanelUpdateHandler}
+      />
       <CanvasWrapper>
         <ShadowFrameCanvas
           data-download="placeholder"
           id="sketch-canvas"
+          data-canvas-refresh={new Date().toISOString()}
         ></ShadowFrameCanvas>
       </CanvasWrapper>
       <a id="canvas-downloader" download=""></a>

@@ -1,6 +1,7 @@
+import StringMap from 'types/StringMap';
 import PageState from './PageState';
 
-const keyActionDescriptions: { [key: string]: string } = {
+const keyActionDescriptions: StringMap<string> = {
   KeyS: 'Saving Image',
 
   Space: 'Randomizing all seeds',
@@ -15,7 +16,7 @@ const keyActionDescriptions: { [key: string]: string } = {
 
 export default function KeyboardHandler(
   state: PageState,
-  regenerate: () => void,
+  draw: () => void,
   download: () => void,
 ) {
   return function handler(event: KeyboardEvent) {
@@ -35,35 +36,35 @@ export default function KeyboardHandler(
       case 'Space':
         // Space Bar - Randomize settings and draw a new image
         state.random();
-        regenerate();
+        draw();
         break;
       case 'KeyI':
         // I - random image seed
         state.randomImage();
-        regenerate();
+        draw();
         break;
       case 'KeyC':
         // C - random color seed
         state.randomColor();
-        regenerate();
+        draw();
         break;
 
       // ===== Arrow keys to navigate through image and color seeds
       case 'ArrowRight':
         state.nextImage();
-        regenerate();
+        draw();
         break;
       case 'ArrowLeft':
         state.prevImage();
-        regenerate();
+        draw();
         break;
       case 'ArrowUp':
         state.nextColor();
-        regenerate();
+        draw();
         break;
       case 'ArrowDown':
         state.prevColor();
-        regenerate();
+        draw();
         break;
 
       default:

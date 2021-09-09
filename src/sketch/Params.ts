@@ -3,6 +3,7 @@ export interface Parameter {
   value: any;
   min?: number;
   max?: number;
+  step?: number;
 }
 
 type Params = Parameter[];

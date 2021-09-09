@@ -13,6 +13,7 @@ declare module 'react-control-panel' {
   interface RangeProps extends ControlProps {
     min: number;
     max: number;
+    step: number;
   }
   export const Range = (props: RangeProps) => React.ReactElement;
   export const Interval = (props: RangeProps) => React.ReactElement;

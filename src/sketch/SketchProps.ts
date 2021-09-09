@@ -1,11 +1,12 @@
 import { Canvas, Random } from '@code-not-art/core';
+import StringMap from 'types/StringMap';
 import Palette from './Palette';
 
 type SketchProps = {
   canvas: Canvas;
   palette: Palette;
   rng: Random;
-  params: { [key: string]: any };
+  params: StringMap<any>;
 };
 
 export default SketchProps;
