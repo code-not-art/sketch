@@ -30,7 +30,7 @@ To use this library as a sketch template, here are steps you can follow to run t
 
    The server will run on `localhost:1234`.
 
-1. The page will render the sketch defined in `src/art.tsx`. Open this file your editor of choice and write your sketch there. The server will watch for changes to the file, drawing to the canvas on the browser on save.
+1. The page will render the sketch defined in `src/art.tsx`. Open this file your editor of choice and write your sketch there. The server will watch for changes to the file, drawing to the canvas on the browser whenever you save your work.
 
 ## Sketch Interface and Controls
 
@@ -58,7 +58,7 @@ To use this library as a sketch template, here are steps you can follow to run t
   config: Config;
 } -->
 
-The canvas expects a prop of the [`Sketch`](src/Sketch.tsx) type. This interface allows you to provide configuration details for your sketch (`config`), and interactable parameters that you can update in browser (`params`). There are several methods for available for you to implement that will interact with the canvas and the seeded random generators provided by the framework. The only one of these that are absolutely required to provide is the `draw(props)` method, all others have sensible (mostly empty) defaults. To summarize the contents of Sketch:
+The canvas expects a prop of the [`Sketch`](src/sketch/Sketch.tsx) type. This interface allows you to provide configuration details for your sketch (`config`), and interactable parameters that you can update in browser (`params`). There are several methods for available for you to implement that will interact with the canvas and the seeded random generators provided by the framework. The only one of these that are absolutely required to provide is the `draw(props)` method, all others have sensible (mostly empty) defaults. To summarize the contents of Sketch:
 
 |       **Property**       |                                                 **Type**                                                  | **Required** |                                                                                                       **Description**                                                                                                       |                                 **Default**                                 |
 | :----------------------: | :-------------------------------------------------------------------------------------------------------: | :----------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------: |
