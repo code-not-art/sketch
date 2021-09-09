@@ -44,7 +44,6 @@ const Menu = (props: {
           switch (typeof p.value) {
             case 'boolean':
               return <Checkbox key={elementKey} label={p.key}></Checkbox>;
-              break;
             case 'number':
               return (
                 <Range
@@ -55,7 +54,6 @@ const Menu = (props: {
                   step={p.step || 0.01}
                 ></Range>
               );
-              break;
             case 'object':
               if (Array.isArray(p.value) && p.value.length === 2) {
                 return (
@@ -68,7 +66,6 @@ const Menu = (props: {
                   ></Interval>
                 );
               }
-            // NO BREAK HERE, fall through when the if case doesn't catch the param
             default:
               console.log(
                 `Parameter not displayed due to unknown type:`,
@@ -76,7 +73,6 @@ const Menu = (props: {
                 typeof p.value,
               );
               return null;
-              break;
           }
         })}
       </>
