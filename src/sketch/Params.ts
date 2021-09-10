@@ -1,6 +1,5 @@
 export interface Parameter {
   key: string;
-  label?: string;
   value?: any;
   min?: number;
   max?: number;
