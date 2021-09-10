@@ -1,4 +1,4 @@
-import Params, { Parameter } from './Params';
+import Params from './Params';
 import Config, { ConfigInput } from './Config';
 import SketchProps from './SketchProps';
 import FrameData from './FrameData';
@@ -10,13 +10,12 @@ export type SketchDefinition = {
   loop?: (props: SketchProps, frameData: FrameData) => void;
   params?: Params;
   config?: ConfigInput;
-  id: number;
 };
 
-const defaultInit = (props: SketchProps) => {
+const defaultInit = () => {
   // Intentionally do nothing.
 };
-const defaultLoop = (props: SketchProps, frameData: FrameData) => {
+const defaultLoop = () => {
   // Do nothing EVERY FRAME
 };
 const defaultReset = (props: SketchProps) => {
@@ -30,7 +29,6 @@ class Sketch {
   reset: (props: SketchProps) => void;
   params: Params;
   config: Config;
-  id: number;
 
   constructor(input: SketchDefinition) {
     this.config = new Config(input.config || {});
@@ -41,8 +39,6 @@ class Sketch {
     this.loop = input.loop || defaultLoop;
 
     this.draw = input.draw;
-
-    this.id = input.id;
   }
 }
 
