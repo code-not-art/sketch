@@ -12,11 +12,13 @@ const config: ConfigInput = {
   menuDelay: 10,
 };
 const params: Params = [
+  { key: 'Size and Scale' },
   { key: 'canvasFill', value: 0.76, min: 0.5, max: 1.1 },
   { key: 'gridWidth', value: 10, min: 1, max: 55, step: 1 },
   { key: 'circleFill', value: 0.72, min: 0.1, max: 2 },
-  { key: '', label: 'Mask Layer' },
+  { key: 'Mask Layer' },
   { key: 'chanceHidden', value: 0.15, min: 0, max: 1 },
+  { key: 'chanceNoMask', value: 0.15, min: 0, max: 1 },
   { key: 'darkenRange', value: 5, min: 0, max: 20 },
   { key: 'lightenRange', value: 0, min: 0, max: 20 },
   { key: 'positionExponent', value: 1, min: 0, max: 5 },
@@ -27,6 +29,7 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   const gridWidth = params.gridWidth as number;
   const circleFill = params.circleFill as number;
   const chanceHidden = params.chanceHidden as number;
+  const chanceNoMask = params.chanceNoMask as number;
   const darkenRange = params.darkenRange as number;
   const lightenRange = params.lightenRange as number;
   const positionExponent = params.positionExponent as number;
@@ -78,10 +81,10 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   repeat(gridWidth, (x) => {
     repeat(gridWidth, (y) => {
       // diagonal scheme
-      // const offsetPostitionScale = Math.pow(
-      //   Math.abs(x - y) / gridWidth,
-      //   positionExponent,
-      // );
+      const offsetPostitionScale = Math.pow(
+        Math.abs(x - y) / gridWidth,
+        positionExponent,
+      );
 
       // inverse diagonal
       // const offsetPostitionScale = Math.pow(
@@ -90,14 +93,14 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
       // );
 
       // Square Radial distance
-      const distanceFromCenter = Math.sqrt(
-        Math.pow(1 - Math.abs(gridWidth - 2 * x) / gridWidth, 2) +
-          Math.pow(1 - Math.abs(gridWidth - 2 * y) / gridWidth, 2),
-      );
-      const offsetPostitionScale = Math.pow(
-        distanceFromCenter,
-        positionExponent,
-      );
+      // const distanceFromCenter = Math.sqrt(
+      //   Math.pow(1 - Math.abs(gridWidth - 2 * x) / gridWidth, 2) +
+      //     Math.pow(1 - Math.abs(gridWidth - 2 * y) / gridWidth, 2),
+      // );
+      // const offsetPostitionScale = Math.pow(
+      //   distanceFromCenter,
+      //   positionExponent,
+      // );
 
       const offset = Vec2.unit()
         .rotate(rng.angle())
@@ -107,15 +110,20 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
       const origin = new Vec2(x, y)
         .add(0.5 - gridWidth / 2)
         .scale(circleRadius * 2)
-        .add(!rng.bool(chanceHidden) ? offset : 0);
-      canvas.draw.circle({
-        origin: origin,
-        radius: circleRadius * circleFill + 1,
-        fill: palette.colors[0]
-          .color()
-          .darken(rng.fuzzy(darkenRange).float(darkenRange))
-          .lighten(rng.fuzzy(lightenRange).float(lightenRange)),
-      });
+        .add(rng.bool(chanceHidden) ? 0 : offset);
+
+      rng.push('skippable draw');
+      const hideMask = !rng.bool(chanceNoMask);
+      hideMask &&
+        canvas.draw.circle({
+          origin: origin,
+          radius: circleRadius * circleFill + 1,
+          fill: palette.colors[0]
+            .color()
+            .darken(rng.fuzzy(darkenRange).float(darkenRange))
+            .lighten(rng.fuzzy(lightenRange).float(lightenRange)),
+        });
+      rng.pop();
     });
   });
 };
@@ -133,7 +141,6 @@ const Art: Sketch = new Sketch({
   // init,
   // loop,
   // reset,
-  id: 2,
 });
 
 export default Art;
