@@ -182,7 +182,6 @@ const Page = (props: { sketch: Sketch }) => {
    * Run once on page load
    */
   useEffect(() => {
-    console.log('useEffect', initialized);
     // ===== Attach event handlers
     resetEventHandlers();
 
