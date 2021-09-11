@@ -143,7 +143,6 @@ const Art: Sketch = new Sketch({
   // init,
   // loop,
   // reset,
-  // data,
 });
 
 export default Art;
