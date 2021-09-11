@@ -192,6 +192,8 @@ const Page = (props: { sketch: Sketch }) => {
     if (!initialized) {
       console.log('### ===== Sketch! ===== ###');
       // ===== Initialize Sketch
+      resize();
+      getCanvas().set.size(config.width, config.height);
       sketch.init(getSketchProps());
 
       setInitialized(true);
