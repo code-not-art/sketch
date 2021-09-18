@@ -7,7 +7,7 @@ export type SketchDefinition = {
   reset?: (props: SketchProps) => void;
   init?: (props: SketchProps) => void;
   draw: (props: SketchProps) => void;
-  loop?: (props: SketchProps, frameData: FrameData) => void;
+  loop?: (props: SketchProps, frameData: FrameData) => boolean;
   params?: Params;
   config?: ConfigInput;
 };
@@ -17,6 +17,7 @@ const defaultInit = () => {
 };
 const defaultLoop = () => {
   // Do nothing EVERY FRAME
+  return false;
 };
 const defaultReset = (props: SketchProps) => {
   props.canvas.clear();
@@ -25,7 +26,7 @@ const defaultReset = (props: SketchProps) => {
 class Sketch {
   init: (props: SketchProps) => void;
   draw: (props: SketchProps) => void;
-  loop: (props: SketchProps, frameData: FrameData) => void;
+  loop: (props: SketchProps, frameData: FrameData) => boolean;
   reset: (props: SketchProps) => void;
   params: Params;
   config: Config;

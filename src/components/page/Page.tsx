@@ -10,6 +10,7 @@ import Palette from '../../sketch/Palette';
 
 import Menu from '../menu';
 import StringMap from 'types/StringMap';
+import LoopState from './LoopState';
 import SketchProps from 'src/sketch/SketchProps';
 
 const FullscreenWrapper = styled.div`
@@ -56,16 +57,16 @@ const Page = (props: { sketch: Sketch }) => {
   const [state] = useState<PageState>(new PageState(config.seed));
   const [eventHandlers] = useState<any>({});
   const [params] = useState<StringMap<any>>(convertSketchParameters());
+  const [loopState] = useState<LoopState>(new LoopState());
+  const [sketchData] = useState<StringMap<any>>({});
 
-  let canvas: Canvas;
-  let sketchProps: SketchProps;
-
-  const updateSketchProps = () => {
-    sketchProps = {
-      canvas,
+  const getSketchProps: () => SketchProps = () => {
+    return {
+      canvas: getCanvas(),
       params,
       rng: state.getImageRng(),
       palette: new Palette(state.getColorRng()),
+      data: sketchData,
     };
   };
 
@@ -93,36 +94,58 @@ const Page = (props: { sketch: Sketch }) => {
         newHeight = (newWidth / config.width) * config.height;
       }
     }
+    const canvas = getCanvas();
     canvas.canvas.style.height = newHeight + 'px';
     canvas.canvas.style.width = newWidth + 'px';
   };
 
-  const draw = () => {
+  const restart = () => {
+    const sketchProps = getSketchProps();
+    sketch.reset(sketchProps);
+    sketch.init(sketchProps);
+    draw();
+    loopState.restart();
+  };
+
+  const getCanvas = () => {
     // Grab our canvas
     const pageCanvas = document.getElementById(
       'sketch-canvas',
     ) as HTMLCanvasElement;
-    canvas = new Canvas(pageCanvas);
-    // updateSketchProps();
+    return new Canvas(pageCanvas);
+  };
 
+  const draw = () => {
     // Set dimensions for window
     resize();
-
+    const sketchProps = getSketchProps();
     // Note: This size update is done pre-draw based on config props for the size.
     //      when this is run, the canvas bitmap content is lost, so do not do this in the resize loop.
-    canvas.set.size(config.width, config.height);
+    sketchProps.canvas.set.size(config.width, config.height);
 
     // TODO: Improve the state logging.
     console.log(state.getImage(), '-', state.getColor());
-    updateSketchProps();
-    sketch.draw(sketchProps);
+
+    sketch.draw(getSketchProps());
+
+    if (loopState.animationFrameRequest) {
+      window.cancelAnimationFrame(loopState.animationFrameRequest);
+    }
+
+    const animate = () => {
+      if (loopState.nextFrame()) {
+        loopState.finished = sketch.loop(getSketchProps(), loopState.frameData);
+      }
+      loopState.animationFrameRequest = window.requestAnimationFrame(animate);
+    };
+    animate();
   };
 
   const download = () => {
     const saveas = `${state.getImage()} - ${state.getColor()}.png`;
     const downloadLink = document.getElementById('canvas-downloader');
     if (downloadLink) {
-      const image = canvas.canvas.toDataURL('image/png');
+      const image = getCanvas().canvas.toDataURL('image/png');
       downloadLink.setAttribute('href', image);
       downloadLink.setAttribute('download', saveas);
       downloadLink.click();
@@ -141,7 +164,7 @@ const Page = (props: { sketch: Sketch }) => {
     // ===== Keydown
     document.removeEventListener('keydown', eventHandlers.keydown);
     eventHandlers.keydown = (event: KeyboardEvent) => {
-      KeyboardHandler(state, draw, download)(event);
+      KeyboardHandler(state, loopState, draw, restart, download)(event);
     };
     document.addEventListener('keydown', eventHandlers.keydown, false);
   };
@@ -149,11 +172,10 @@ const Page = (props: { sketch: Sketch }) => {
   const controlPanelUpdateHandler = (
     property: string,
     value: any,
-    updatedState: StringMap<any>,
+    // updatedState: StringMap<any>,
   ) => {
     params[property] = value;
     draw();
-    // regenerate();
   };
 
   /**
@@ -170,12 +192,9 @@ const Page = (props: { sketch: Sketch }) => {
     if (!initialized) {
       console.log('### ===== Sketch! ===== ###');
       // ===== Initialize Sketch
-      sketch.init({
-        canvas,
-        params,
-        rng: state.getImageRng(),
-        palette: new Palette(state.getColorRng()),
-      });
+      resize();
+      getCanvas().set.size(config.width, config.height);
+      sketch.init(getSketchProps());
 
       setInitialized(true);
     }

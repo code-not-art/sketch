@@ -7,6 +7,7 @@ type SketchProps = {
   palette: Palette;
   rng: Random;
   params: StringMap<any>;
+  data: StringMap<any>;
 };
 
 export default SketchProps;

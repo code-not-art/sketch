@@ -1,14 +1,13 @@
-import Sketch, { Params } from './sketch';
-import { ConfigInput } from './sketch/Config';
-import SketchProps from './sketch/SketchProps';
-// import FrameData from './sketch/FrameData';
 import { Vec2, Utils } from '@code-not-art/core';
+import Sketch, { Params } from '../sketch';
+import { ConfigInput } from '../sketch/Config';
+import SketchProps from '../sketch/SketchProps';
+// import FrameData from '../sketch/FrameData';
+// import StringMap from 'types/StringMap';
 const { repeat } = Utils;
 
+// const data: StringMap<any> = {};
 const config: ConfigInput = {
-  // width: 2160,
-  // height: 2160,
-  // seed: 'predictable randomness',
   menuDelay: 10,
 };
 const params: Params = [
@@ -37,8 +36,6 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   const width = canvas.get.width() * canvasFill;
   const height = canvas.get.height() * canvasFill;
 
-  const minDim = Math.min(width, height);
-
   // Background
   canvas.fill(palette.colors[0]);
 
@@ -59,7 +56,7 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   //   fill: palette.colors[1],
   // });
 
-  const circleRadius = minDim / gridWidth / 2;
+  const circleRadius = (canvas.get.minDim() * canvasFill) / gridWidth / 2;
 
   // Base layer dots
   repeat(gridWidth, (x) => {
@@ -128,9 +125,14 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   });
 };
 
-// const init = ({}: SketchProps) => {};
+const init = ({}: SketchProps) => {
+  console.log('init');
+};
 
-// const loop = ({}: SketchProps, {}: FrameData) => {};
+// const loop = (
+//   { canvas, rng }: SketchProps,
+//   { frame, frameTime }: FrameData,
+// ): boolean => {};
 
 // const reset = ({}: SketchProps) => {};
 

@@ -1,4 +1,5 @@
 import StringMap from 'types/StringMap';
+import LoopState from './LoopState';
 import PageState from './PageState';
 
 const keyActionDescriptions: StringMap<string> = {
@@ -12,14 +13,26 @@ const keyActionDescriptions: StringMap<string> = {
   ArrowLeft: 'Previous Image seed',
   ArrowUp: 'Next Color seed',
   ArrowDown: 'Previous Color seed',
+
+  Enter: 'Pause Animation Loop',
+  NumpadEnter: 'Pause Animation Loop',
+
+  KeyR: 'Redraw Sketch and Restart Loop',
 };
 
 export default function KeyboardHandler(
   state: PageState,
+  loopState: LoopState,
   draw: () => void,
+  restart: () => void,
   download: () => void,
 ) {
   return function handler(event: KeyboardEvent) {
+    // This line gets complaints from the TypeScript linter, but runs in the browser without fail.
+    if (event.target && event.target.localTarget === 'input') {
+      return;
+    }
+
     // TODO: end function if keydown is in an input element
     const actionDescriptionLog = keyActionDescriptions[event.code]
       ? ` - ${keyActionDescriptions[event.code]}`
@@ -65,6 +78,16 @@ export default function KeyboardHandler(
       case 'ArrowDown':
         state.prevColor();
         draw();
+        break;
+
+      // ===== Animation Controls
+      case 'Enter':
+      case 'NumpadEnter':
+        loopState.togglePause();
+        break;
+
+      case 'KeyR':
+        restart();
         break;
 
       default:
