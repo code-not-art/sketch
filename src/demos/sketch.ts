@@ -33,15 +33,11 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   const lightenRange = params.lightenRange as number;
   const positionExponent = params.positionExponent as number;
 
-  const width = canvas.get.width() * canvasFill;
-  const height = canvas.get.height() * canvasFill;
-
   // Background
   canvas.fill(palette.colors[0]);
 
-  // How to center:
+  // Put origin at center of canvas:
   canvas.translate(new Vec2(canvas.get.width() / 2, canvas.get.height() / 2));
-  // canvas.rotate(rng.angle());
 
   // const edgeGap = new Vec2(
   //   (width / 2) * (1 / canvasFill - 1),
@@ -125,14 +121,9 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   });
 };
 
-const init = ({}: SketchProps) => {
-  console.log('init');
-};
+// const init = ({}: SketchProps) => {};
 
-// const loop = (
-//   { canvas, rng }: SketchProps,
-//   { frame, frameTime }: FrameData,
-// ): boolean => {};
+// const loop = ({}: SketchProps, {}: FrameData): boolean => {};
 
 // const reset = ({}: SketchProps) => {};
 

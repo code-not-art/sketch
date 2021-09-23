@@ -5,6 +5,7 @@ import { Constants, Gradient, Vec2, Utils } from '@code-not-art/core';
 const TAU = Constants.TAU;
 
 // const config: ConfigInput = {};
+
 const params: Params = [
   { key: 'speed', value: 2, min: 0, max: 10 },
   { key: 'rotationSpeed', value: 1, min: 0, max: 10 },
@@ -55,7 +56,6 @@ const loop = (
       .rotate(TAU * repeatFraction);
 
     const circleOrigin = Vec2.unit()
-      // .rotate(Math.cos(angle))
       .rotate(angle * twists)
       .scale(spinRadius)
       .add(spinOffset)
