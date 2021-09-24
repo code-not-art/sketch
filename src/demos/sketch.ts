@@ -1,5 +1,5 @@
 import { Vec2, Utils } from '@code-not-art/core';
-import Sketch, { Params } from '../sketch';
+import { Sketch, Params } from '../sketch';
 import { ConfigInput } from '../sketch/Config';
 import SketchProps from '../sketch/SketchProps';
 // import FrameData from '../sketch/FrameData';

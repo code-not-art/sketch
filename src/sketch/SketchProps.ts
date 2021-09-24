@@ -1,5 +1,5 @@
 import { Canvas, Random } from '@code-not-art/core';
-import StringMap from 'types/StringMap';
+import StringMap from '../utils/StringMap';
 import Palette from './Palette';
 
 type SketchProps = {

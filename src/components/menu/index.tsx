@@ -4,8 +4,8 @@ import { debounce } from 'lodash';
 
 import ControlPanel from 'react-control-panel';
 import { Checkbox, Interval, Range, Text } from 'react-control-panel';
-import { Params } from 'src/sketch';
-import StringMap from 'types/StringMap';
+import { Params } from '../../sketch';
+import StringMap from 'utils/StringMap';
 
 const FixedPositionWrapper = styled.div`
   position: fixed;

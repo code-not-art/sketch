@@ -1,4 +1,4 @@
-import Sketch, { Params } from '../sketch';
+import { Sketch, Params } from '../sketch';
 import SketchProps from '../sketch/SketchProps';
 import FrameData from '../sketch/FrameData';
 import { Constants, Gradient, Vec2, Utils } from '@code-not-art/core';

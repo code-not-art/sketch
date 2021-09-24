@@ -1,4 +1,4 @@
-import StringMap from 'types/StringMap';
+import StringMap from 'utils/StringMap';
 import LoopState from './LoopState';
 import PageState from './PageState';
 
@@ -29,7 +29,7 @@ export default function KeyboardHandler(
 ) {
   return function handler(event: KeyboardEvent) {
     // This line gets complaints from the TypeScript linter, but runs in the browser without fail.
-    if (event.target && event.target.localTarget === 'input') {
+    if (event.target && (<HTMLElement>event.target).localName === 'input') {
       return;
     }
 

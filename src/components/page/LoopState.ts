@@ -1,4 +1,4 @@
-import FrameData from 'src/sketch/FrameData';
+import FrameData from 'sketch/FrameData';
 
 export default class LoopState {
   finished: boolean;

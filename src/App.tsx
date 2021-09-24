@@ -1,16 +1,23 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { Sketch } from './sketch';
 
 import Page from './components/page';
-import sketch from './demos/sketch';
-import loop from './demos/loop';
 
-const App = () => {
+const App = ({
+  sketch,
+  title = 'Code Sketch',
+  description = 'HTML Canvas sketch made by code',
+}: {
+  sketch: Sketch;
+  title?: string;
+  description?: string;
+}) => {
   return (
     <>
       <Helmet>
-        <title>Make Code Sketch</title>
-        <meta name="description" content="Canvas sketch made by code" />
+        <title>{title}</title>
+        <meta name="description" content={description} />
       </Helmet>
       <Page sketch={sketch}></Page>
     </>

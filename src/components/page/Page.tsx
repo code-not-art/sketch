@@ -3,15 +3,13 @@ import styled from 'styled-components';
 
 import { Canvas } from '@code-not-art/core';
 
-import Sketch from '../../sketch';
+import { Sketch, Palette, SketchProps } from '../../sketch';
 import KeyboardHandler from './KeyboardHandler';
 import PageState from './PageState';
-import Palette from '../../sketch/Palette';
 
 import Menu from '../menu';
-import StringMap from 'types/StringMap';
+import StringMap from 'utils/StringMap';
 import LoopState from './LoopState';
-import SketchProps from 'src/sketch/SketchProps';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
