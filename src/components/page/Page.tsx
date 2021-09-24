@@ -37,7 +37,7 @@ const ShadowFrameCanvas = styled.canvas`
   box-shadow: 0px 0px 34px 4px rgba(0, 0, 0, 0.7);
 `;
 
-const Page = (props: { sketch: Sketch }) => {
+const Page = (props: { sketch: ReturnType<typeof Sketch> }) => {
   // Expand inputs for convenience
   const sketch = props.sketch;
   const config = sketch.config;

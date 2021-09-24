@@ -23,24 +23,23 @@ const defaultReset = (props: SketchProps) => {
   props.canvas.clear();
 };
 
-class Sketch {
+const Sketch = (
+  input: SketchDefinition,
+): {
   init: (props: SketchProps) => void;
   draw: (props: SketchProps) => void;
   loop: (props: SketchProps, frameData: FrameData) => boolean;
   reset: (props: SketchProps) => void;
   params: Params;
-  config: Config;
+  config: ReturnType<typeof Config>;
+} => ({
+  config: Config(input.config || {}),
+  params: input.params || [],
 
-  constructor(input: SketchDefinition) {
-    this.config = new Config(input.config || {});
-    this.params = input.params || [];
-
-    this.init = input.init || defaultInit;
-    this.reset = input.reset || defaultReset;
-    this.loop = input.loop || defaultLoop;
-
-    this.draw = input.draw;
-  }
-}
+  init: input.init || defaultInit,
+  draw: input.draw,
+  loop: input.loop || defaultLoop,
+  reset: input.reset || defaultReset,
+});
 
 export default Sketch;

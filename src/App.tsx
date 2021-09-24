@@ -9,7 +9,7 @@ const App = ({
   title = 'Code Sketch',
   description = 'HTML Canvas sketch made by code',
 }: {
-  sketch: Sketch;
+  sketch: ReturnType<typeof Sketch>;
   title?: string;
   description?: string;
 }) => {

@@ -15,7 +15,7 @@ const params: Params = [
 ];
 
 const draw = ({ canvas, palette, data }: SketchProps) => {
-  // Nothing doing, checkout the loop!
+  // One time setup instructions that we don't need to repeat every frame:
   canvas.translate(canvas.get.size().scale(0.5));
 
   // define the gradient in the draw step so that when the color is updated the gradient is regenerated.
@@ -72,7 +72,7 @@ const loop = (
 
 // const reset = ({}: SketchProps) => {};
 
-const Art: Sketch = new Sketch({
+const Art = Sketch({
   // config,
   params,
   draw,

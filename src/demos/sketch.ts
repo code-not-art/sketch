@@ -127,7 +127,7 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
 
 // const reset = ({}: SketchProps) => {};
 
-const Art: Sketch = new Sketch({
+const Art = Sketch({
   config,
   params,
   draw,

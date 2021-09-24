@@ -5,16 +5,20 @@ export type ConfigInput = {
   menuDelay?: number;
 };
 
-export default class Config {
+const Config = (
+  input: ConfigInput,
+): {
   width: number;
   height: number;
   seed: string;
   menuDelay?: number;
+} => {
+  return {
+    width: input.width || 1080,
+    height: input.height || 1080,
+    seed: input.seed || new Date().toISOString(),
+    menuDelay: input.menuDelay,
+  };
+};
 
-  constructor(input: ConfigInput) {
-    this.width = input.width || 1080;
-    this.height = input.height || 1080;
-    this.seed = input.seed || new Date().toISOString();
-    this.menuDelay = input.menuDelay;
-  }
-}
+export default Config;
