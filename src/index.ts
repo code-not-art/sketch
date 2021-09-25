@@ -1,4 +1,2 @@
-import * as SketchImports from './sketch';
-import App from './App';
-
-export default { ...SketchImports, App };
+export * from './sketch';
+export { default as App } from './App';
