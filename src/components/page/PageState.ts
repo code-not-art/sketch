@@ -12,6 +12,9 @@ export default class PageState {
   activeImage: number;
   activeColor: number;
 
+  userImageSeed?: string;
+  userColorSeed?: string;
+
   constructor(seed?: string) {
     // definte the state from the seed or from the current Date/time
     this._seed = seed || new Date().toISOString();
@@ -76,11 +79,22 @@ export default class PageState {
     }
   }
 
+  setUserImage(seed: string): void {
+    this.userImageSeed = seed;
+  }
+  setUserColor(seed: string): void {
+    this.userColorSeed = seed;
+  }
+
   getImage(): string {
-    return this.imageSeeds[this.activeImage];
+    return this.userImageSeed
+      ? this.userImageSeed
+      : this.imageSeeds[this.activeImage];
   }
   getColor(): string {
-    return this.colorSeeds[this.activeColor];
+    return this.userColorSeed
+      ? this.userColorSeed
+      : this.colorSeeds[this.activeColor];
   }
 
   getImageRng(): Random {

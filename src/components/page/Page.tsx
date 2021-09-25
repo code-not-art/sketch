@@ -188,7 +188,20 @@ const Page = (props: { sketch: ReturnType<typeof Sketch> }) => {
     value: any,
     // updatedState: StringMap<any>,
   ) => {
-    params[property] = value;
+    // The menu provides two special inputs for 'image' and 'color'
+    //  which we want to use on the user provided image and color seeds
+    // Every other property gets set in the Params defined by the sketch.
+    switch (property) {
+      case 'image':
+        state.setUserImage(value);
+        break;
+      case 'color':
+        state.setUserColor(value);
+        break;
+      default:
+        params[property] = value;
+        break;
+    }
     draw();
   };
 
