@@ -165,6 +165,22 @@ const Page = (props: { sketch: ReturnType<typeof Sketch> }) => {
       KeyboardHandler(state, loopState, draw, restart, download)(event);
     };
     document.addEventListener('keydown', eventHandlers.keydown, false);
+
+    // ===== Touch Screen Press on Canvas
+    document.removeEventListener('touchend', eventHandlers.touchend);
+
+    eventHandlers.touchend = (event: TouchEvent) => {
+      if (
+        event.target &&
+        (event.target as HTMLElement).localName !== 'canvas'
+      ) {
+        // Ignore any touch not on the canvas
+        return;
+      }
+      state.random();
+      draw();
+    };
+    document.addEventListener('touchend', eventHandlers.touchend, false);
   };
 
   const controlPanelUpdateHandler = (
