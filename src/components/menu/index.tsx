@@ -6,11 +6,23 @@ import ControlPanel from 'react-control-panel';
 import { Checkbox, Interval, Range, Text } from 'react-control-panel';
 import { Params } from '../../sketch';
 import StringMap from 'utils/StringMap';
+import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
 
 const FixedPositionWrapper = styled.div`
   position: fixed;
   top: 0px;
   right: 0px;
+
+  @media only screen and (max-width: ${MOBILE_WIDTH_BREAKPOINT}px) {
+    position: static;
+    width: 100%;
+    height: 50%;
+    overflow: auto;
+
+    .control-panel {
+      width: 100% !important;
+    }
+  }
 `;
 
 const SectionHeader = styled.div`

@@ -10,6 +10,7 @@ import PageState from './PageState';
 import Menu from '../menu';
 import StringMap from 'utils/StringMap';
 import LoopState from './LoopState';
+import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
@@ -22,10 +23,17 @@ const FullscreenWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  @media only screen and (max-width: ${MOBILE_WIDTH_BREAKPOINT}px) {
+    flex-direction: column;
+  }
 `;
 
 const CanvasWrapper = styled.div`
   padding: 50px;
+  @media only screen and (max-width: ${MOBILE_WIDTH_BREAKPOINT}px) {
+    height: 50%;
+  }
 `;
 
 const ShadowFrameCanvas = styled.canvas`
@@ -71,8 +79,13 @@ const Page = (props: { sketch: ReturnType<typeof Sketch> }) => {
   const resize = () => {
     const canvasAspectRatio = config.width / config.height;
 
+    // For quick mobile sizing solution:
+    const useHalfScreen = window.innerWidth <= MOBILE_WIDTH_BREAKPOINT;
+
     const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
+    const windowHeight = useHalfScreen
+      ? window.innerHeight / 2
+      : window.innerHeight;
     const windowAspectRatio = windowWidth / windowHeight;
 
     let newHeight = config.height;
@@ -80,13 +93,13 @@ const Page = (props: { sketch: ReturnType<typeof Sketch> }) => {
 
     // Always render the canvas within the dimensions of the window
     if (windowAspectRatio > canvasAspectRatio) {
-      const maxDim = window.innerHeight - 50;
+      const maxDim = windowHeight - 50;
       if (config.height > maxDim) {
         newHeight = maxDim;
         newWidth = (newHeight / config.height) * config.width;
       }
     } else {
-      const maxDim = window.innerWidth - 50;
+      const maxDim = windowWidth - 50;
       if (config.width > maxDim) {
         newWidth = maxDim;
         newHeight = (newWidth / config.width) * config.height;
