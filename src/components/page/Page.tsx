@@ -32,9 +32,11 @@ const FullscreenWrapper = styled.div`
 
 const CanvasWrapper = styled.div`
   padding: 30px;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 `;
 
 const ShadowFrameCanvas = styled.canvas`
@@ -61,6 +63,13 @@ const Page = (props: { sketch: ReturnType<typeof Sketch> }) => {
   };
 
   const [initialized, setInitialized] = useState<boolean>(false);
+  const [showMenu, setShowMenu] = useState<boolean>(true);
+  const toggleMenu = () => setShowMenu(!showMenu);
+
+  // All these state variables could just be local references, except they would get wiped during hotload
+  //  by stashing them in state, they keep their values as the user edits their sketch
+  //  Some of the classes used here (PageState) could be managed in the Page react state, but this was a
+  //  convenient way of separating the code
   const [state] = useState<PageState>(new PageState(config.seed));
   const [eventHandlers] = useState<any>({});
   const [params] = useState<StringMap<any>>(convertSketchParameters());
@@ -176,7 +185,14 @@ const Page = (props: { sketch: ReturnType<typeof Sketch> }) => {
     // ===== Keydown
     document.removeEventListener('keydown', eventHandlers.keydown);
     eventHandlers.keydown = (event: KeyboardEvent) => {
-      KeyboardHandler(state, loopState, draw, restart, download)(event);
+      KeyboardHandler(
+        state,
+        loopState,
+        draw,
+        restart,
+        download,
+        toggleMenu,
+      )(event);
     };
     document.addEventListener('keydown', eventHandlers.keydown, false);
 
@@ -243,12 +259,14 @@ const Page = (props: { sketch: ReturnType<typeof Sketch> }) => {
 
   return (
     <FullscreenWrapper>
-      <Menu
-        sketchParameters={sketch.params}
-        params={params}
-        updateHandler={controlPanelUpdateHandler}
-        debounce={config.menuDelay}
-      />
+      {showMenu && (
+        <Menu
+          sketchParameters={sketch.params}
+          params={params}
+          updateHandler={controlPanelUpdateHandler}
+          debounce={config.menuDelay}
+        />
+      )}
       <CanvasWrapper>
         <ShadowFrameCanvas
           data-download="placeholder"

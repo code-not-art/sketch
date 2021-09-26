@@ -110,7 +110,7 @@ const Menu = (props: {
   ) => void;
   debounce?: number;
 }) => {
-  const debounceTime = props.debounce || 25;
+  const debounceTime = props.debounce === undefined ? 25 : props.debounce;
   const debouncedUpdate = debounce(props.updateHandler, debounceTime);
 
   const sections = props.sketchParameters.reduce<Section[]>(sectionReducer, []);
