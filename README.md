@@ -4,8 +4,6 @@ Framework used to create a hot reloading canvas for art development using the [@
 
 While this runs as a standalone dev environment, it is used as the foundation for [@code-not-art/template](https://github.com/code-not-art/template) which provides a blank canvas to easily make your own generative works. If you are looking to write some code that makes some art, start there instead.
 
-
-
 ## Quick Start
 
 1. **Clone** to your computer - [How To](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/adding-and-cloning-repositories/cloning-a-repository-from-github-to-github-desktop)
@@ -28,13 +26,15 @@ While this runs as a standalone dev environment, it is used as the foundation fo
 
 1. The page will render the sketch defined in `src/demos/sketch.ts`. Open this file your editor of choice and write your sketch there. The server will watch for changes to the file, drawing to the canvas on the browser whenever you save your work.
 
-   Other demo sketches to play with are in that demos folder, but need to be imported into `src/demo.tsx` and added as a prop into the `App` element. 
+   Other demo sketches to play with are in that demos folder, but need to be imported into `src/demo.tsx` and added as a prop into the `App` element.
 
 ## Sketch Interface and Controls
 
 | **Key** |                                        **Action**                                         |
 | :-----: | :---------------------------------------------------------------------------------------: |
 |   `s`   |                                  Save the current image                                   |
+|   `m`   |                                 Show/Hide Parameter Menu                                  |
+|         |                                                                                           |
 | `space` |              Generate new **image** and **color** seeds. **Draw new image**.              |
 |   `↑`   | Move to next **color** seed, or generate a new one if at end of list. **Draw new image**. |
 |   `↓`   |                   Move to previous **color** seed. **Draw new image**.                    |
