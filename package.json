@@ -1,6 +1,6 @@
 {
   "name": "@code-not-art/sketch",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Quick start framework for HTML Canvas sketches",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -38,6 +38,7 @@
     "react": "^17.0.2",
     "react-control-panel": "^0.8.3",
     "react-dom": "^17.0.2",
+    "react-feather": "^2.0.9",
     "react-helmet": "^6.1.0",
     "styled-components": "^5.3.1"
   },

@@ -26,14 +26,15 @@ const FullscreenWrapper = styled.div`
 
   @media only screen and (max-width: ${MOBILE_WIDTH_BREAKPOINT}px) {
     flex-direction: column;
+    justify-content: flex-start;
   }
 `;
 
 const CanvasWrapper = styled.div`
-  padding: 50px;
-  @media only screen and (max-width: ${MOBILE_WIDTH_BREAKPOINT}px) {
-    height: 50%;
-  }
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const ShadowFrameCanvas = styled.canvas`
@@ -93,13 +94,13 @@ const Page = (props: { sketch: ReturnType<typeof Sketch> }) => {
 
     // Always render the canvas within the dimensions of the window
     if (windowAspectRatio > canvasAspectRatio) {
-      const maxDim = windowHeight - 50;
+      const maxDim = windowHeight - 30;
       if (config.height > maxDim) {
         newHeight = maxDim;
         newWidth = (newHeight / config.height) * config.width;
       }
     } else {
-      const maxDim = windowWidth - 50;
+      const maxDim = windowWidth - 30;
       if (config.width > maxDim) {
         newWidth = maxDim;
         newHeight = (newWidth / config.width) * config.height;
