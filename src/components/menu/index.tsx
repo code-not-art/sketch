@@ -4,7 +4,11 @@ import { debounce } from 'lodash';
 
 import ControlPanel from 'react-control-panel';
 import { Checkbox, Interval, Range, Text } from 'react-control-panel';
+
+import CollapsibleSection from './CollapsibleSection';
+
 import { Params } from '../../sketch';
+import { Parameter } from 'sketch/Params';
 import StringMap from 'utils/StringMap';
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
 
@@ -16,7 +20,7 @@ const FixedPositionWrapper = styled.div`
   @media only screen and (max-width: ${MOBILE_WIDTH_BREAKPOINT}px) {
     position: static;
     width: 100%;
-    height: 50%;
+    max-height: 50%;
     overflow: auto;
 
     .control-panel {
@@ -25,15 +29,76 @@ const FixedPositionWrapper = styled.div`
   }
 `;
 
-const SectionHeader = styled.div`
-  width: 100%;
-  text-align: right;
-  color: rgb(130, 130, 130);
-  text-transform: uppercase;
-  height: 20px;
-  margin-bottom: 2px;
-  margin-top: 12px;
-`;
+type Section = {
+  title: string;
+  params: Params;
+};
+const sectionReducer = (sections: Section[], parameter: Parameter) => {
+  if (parameter.value === undefined) {
+    // This parameter is a header, create a new section
+    sections.push({ title: parameter.key, params: [] });
+    return sections;
+  }
+  if (sections.length === 0) {
+    // The first parameter provided isnt a header, so put in a default header
+    sections.push({ title: 'Custom Parameters', params: [] });
+  }
+  const section = sections[sections.length - 1];
+  section.params.push(parameter);
+  return sections;
+};
+
+const renderParam = (section: string) => (param: Parameter) => {
+  const elementKey = `${section}-${param.key}`;
+  switch (typeof param.value) {
+    case 'boolean':
+      return <Checkbox key={elementKey} label={param.key}></Checkbox>;
+    case 'number':
+      return (
+        <Range
+          key={elementKey}
+          label={param.key}
+          min={param.min || Math.min(0, param.value)}
+          max={param.max || Math.max(1, param.value)}
+          step={param.step || 0.01}
+        ></Range>
+      );
+    case 'object':
+      if (Array.isArray(param.value) && param.value.length === 2) {
+        return (
+          <Interval
+            key={elementKey}
+            label={param.key}
+            min={param.min || Math.min(0, param.value[0])}
+            max={param.max || Math.max(1, param.value[1])}
+            step={param.step || 0.01}
+          ></Interval>
+        );
+      }
+    default:
+      console.log(
+        `Parameter not displayed due to unknown type:`,
+        JSON.stringify(param),
+        typeof param.value,
+      );
+      return null;
+  }
+};
+
+const renderSections = (sections: Section[]) => {
+  return (
+    <>
+      {sections.map((section) => (
+        <CollapsibleSection
+          title={section.title}
+          initialState={window.innerWidth <= MOBILE_WIDTH_BREAKPOINT}
+        >
+          {section.params.map(renderParam(section.title))}
+        </CollapsibleSection>
+      ))}
+    </>
+  );
+};
 
 const Menu = (props: {
   sketchParameters: Params;
@@ -45,58 +110,10 @@ const Menu = (props: {
   ) => void;
   debounce?: number;
 }) => {
-  const debounceTime = props.debounce || 25;
+  const debounceTime = props.debounce === undefined ? 25 : props.debounce;
   const debouncedUpdate = debounce(props.updateHandler, debounceTime);
 
-  const renderParams = () => {
-    return (
-      <>
-        {props.sketchParameters.map((p, i) => {
-          const elementKey = `${i}-${p.key}`;
-
-          switch (typeof p.value) {
-            case 'undefined':
-              // No key provided, if there is a label then display a header
-
-              return <SectionHeader key={elementKey}>{p.key}</SectionHeader>;
-
-              return null;
-            case 'boolean':
-              return <Checkbox key={elementKey} label={p.key}></Checkbox>;
-            case 'number':
-              return (
-                <Range
-                  key={elementKey}
-                  label={p.key}
-                  min={p.min || Math.min(0, p.value)}
-                  max={p.max || Math.max(1, p.value)}
-                  step={p.step || 0.01}
-                ></Range>
-              );
-            case 'object':
-              if (Array.isArray(p.value) && p.value.length === 2) {
-                return (
-                  <Interval
-                    key={elementKey}
-                    label={p.key}
-                    min={p.min || Math.min(0, p.value[0])}
-                    max={p.max || Math.max(1, p.value[1])}
-                    step={p.step || 0.01}
-                  ></Interval>
-                );
-              }
-            default:
-              console.log(
-                `Parameter not displayed due to unknown type:`,
-                p.key,
-                typeof p.value,
-              );
-              return null;
-          }
-        })}
-      </>
-    );
-  };
+  const sections = props.sketchParameters.reduce<Section[]>(sectionReducer, []);
 
   return (
     <FixedPositionWrapper>
@@ -109,11 +126,14 @@ const Menu = (props: {
         onChange={debouncedUpdate}
       >
         {/* Sketch Summary Header Goes Here*/}
-        <SectionHeader>Custom Seeds</SectionHeader>
-        <Text label="image"></Text>
-        <Text label="color"></Text>
-        <SectionHeader>Parameters</SectionHeader>
-        {renderParams()}
+        <CollapsibleSection
+          title="Custom Seeds"
+          initialState={window.innerWidth <= MOBILE_WIDTH_BREAKPOINT}
+        >
+          <Text label="image"></Text>
+          <Text label="color"></Text>
+        </CollapsibleSection>
+        {renderSections(sections)}
       </ControlPanel>
     </FixedPositionWrapper>
   );
