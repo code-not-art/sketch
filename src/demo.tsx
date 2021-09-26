@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { hot } from 'react-hot-loader';
-import sketch from './demos/sketch';
+// import sketch from './demos/sketch';
+import sketch from './demos/loop';
 
 import App from './App';
 

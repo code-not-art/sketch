@@ -18,6 +18,8 @@ const keyActionDescriptions: StringMap<string> = {
   NumpadEnter: 'Pause Animation Loop',
 
   KeyR: 'Redraw Sketch and Restart Loop',
+
+  KeyM: 'Toggle Menu Visibility',
 };
 
 export default function KeyboardHandler(
@@ -26,6 +28,7 @@ export default function KeyboardHandler(
   draw: () => void,
   restart: () => void,
   download: () => void,
+  toggleMenu: () => void,
 ) {
   return function handler(event: KeyboardEvent) {
     // This line gets complaints from the TypeScript linter, but runs in the browser without fail.
@@ -88,6 +91,11 @@ export default function KeyboardHandler(
 
       case 'KeyR':
         restart();
+        break;
+
+      // ===== UI Controls
+      case 'KeyM':
+        toggleMenu();
         break;
 
       default:
