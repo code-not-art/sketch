@@ -1,6 +1,6 @@
 import StringMap from 'utils/StringMap';
 import LoopState from './LoopState';
-import PageState from './PageState';
+import ImageState from './ImageState';
 
 const keyActionDescriptions: StringMap<string> = {
   KeyS: 'Saving Image',
@@ -23,7 +23,7 @@ const keyActionDescriptions: StringMap<string> = {
 };
 
 export default function KeyboardHandler(
-  state: PageState,
+  state: ImageState,
   loopState: LoopState,
   draw: () => void,
   restart: () => void,
@@ -36,7 +36,11 @@ export default function KeyboardHandler(
       return;
     }
 
-    // TODO: end function if keydown is in an input element
+    if (event.ctrlKey) {
+      // Don't conflict with user Ctrl+Key commands
+      return;
+    }
+
     const actionDescriptionLog = keyActionDescriptions[event.code]
       ? ` - ${keyActionDescriptions[event.code]}`
       : '';

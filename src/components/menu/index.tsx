@@ -6,11 +6,12 @@ import ControlPanel from 'react-control-panel';
 import { Checkbox, Interval, Range, Text } from 'react-control-panel';
 
 import CollapsibleSection from './CollapsibleSection';
-
 import { Params } from '../../sketch';
-import { Parameter } from 'sketch/Params';
+import { Parameter } from '../../sketch/Params';
 import StringMap from 'utils/StringMap';
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
+import ImageState from '../../components/page/ImageState';
+import SummarySection from './SummarySection';
 
 const FixedPositionWrapper = styled.div`
   position: fixed;
@@ -88,8 +89,9 @@ const renderParam = (section: string) => (param: Parameter) => {
 const renderSections = (sections: Section[]) => {
   return (
     <>
-      {sections.map((section) => (
+      {sections.map((section, index) => (
         <CollapsibleSection
+          key={`${index}-${section.title}`}
           title={section.title}
           initialState={window.innerWidth <= MOBILE_WIDTH_BREAKPOINT}
         >
@@ -109,6 +111,7 @@ const Menu = (props: {
     updatedState: StringMap<any>,
   ) => void;
   debounce?: number;
+  imageState: ImageState;
 }) => {
   const debounceTime = props.debounce === undefined ? 25 : props.debounce;
   const debouncedUpdate = debounce(props.updateHandler, debounceTime);
@@ -119,12 +122,12 @@ const Menu = (props: {
     <FixedPositionWrapper>
       <ControlPanel
         width={350}
-        // initialState={{ image: 'hello', ...props.params }}
         theme="dark"
         title="Make Code Not Art"
         initialState={props.params}
         onChange={debouncedUpdate}
       >
+        <SummarySection state={props.imageState} />
         {/* Sketch Summary Header Goes Here*/}
         <CollapsibleSection
           title="Custom Seeds"
