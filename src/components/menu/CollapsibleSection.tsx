@@ -5,14 +5,14 @@ import { ChevronsDown } from 'react-feather';
 const SectionHeader = styled.div`
   width: 100%;
   text-align: right;
-  color: rgb(130, 130, 130);
+  color: rgb(170, 170, 170);
   text-transform: uppercase;
   height: 20px;
   margin-bottom: 2px;
   margin-top: 12px;
 
   :hover {
-    color: rgb(200, 200, 200);
+    color: rgb(235, 235, 235);
     cursor: pointer;
   }
 
@@ -45,7 +45,7 @@ const CollapsibleSection = ({
   children,
 }: {
   title: string;
-  initialState: boolean;
+  initialState?: boolean;
   children?: React.ReactNode;
 }) => {
   const [collapsed, setCollapsed] = useState<boolean>(initialState);

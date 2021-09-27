@@ -8,7 +8,7 @@ const { repeat } = Utils;
 
 // const data: StringMap<any> = {};
 const config: ConfigInput = {
-  menuDelay: 10,
+  menuDelay: 0,
 };
 const params: Params = [
   { key: 'Size and Scale' },

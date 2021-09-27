@@ -13,8 +13,8 @@ class Palette {
   rng: Random;
   colors: Color[];
   custom: { [name: string]: Color };
-  constructor(rng: Random) {
-    this.rng = rng;
+  constructor(rng?: Random) {
+    this.rng = rng || new Random('random palette');
 
     this.colors = [];
     // Stick 5 random colours in our pallete
