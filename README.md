@@ -45,8 +45,6 @@ While this runs as a standalone dev environment, it is used as the foundation fo
 
 ## The Sketch Interface (AKA. writing your sketch)
 
-> Note: For the moment this is prone to dramatic changes, we're in a bit of a trial and error stage with this. Use the file `art.tsx` as a template for a new sketch as it has all the relevant components and a simplistic but working example.
-
 <!-- interface Sketch {
   reset: (props: SketchProps) => void;
   init: (props: SketchProps) => void;
@@ -71,8 +69,10 @@ The canvas expects a prop of the [`Sketch`](src/sketch/Sketch.tsx) type. This in
 
 The [`SketchProps`](src/sketch/SketchProps.ts) are provided provided to every function in the Sketch definition. They provide access to the `Canvas`, and to the seeded `Random` generators. The full list of properties available and links to their code or documentation is:
 
-| **Property** |                                             **Type**                                              |                                                                            **Description**                                                                             |
-| :----------: | :-----------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|    Canvas    | [`@code-not-art/core.Canvas`](https://github.com/code-not-art/core/blob/main/src/canvas/index.ts) | Provides access to the canvas and 2D context directly, plus all the drawing tools provided by the [`code-not-art core library`](https://github.com/code-not-art/core). |
-|     rng      | [`@code-not-art/core.Random`](https://github.com/code-not-art/core/blob/main/src/random/index.ts) |                                                          Random number generator provided the **image** seed                                                           |
-|   coloRng    | [`@code-not-art/core.Random`](https://github.com/code-not-art/core/blob/main/src/random/index.ts) |       Random number generator provided the **color** seed. <br/>_Note: this will hopefully be replaced soon with a **Palette** object to handle color selection_       |
+| **Property** |                                             **Type**                                              |                                                                                                                   **Description**                                                                                                                   |
+| :----------: | :-----------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|    canvas    | [`@code-not-art/core.Canvas`](https://github.com/code-not-art/core/blob/main/src/canvas/index.ts) |                                       Provides access to the canvas and 2D context directly, plus all the drawing tools provided by the [`code-not-art core library`](https://github.com/code-not-art/core).                                        |
+|     rng      | [`@code-not-art/core.Random`](https://github.com/code-not-art/core/blob/main/src/random/index.ts) |                                                                                                 Random number generator provided the **image** seed                                                                                                 |
+|   palette    |                             [`Palette`](src/sketch/Palette/index.ts)                              |                 Random Color Palette with 5 randomly selected colors. Changing the color seed will update the colors in the palette without affecting the random seed of the `rng` `Random` generator provided in the `SketchProps`                 |
+|    params    |                                        [`StringMap<any>`]                                         |                                                The values for the parameters provided in the sketch definition. If these are updated in the UI then this params object will have the updated values.                                                |
+|     data     |                                        [`StringMap<any>`]                                         | An object with no defined shape that can be used to store data that will not be reset between draw/loop calls and will persist across hot-reloads. This is particularly useful when writing loops to store state that persists from frame to frame. |
