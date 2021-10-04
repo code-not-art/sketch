@@ -2,9 +2,12 @@ import { Sketch, Params } from '../sketch';
 import SketchProps from '../sketch/SketchProps';
 import FrameData from '../sketch/FrameData';
 import { Constants, Gradient, Vec2, Utils } from '@code-not-art/core';
+import { ConfigInput } from 'sketch/Config';
 const TAU = Constants.TAU;
 
-// const config: ConfigInput = {};
+const config: ConfigInput = {
+  loopControls: true,
+};
 
 const params: Params = [
   { key: 'speed', value: 2, min: 0, max: 10 },
@@ -73,7 +76,7 @@ const loop = (
 // const reset = ({}: SketchProps) => {};
 
 const Art = Sketch({
-  // config,
+  config,
   params,
   draw,
   init,

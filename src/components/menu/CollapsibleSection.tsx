@@ -27,7 +27,7 @@ const SectionHeader = styled.div`
 `;
 
 const CollapsibleWrapper = styled.div`
-  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   div.collapsed {
     overflow: hidden;
     max-height: 0px;

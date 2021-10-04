@@ -17,14 +17,14 @@ const defaultInit = () => {
 };
 const defaultLoop = () => {
   // Do nothing EVERY FRAME
-  return false;
+  return true;
 };
 const defaultReset = (props: SketchProps) => {
   props.canvas.clear();
 };
 
 const Sketch = (
-  input: SketchDefinition,
+  definition: SketchDefinition,
 ): {
   init: (props: SketchProps) => void;
   draw: (props: SketchProps) => void;
@@ -33,13 +33,13 @@ const Sketch = (
   params: Params;
   config: ReturnType<typeof Config>;
 } => ({
-  config: Config(input.config || {}),
-  params: input.params || [],
+  config: Config(definition.config || {}),
+  params: definition.params || [],
 
-  init: input.init || defaultInit,
-  draw: input.draw,
-  loop: input.loop || defaultLoop,
-  reset: input.reset || defaultReset,
+  init: definition.init || defaultInit,
+  draw: definition.draw,
+  loop: definition.loop || defaultLoop,
+  reset: definition.reset || defaultReset,
 });
 
 export default Sketch;
