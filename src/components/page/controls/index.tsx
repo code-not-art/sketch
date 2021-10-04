@@ -18,7 +18,8 @@ const FixedPositionMenu = styled.div`
   bottom: 0px;
   color: rgb(170, 170, 170);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  margin-bottom: -5px;
 `;
 
 const FixedRight = styled(FixedPositionMenu)`
@@ -32,7 +33,7 @@ const FixedLeft = styled(FixedPositionMenu)`
   left: 0px;
   margin-left: -3px;
 
-  div:first-child {
+  div:last-child {
     border-radius: 0px 7px 0px 0px;
   }
 `;
@@ -40,7 +41,6 @@ const FixedLeft = styled(FixedPositionMenu)`
 const FixedCenterWrapper = styled(FixedPositionMenu)`
   left: 0px;
   width: 100%;
-  margin-bottom: -5px;
 
   flex-direction: row;
   align-items: center;
@@ -62,7 +62,7 @@ const FixedCenterMenu = styled.div`
   display: flex;
 `;
 
-const ICON_SIZE = 20;
+const ICON_SIZE = 25;
 
 type ControlsProps = {
   state: ImageState;
@@ -147,11 +147,10 @@ const Controls = ({
           disabled={false}
           onTouch={() => {
             state.nextImage();
-            state.nextColor();
             draw();
           }}
         >
-          <ArrowRight size={ICON_SIZE + 2} />
+          <Image size={ICON_SIZE} />
         </ControlButton>
         <ControlButton
           disabled={false}
@@ -162,14 +161,16 @@ const Controls = ({
         >
           <PenTool size={ICON_SIZE} />
         </ControlButton>
+
         <ControlButton
           disabled={false}
           onTouch={() => {
             state.nextImage();
+            state.nextColor();
             draw();
           }}
         >
-          <Image size={ICON_SIZE} />
+          <ArrowRight size={ICON_SIZE + 2} />
         </ControlButton>
       </FixedRight>
     </div>
