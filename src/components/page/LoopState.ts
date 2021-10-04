@@ -33,10 +33,6 @@ export default class LoopState {
   }
 
   nextFrame() {
-    if (this.paused || this.finished) {
-      return false;
-    }
-
     const requestTime = Date.now();
     const ticks = requestTime - this.lastTime;
     if (ticks > 10) {
@@ -45,6 +41,10 @@ export default class LoopState {
       this.frameData.totalTime += ticks;
 
       this.lastTime = requestTime;
+
+      if (this.paused || this.finished) {
+        return false;
+      }
 
       return true;
     }
