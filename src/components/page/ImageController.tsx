@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Feather from 'react-feather';
 
 import { Canvas } from '@code-not-art/core';
 
