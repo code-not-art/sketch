@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import Feather from 'react-feather';
 
 import { Canvas } from '@code-not-art/core';
 
 import { Sketch, SketchProps } from '../../sketch';
 import KeyboardHandler from './KeyboardHandler';
 import ImageState from './ImageState';
+import ControlButtons from './controls';
 
 import Menu from '../menu';
 import StringMap from 'utils/StringMap';
@@ -243,6 +245,15 @@ const ImageController = ({
           updateHandler={controlPanelUpdateHandler}
           debounce={config.menuDelay}
           imageState={state}
+        />
+      )}
+      {window.innerWidth <= MOBILE_WIDTH_BREAKPOINT && (
+        <ControlButtons
+          state={state}
+          loopState={loopState}
+          draw={triggerRedraw}
+          download={download}
+          videoControls={sketch.config.loopControls}
         />
       )}
     </>
