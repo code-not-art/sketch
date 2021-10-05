@@ -19,7 +19,9 @@ export function attachQueryStringToWindow(query: string) {
     '//' +
     window.location.host +
     window.location.pathname +
-    `?p=${query}`;
+    `?p=${query}#`;
+  // Note the shameful hash at the end, this hacky workaround fixes issues on mobile URL parsers
+  //  that exclude the trailing parenthesis in the URL. I'm looking at you, discord!
   window.history.pushState({ path: newUrl }, '', newUrl);
 }
 
