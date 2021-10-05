@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import querystring from 'query-string';
 
 import { Canvas } from '@code-not-art/core';
 
@@ -11,6 +12,8 @@ import Menu from '../menu';
 import StringMap from 'utils/StringMap';
 import LoopState from './LoopState';
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
+
+import { applyQuery, buildQuery } from './share';
 
 type ImageControllerProps = {
   canvasId: string;
@@ -227,9 +230,15 @@ const ImageController = ({
     if (!initialized) {
       console.log('### ===== Sketch! ===== ###');
       // ===== Initialize Sketch
+
       resize();
       getCanvas().set.size(config.width, config.height);
       sketch.init(getSketchProps());
+
+      const query = querystring.parse(location.search);
+      if (typeof query.p === 'string') {
+        applyQuery(query.p, state, params);
+      }
 
       setInitialized(true);
     }

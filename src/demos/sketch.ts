@@ -34,7 +34,7 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   const positionExponent = params.positionExponent as number;
 
   // Background
-  canvas.fill(palette.colors[0]);
+  canvas.fill(palette.colors[4]);
 
   // Put origin at center of canvas:
   canvas.translate(new Vec2(canvas.get.width() / 2, canvas.get.height() / 2));
