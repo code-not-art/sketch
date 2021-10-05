@@ -13,7 +13,7 @@ import StringMap from 'utils/StringMap';
 import LoopState from './LoopState';
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
 
-import { applyQuery, buildQuery } from './share';
+import { applyQuery } from './share';
 
 type ImageControllerProps = {
   canvasId: string;
@@ -169,6 +169,7 @@ const ImageController = ({
       KeyboardHandler(
         state,
         loopState,
+        params,
         triggerRedraw,
         restart,
         download,
@@ -231,14 +232,14 @@ const ImageController = ({
       console.log('### ===== Sketch! ===== ###');
       // ===== Initialize Sketch
 
-      resize();
-      getCanvas().set.size(config.width, config.height);
-      sketch.init(getSketchProps());
-
       const query = querystring.parse(location.search);
       if (typeof query.p === 'string') {
         applyQuery(query.p, state, params);
       }
+
+      resize();
+      getCanvas().set.size(config.width, config.height);
+      sketch.init(getSketchProps());
 
       setInitialized(true);
     }
@@ -259,6 +260,7 @@ const ImageController = ({
         <ControlButtons
           state={state}
           loopState={loopState}
+          params={params}
           draw={triggerRedraw}
           download={download}
           videoControls={sketch.config.loopControls}

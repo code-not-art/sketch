@@ -7,10 +7,13 @@ import {
   PenTool,
   Image,
   Save,
+  Share2,
 } from 'react-feather';
 import styled from 'styled-components';
+import StringMap from 'utils/StringMap';
 import ImageState from '../ImageState';
 import LoopState from '../LoopState';
+import { shareViaUrl } from '../share';
 import ControlButton from './ControlButton';
 
 const FixedPositionMenu = styled.div`
@@ -67,6 +70,7 @@ const ICON_SIZE = 25;
 type ControlsProps = {
   state: ImageState;
   loopState: LoopState;
+  params: StringMap<any>;
   draw: () => void;
   download: () => void;
   videoControls: boolean;
@@ -74,6 +78,7 @@ type ControlsProps = {
 const Controls = ({
   state,
   loopState,
+  params,
   draw,
   download,
   videoControls = false,
@@ -97,6 +102,14 @@ const Controls = ({
             }}
           >
             <Save size={ICON_SIZE} />
+          </ControlButton>
+          <ControlButton
+            disabled={false}
+            onTouch={() => {
+              shareViaUrl(state, params);
+            }}
+          >
+            <Share2 size={ICON_SIZE} />
           </ControlButton>
           {videoControls && (
             <ControlButton

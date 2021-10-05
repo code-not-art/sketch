@@ -1,6 +1,7 @@
 import StringMap from 'utils/StringMap';
 import LoopState from './LoopState';
 import ImageState from './ImageState';
+import { shareViaUrl } from './share';
 
 const keyActionDescriptions: StringMap<string> = {
   KeyS: 'Saving Image',
@@ -20,11 +21,14 @@ const keyActionDescriptions: StringMap<string> = {
   KeyR: 'Redraw Sketch and Restart Loop',
 
   KeyM: 'Toggle Menu Visibility',
+
+  KeyU: 'Copy Shareable URL to Clipboard',
 };
 
 export default function KeyboardHandler(
   state: ImageState,
   loopState: LoopState,
+  params: StringMap<any>,
   draw: () => void,
   restart: () => void,
   download: () => void,
@@ -50,6 +54,11 @@ export default function KeyboardHandler(
       case 'KeyS':
         // S - Save current image
         download();
+        break;
+
+      // ===== Share
+      case 'KeyU':
+        shareViaUrl(state, params);
         break;
 
       // ===== Randomize
