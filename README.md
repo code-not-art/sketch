@@ -14,8 +14,6 @@ While this runs as a standalone dev environment, it is used as the foundation fo
    npm ci
    ```
 
-   > **NOTE**: This is untested with `yarn` but almost certainly works. If you find issues please [raise an issue](https://github.com/code-not-art/sketch/issues).
-
 1. Start development server:
 
    ```
@@ -30,31 +28,23 @@ While this runs as a standalone dev environment, it is used as the foundation fo
 
 ## Sketch Interface and Controls
 
-| **Key** |                                        **Action**                                         |
-| :-----: | :---------------------------------------------------------------------------------------: |
-|   `s`   |                                  Save the current image                                   |
-|   `m`   |                                 Show/Hide Parameter Menu                                  |
-|         |                                                                                           |
-| `space` |              Generate new **image** and **color** seeds. **Draw new image**.              |
-|   `↑`   | Move to next **color** seed, or generate a new one if at end of list. **Draw new image**. |
-|   `↓`   |                   Move to previous **color** seed. **Draw new image**.                    |
-|   `→`   | Move to next **image** seed, or generate a new one if at end of list. **Draw new image**. |
-|   `←`   |                   Move to previous **image** seed. **Draw new image**.                    |
-|   `c`   |                     Generate new **color** seed. **Draw new image**.                      |
-|   `i`   |                     Generate new **image** seed. **Draw new image**.                      |
+| **Key** |                                      **Action**                                       |
+| :-----: | :-----------------------------------------------------------------------------------: |
+|   `s`   |                              **Save** the current image                               |
+|   `u`   | Shareable image **URL** - Create a shareable URL and copy that link to your clipboard |
+|   `m`   |                             Show/Hide Parameter **Menu**                              |
+|         |                                                                                       |
+| `space` |                 Draw **new image** with random image and color seeds.                 |
+|   `↑`   | Move to **next color** seed, or generate a new one if at end of list. Draw new image. |
+|   `↓`   |                   Move to **previous color** seed. Draw new image.                    |
+|   `→`   | Move to **next image** seed, or generate a new one if at end of list. Draw new image. |
+|   `←`   |                   Move to **previous image** seed. Draw new image.                    |
+|   `c`   |                     Generate new **color** seed. Draw new image.                      |
+|   `i`   |                     Generate new **image** seed. Draw new image.                      |
 
 ## The Sketch Interface (AKA. writing your sketch)
 
-<!-- interface Sketch {
-  reset: (props: SketchProps) => void;
-  init: (props: SketchProps) => void;
-  draw: (props: SketchProps) => void;
-  loop: (props: SketchProps, time: number) => void;
-  params: Params;
-  config: Config;
-} -->
-
-The canvas expects a prop of the [`Sketch`](src/sketch/Sketch.tsx) type. This interface allows you to provide configuration details for your sketch (`config`), and interactable parameters that you can update in browser (`params`). There are several methods for available for you to implement that will interact with the canvas and the seeded random generators provided by the framework. The only one of these that are absolutely required to provide is the `draw(props)` method, all others have sensible (mostly empty) defaults. To summarize the contents of Sketch:
+The canvas expects a prop of the [`Sketch`](src/sketch/Sketch.ts) type. This interface allows you to provide configuration details for your sketch (`config`), and interactable parameters that you can update in browser (`params`). There are several methods for available for you to implement that will interact with the canvas and the seeded random generators provided by the framework. The only one of these that are absolutely required to provide is the `draw(props)` method, all others have sensible (mostly empty) defaults. To summarize the contents of Sketch:
 
 |       **Property**       |                                                 **Type**                                                  | **Required** |                                                                                                       **Description**                                                                                                       |                                 **Default**                                 |
 | :----------------------: | :-------------------------------------------------------------------------------------------------------: | :----------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------: |
@@ -74,5 +64,5 @@ The [`SketchProps`](src/sketch/SketchProps.ts) are provided provided to every fu
 |    canvas    | [`@code-not-art/core.Canvas`](https://github.com/code-not-art/core/blob/main/src/canvas/index.ts) |                                       Provides access to the canvas and 2D context directly, plus all the drawing tools provided by the [`code-not-art core library`](https://github.com/code-not-art/core).                                        |
 |     rng      | [`@code-not-art/core.Random`](https://github.com/code-not-art/core/blob/main/src/random/index.ts) |                                                                                                 Random number generator provided the **image** seed                                                                                                 |
 |   palette    |                             [`Palette`](src/sketch/Palette/index.ts)                              |                 Random Color Palette with 5 randomly selected colors. Changing the color seed will update the colors in the palette without affecting the random seed of the `rng` `Random` generator provided in the `SketchProps`                 |
-|    params    |                                        `StringMap<any>`                                         |                                                The values for the parameters provided in the sketch definition. If these are updated in the UI then this params object will have the updated values.                                                |
-|     data     |                                        `StringMap<any>`                                         | An object with no defined shape that can be used to store data that will not be reset between draw/loop calls and will persist across hot-reloads. This is particularly useful when writing loops to store state that persists from frame to frame. |
+|    params    |                                         `StringMap<any>`                                          |                                                The values for the parameters provided in the sketch definition. If these are updated in the UI then this params object will have the updated values.                                                |
+|     data     |                                         `StringMap<any>`                                          | An object with no defined shape that can be used to store data that will not be reset between draw/loop calls and will persist across hot-reloads. This is particularly useful when writing loops to store state that persists from frame to frame. |
