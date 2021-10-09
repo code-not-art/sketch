@@ -1,4 +1,4 @@
-import { Vec2, Utils } from '@code-not-art/core';
+import { Vec2, Utils, Color } from '@code-not-art/core';
 import { Sketch } from '../sketch';
 import { ConfigInput } from '../sketch/Config';
 import Params, { Parameter } from '../sketch/Params';
@@ -22,9 +22,6 @@ const params: Parameter[] = [
   Params.range('darkenRange', 5, [0, 20]),
   Params.range('lightenRange', 0, [0, 20]),
   Params.range('positionExponent', 1, [0, 5]),
-  Params.header('test'),
-  Params.checkbox('hideBackground', false),
-  Params.interval('intervalTest', [0.25, 0.75]),
 ];
 
 const draw = ({ canvas, rng, palette, params }: SketchProps) => {
@@ -36,10 +33,9 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   const darkenRange = params.darkenRange as number;
   const lightenRange = params.lightenRange as number;
   const positionExponent = params.positionExponent as number;
-  const hideBackground = params.hideBackground as boolean;
 
   // Background
-  if (!hideBackground) canvas.fill(palette.colors[4]);
+  canvas.fill(palette.colors[0]);
 
   // Put origin at center of canvas:
   canvas.translate(new Vec2(canvas.get.width() / 2, canvas.get.height() / 2));

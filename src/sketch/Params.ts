@@ -1,10 +1,12 @@
+import { Color } from '@code-not-art/core';
+
 export enum ParameterType {
   Checkbox = 'checkbox',
-  // Color = 'color', // TODO - Make Color selector component
+  Color = 'color',
   Header = 'header',
   Interval = 'interval',
   Range = 'range',
-  // Select = 'select', // TODO - Make Select parameter
+  Select = 'select',
   Text = 'string',
 }
 
@@ -13,6 +15,7 @@ export interface Parameter {
   key: string;
   value?: any;
   rangeOptions?: RangeOptionsObject;
+  selectOptions?: string[];
 }
 type RangeOptionsObject = { min: number; max: number; step: number };
 
@@ -29,6 +32,18 @@ const checkbox = (key: string, value: boolean): Parameter => ({
 });
 
 /**
+ * Define a color selection Parameter
+ * @param key
+ * @param value
+ * @returns
+ */
+const color = (key: string, value: Color): Parameter => ({
+  type: ParameterType.Color,
+  key,
+  value: value.get.hex(),
+});
+
+/**
  * Define a header for the Parameter control menu
  * @param key {string}
  * @returns {Parameter}
@@ -37,6 +52,15 @@ const header = (key: string): Parameter => ({
   type: ParameterType.Header,
   key,
 });
+
+const select = (key: string, value: string, options: string[]) => ({
+  type: ParameterType.Select,
+  key,
+  value,
+  selectOptions: options,
+});
+
+// ===== Range and Interval selects with their complicated options
 
 type RangeOptionsArray = [number, number, number] | [number, number];
 const parseRangeOptions = (
@@ -90,9 +114,11 @@ const interval = (
 
 const Params = {
   checkbox,
+  color,
   header,
   interval,
   range,
+  select,
 };
 
 export default Params;

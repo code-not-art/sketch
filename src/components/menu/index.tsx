@@ -3,7 +3,14 @@ import styled from 'styled-components';
 import { debounce } from 'lodash';
 
 import ControlPanel from 'react-control-panel';
-import { Checkbox, Interval, Range, Text } from 'react-control-panel';
+import {
+  Checkbox,
+  Color as ColorControl,
+  Interval,
+  Range,
+  Text,
+  Select,
+} from 'react-control-panel';
 
 import CollapsibleSection from './CollapsibleSection';
 import { Parameter, ParameterType } from '../../sketch/Params';
@@ -53,6 +60,14 @@ const renderParam = (section: string) => (param: Parameter) => {
   switch (param.type) {
     case ParameterType.Checkbox:
       return <Checkbox key={elementKey} label={param.key}></Checkbox>;
+    case ParameterType.Color:
+      return (
+        <ColorControl
+          key={elementKey}
+          label={param.key}
+          format="hex"
+        ></ColorControl>
+      );
     case ParameterType.Range:
       return (
         <Range
@@ -64,17 +79,23 @@ const renderParam = (section: string) => (param: Parameter) => {
         ></Range>
       );
     case ParameterType.Interval:
-      if (Array.isArray(param.value) && param.value.length === 2) {
-        return (
-          <Interval
-            key={elementKey}
-            label={param.key}
-            min={param?.rangeOptions?.min || Math.min(0, param.value[0])}
-            max={param?.rangeOptions?.max || Math.max(1, param.value[1])}
-            step={param?.rangeOptions?.step || 0.01}
-          ></Interval>
-        );
-      }
+      return (
+        <Interval
+          key={elementKey}
+          label={param.key}
+          min={param?.rangeOptions?.min || Math.min(0, param.value[0])}
+          max={param?.rangeOptions?.max || Math.max(1, param.value[1])}
+          step={param?.rangeOptions?.step || 0.01}
+        ></Interval>
+      );
+    case ParameterType.Select:
+      return (
+        <Select
+          key={elementKey}
+          label={param.key}
+          options={param.selectOptions || []}
+        />
+      );
     default:
       console.log(
         `Parameter not displayed due to unknown type:`,
@@ -101,7 +122,7 @@ const renderSections = (sections: Section[]) => {
   );
 };
 
-const Menu = (props: {
+type MenuProps = {
   sketchParameters: Parameter[];
   params: StringMap<any>;
   updateHandler: (
@@ -111,7 +132,8 @@ const Menu = (props: {
   ) => void;
   debounce?: number;
   imageState: ImageState;
-}) => {
+};
+const Menu = (props: MenuProps) => {
   const debounceTime = props.debounce === undefined ? 25 : props.debounce;
   const debouncedUpdate = debounce(props.updateHandler, debounceTime);
 

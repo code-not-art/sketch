@@ -23,6 +23,11 @@ declare module 'react-control-panel' {
   }
   export const Color = (props: ColorProps) => React.ReactElement;
 
+  interface SelectProps extends ControlProps {
+    options: string[];
+  }
+  export const Select = (props: SelectProps) => React.ReactElement;
+
   interface ButtonProps extends ControlProps {
     action: () => void;
   }

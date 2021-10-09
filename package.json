@@ -18,7 +18,7 @@
     "canvas",
     "generative",
     "art",
-    "Typescript",
+    "TypeScript",
     "React",
     "ReactJS",
     "makecodenotart",
@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/code-not-art/sketch#readme",
   "dependencies": {
-    "@code-not-art/core": "^0.1.0",
+    "@code-not-art/core": "^0.1.1",
     "jsurl": "^0.1.5",
     "lodash": "^4.17.21",
     "query-string": "^7.0.1",

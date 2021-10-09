@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import querystring from 'query-string';
 
-import { Canvas } from '@code-not-art/core';
+import { Canvas, Color } from '@code-not-art/core';
 
 import { Sketch, SketchProps } from '../../sketch';
 import KeyboardHandler from './KeyboardHandler';
@@ -14,6 +14,7 @@ import LoopState from './LoopState';
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
 
 import { applyQuery } from './share';
+import { ParameterType } from '../../sketch/Params';
 
 type ImageControllerProps = {
   canvasId: string;
@@ -55,10 +56,20 @@ const ImageController = ({
     setRedraws(redraws + 1);
   };
 
+  const getTypeCorrectedProps = () => {
+    const output = { ...params };
+    sketch.params.forEach((param) => {
+      if (param.type === ParameterType.Color) {
+        output[param.key] = new Color(params[param.key]);
+      }
+    });
+    return output;
+  };
+
   const getSketchProps: () => SketchProps = () => {
     return {
       canvas: getCanvas(),
-      params,
+      params: getTypeCorrectedProps(),
       rng: state.getImageRng(),
       palette: state.getPalette(),
       data: sketchData,
