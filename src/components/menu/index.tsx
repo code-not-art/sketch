@@ -6,8 +6,7 @@ import ControlPanel from 'react-control-panel';
 import { Checkbox, Interval, Range, Text } from 'react-control-panel';
 
 import CollapsibleSection from './CollapsibleSection';
-import { Params } from '../../sketch';
-import { Parameter } from '../../sketch/Params';
+import { Parameter, ParameterType } from '../../sketch/Params';
 import StringMap from 'utils/StringMap';
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
 import ImageState from '../../components/page/ImageState';
@@ -32,7 +31,7 @@ const FixedPositionWrapper = styled.div`
 
 type Section = {
   title: string;
-  params: Params;
+  params: Parameter[];
 };
 const sectionReducer = (sections: Section[], parameter: Parameter) => {
   if (parameter.value === undefined) {
@@ -51,28 +50,28 @@ const sectionReducer = (sections: Section[], parameter: Parameter) => {
 
 const renderParam = (section: string) => (param: Parameter) => {
   const elementKey = `${section}-${param.key}`;
-  switch (typeof param.value) {
-    case 'boolean':
+  switch (param.type) {
+    case ParameterType.Checkbox:
       return <Checkbox key={elementKey} label={param.key}></Checkbox>;
-    case 'number':
+    case ParameterType.Range:
       return (
         <Range
           key={elementKey}
           label={param.key}
-          min={param.min || Math.min(0, param.value)}
-          max={param.max || Math.max(1, param.value)}
-          step={param.step || 0.01}
+          min={param?.rangeOptions?.min || Math.min(0, param.value)}
+          max={param?.rangeOptions?.max || Math.max(1, param.value)}
+          step={param?.rangeOptions?.step || 0.01}
         ></Range>
       );
-    case 'object':
+    case ParameterType.Interval:
       if (Array.isArray(param.value) && param.value.length === 2) {
         return (
           <Interval
             key={elementKey}
             label={param.key}
-            min={param.min || Math.min(0, param.value[0])}
-            max={param.max || Math.max(1, param.value[1])}
-            step={param.step || 0.01}
+            min={param?.rangeOptions?.min || Math.min(0, param.value[0])}
+            max={param?.rangeOptions?.max || Math.max(1, param.value[1])}
+            step={param?.rangeOptions?.step || 0.01}
           ></Interval>
         );
       }
@@ -103,7 +102,7 @@ const renderSections = (sections: Section[]) => {
 };
 
 const Menu = (props: {
-  sketchParameters: Params;
+  sketchParameters: Parameter[];
   params: StringMap<any>;
   updateHandler: (
     property: string,

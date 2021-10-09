@@ -1,6 +1,7 @@
 import { Vec2, Utils } from '@code-not-art/core';
-import { Sketch, Params } from '../sketch';
+import { Sketch } from '../sketch';
 import { ConfigInput } from '../sketch/Config';
+import Params, { Parameter } from '../sketch/Params';
 import SketchProps from '../sketch/SketchProps';
 // import FrameData from '../sketch/FrameData';
 // import StringMap from 'types/StringMap';
@@ -10,17 +11,20 @@ const { repeat } = Utils;
 const config: ConfigInput = {
   menuDelay: 0,
 };
-const params: Params = [
-  { key: 'Size and Scale' },
-  { key: 'canvasFill', value: 0.76, min: 0.5, max: 1.1 },
-  { key: 'gridWidth', value: 10, min: 1, max: 55, step: 1 },
-  { key: 'circleFill', value: 0.72, min: 0.1, max: 2 },
-  { key: 'Mask Layer' },
-  { key: 'chanceHidden', value: 0.15, min: 0, max: 1 },
-  { key: 'chanceNoMask', value: 0.15, min: 0, max: 1 },
-  { key: 'darkenRange', value: 5, min: 0, max: 20 },
-  { key: 'lightenRange', value: 0, min: 0, max: 20 },
-  { key: 'positionExponent', value: 1, min: 0, max: 5 },
+const params: Parameter[] = [
+  Params.header('Size and Scale'),
+  Params.range('canvasFill', 0.76, [0.5, 1.1]),
+  Params.range('gridWidth', 10, [1, 55, 1]),
+  Params.range('circleFill', 0.72, [0.1, 2]),
+  Params.header('Mask Layer'),
+  Params.range('chanceHidden', 0.72),
+  Params.range('chanceNoMask', 0.15),
+  Params.range('darkenRange', 5, [0, 20]),
+  Params.range('lightenRange', 0, [0, 20]),
+  Params.range('positionExponent', 1, [0, 5]),
+  Params.header('test'),
+  Params.checkbox('hideBackground', false),
+  Params.interval('intervalTest', [0.25, 0.75]),
 ];
 
 const draw = ({ canvas, rng, palette, params }: SketchProps) => {
@@ -32,9 +36,10 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   const darkenRange = params.darkenRange as number;
   const lightenRange = params.lightenRange as number;
   const positionExponent = params.positionExponent as number;
+  const hideBackground = params.hideBackground as boolean;
 
   // Background
-  canvas.fill(palette.colors[4]);
+  if (!hideBackground) canvas.fill(palette.colors[4]);
 
   // Put origin at center of canvas:
   canvas.translate(new Vec2(canvas.get.width() / 2, canvas.get.height() / 2));

@@ -1,4 +1,5 @@
-import { Sketch, Params } from '../sketch';
+import { Sketch } from '../sketch';
+import Params, { Parameter } from '../sketch/Params';
 import SketchProps from '../sketch/SketchProps';
 import FrameData from '../sketch/FrameData';
 import { Constants, Gradient, Vec2, Utils } from '@code-not-art/core';
@@ -7,14 +8,15 @@ const TAU = Constants.TAU;
 
 const config: ConfigInput = {
   loopControls: true,
+  menuDelay: 0,
 };
 
-const params: Params = [
-  { key: 'speed', value: 2, min: 0, max: 10 },
-  { key: 'rotationSpeed', value: 1, min: 0, max: 10 },
-  { key: 'dotSize', value: 0.04, min: 0.005, max: 0.2, step: 0.001 },
-  { key: 'dotCount', value: 24, min: 1, max: 89, step: 1 },
-  { key: 'twists', value: 5, min: 1, max: 8, step: 1 },
+const params: Parameter[] = [
+  Params.range('speed', 2, [0, 10]),
+  Params.range('rotationSpeed', 1, [0, 10]),
+  Params.range('dotSize', 0.04, [0.005, 0.2, 0.001]),
+  Params.range('dotCount', 24, [1, 89, 1]),
+  Params.range('twists', 5, [1, 8, 1]),
 ];
 
 const draw = ({ canvas, palette, data }: SketchProps) => {

@@ -1,4 +1,4 @@
-import Params from './Params';
+import { Parameter } from './Params';
 import Config, { ConfigInput } from './Config';
 import SketchProps from './SketchProps';
 import FrameData from './FrameData';
@@ -8,7 +8,7 @@ export type SketchDefinition = {
   init?: (props: SketchProps) => void;
   draw: (props: SketchProps) => void;
   loop?: (props: SketchProps, frameData: FrameData) => boolean;
-  params?: Params;
+  params?: Parameter[];
   config?: ConfigInput;
 };
 
@@ -30,7 +30,7 @@ const Sketch = (
   draw: (props: SketchProps) => void;
   loop: (props: SketchProps, frameData: FrameData) => boolean;
   reset: (props: SketchProps) => void;
-  params: Params;
+  params: Parameter[];
   config: ReturnType<typeof Config>;
 } => ({
   config: Config(definition.config || {}),
