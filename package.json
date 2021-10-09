@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "dev": "parcel src/public/index.html",
+    "start": "parcel src/public/index.html",
     "build-parcel": "parcel build src/public/index.html",
     "build": "tsc --project tsconfig.module.json",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,9 +21,9 @@
     "Typescript",
     "React",
     "ReactJS",
-    "template",
     "makecodenotart",
-    "code-not-art"
+    "codenotart",
+    "codeart"
   ],
   "type": "module",
   "author": "Jon Eubank <joneubank@gmail.com>",

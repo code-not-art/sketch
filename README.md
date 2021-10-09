@@ -17,7 +17,7 @@ While this runs as a standalone dev environment, it is used as the foundation fo
 1. Start development server:
 
    ```
-   npm run dev
+   npm start
    ```
 
    The server will run on `localhost:1234`.
