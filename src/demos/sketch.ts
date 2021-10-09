@@ -1,16 +1,8 @@
-import { Vec2, Utils, Color } from '@code-not-art/core';
-import { Sketch } from '../sketch';
-import { ConfigInput } from '../sketch/Config';
-import Params, { Parameter } from '../sketch/Params';
-import SketchProps from '../sketch/SketchProps';
-// import FrameData from '../sketch/FrameData';
-// import StringMap from 'types/StringMap';
+import { Vec2, Utils } from '@code-not-art/core';
+import { Config, Sketch, SketchProps, Params, Parameter } from '../sketch';
 const { repeat } = Utils;
 
-// const data: StringMap<any> = {};
-const config: ConfigInput = {
-  menuDelay: 0,
-};
+const config = Config({});
 const params: Parameter[] = [
   Params.header('Size and Scale'),
   Params.range('canvasFill', 0.76, [0.5, 1.1]),

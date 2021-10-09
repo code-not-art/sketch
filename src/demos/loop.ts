@@ -1,15 +1,18 @@
-import { Sketch } from '../sketch';
-import Params, { Parameter } from '../sketch/Params';
-import SketchProps from '../sketch/SketchProps';
-import FrameData from '../sketch/FrameData';
+import {
+  Config,
+  FrameData,
+  Sketch,
+  SketchProps,
+  Params,
+  Parameter,
+} from '../sketch';
 import { Constants, Gradient, Vec2, Utils } from '@code-not-art/core';
-import { ConfigInput } from 'sketch/Config';
 const TAU = Constants.TAU;
 
-const config: ConfigInput = {
+const config = Config({
   loopControls: true,
   menuDelay: 0,
-};
+});
 
 const params: Parameter[] = [
   Params.range('speed', 2, [0, 10]),
