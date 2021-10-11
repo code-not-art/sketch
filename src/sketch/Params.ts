@@ -1,4 +1,4 @@
-import { Color, Utils } from '@code-not-art/core';
+import { Color } from '@code-not-art/core';
 import StringMap from 'utils/StringMap';
 
 export enum ParameterType {
