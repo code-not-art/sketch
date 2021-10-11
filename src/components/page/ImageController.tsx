@@ -58,9 +58,21 @@ const ImageController = ({
 
   const getTypeCorrectedProps = () => {
     const output = { ...params };
-    sketch.params.forEach((param) => {
-      if (param.type === ParameterType.Color) {
-        output[param.key] = new Color(params[param.key]);
+    sketch.params.forEach((originalParam) => {
+      switch (originalParam.type) {
+        case ParameterType.Color:
+          output[originalParam.key] = new Color(params[originalParam.key]);
+          break;
+        case ParameterType.MultiSelect:
+          const value: StringMap<boolean> = {};
+          const updatedBooleans: boolean[] = params[originalParam.key];
+          Object.keys(originalParam.multiSelectValues || []).forEach(
+            (key, index) => (value[key] = updatedBooleans[index]),
+          );
+          output[originalParam.key] = value;
+          break;
+        default:
+        // Do nothing
       }
     });
     return output;

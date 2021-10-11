@@ -1,8 +1,17 @@
 import { Vec2, Utils } from '@code-not-art/core';
-import { Config, Sketch, SketchProps, Params, Parameter } from '../sketch';
+import {
+  Config,
+  Sketch,
+  SketchProps,
+  Params,
+  Parameter,
+  MultiSelectOptions,
+} from '../sketch';
 const { repeat } = Utils;
 
-const config = Config({});
+const config = Config({
+  menuDelay: 0,
+});
 const params: Parameter[] = [
   Params.header('Size and Scale'),
   Params.range('canvasFill', 0.76, [0.5, 1.1]),
@@ -30,7 +39,9 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   canvas.fill(palette.colors[0]);
 
   // Put origin at center of canvas:
-  canvas.translate(new Vec2(canvas.get.width() / 2, canvas.get.height() / 2));
+  canvas.transform.translate(
+    new Vec2(canvas.get.width() / 2, canvas.get.height() / 2),
+  );
 
   // const edgeGap = new Vec2(
   //   (width / 2) * (1 / canvasFill - 1),

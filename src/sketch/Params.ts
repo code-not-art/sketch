@@ -1,10 +1,12 @@
-import { Color } from '@code-not-art/core';
+import { Color, Utils } from '@code-not-art/core';
+import StringMap from 'utils/StringMap';
 
 export enum ParameterType {
   Checkbox = 'checkbox',
   Color = 'color',
   Header = 'header',
   Interval = 'interval',
+  MultiSelect = 'multiselect',
   Range = 'range',
   Select = 'select',
   Text = 'string',
@@ -16,8 +18,10 @@ export interface Parameter {
   value?: any;
   rangeOptions?: RangeOptionsObject;
   selectOptions?: string[];
+  multiSelectValues?: MultiSelectOptions;
 }
-type RangeOptionsObject = { min: number; max: number; step: number };
+export type RangeOptionsObject = { min: number; max: number; step: number };
+export type MultiSelectOptions = StringMap<boolean>;
 
 /**
  * Define a boolean checkbox Parameter
@@ -112,11 +116,21 @@ const interval = (
   rangeOptions: parseRangeOptions(options),
 });
 
+const multiselect = (key: string, options: MultiSelectOptions): Parameter => {
+  return {
+    type: ParameterType.MultiSelect,
+    key,
+    value: Object.values(options),
+    multiSelectValues: options,
+  };
+};
+
 const Params = {
   checkbox,
   color,
   header,
   interval,
+  multiselect,
   range,
   select,
 };

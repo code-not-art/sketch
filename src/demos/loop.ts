@@ -24,7 +24,7 @@ const params: Parameter[] = [
 
 const draw = ({ canvas, palette, data }: SketchProps) => {
   // One time setup instructions that we don't need to repeat every frame:
-  canvas.translate(canvas.get.size().scale(0.5));
+  canvas.transform.translate(canvas.get.size().scale(0.5));
 
   // define the gradient in the draw step so that when the color is updated the gradient is regenerated.
   // if this is done in the init, the gradient won't be updated until the whole image is refreshed.

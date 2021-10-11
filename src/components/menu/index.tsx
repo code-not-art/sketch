@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { debounce } from 'lodash';
-
 import ControlPanel from 'react-control-panel';
 import {
   Checkbox,
@@ -10,7 +9,9 @@ import {
   Range,
   Text,
   Select,
+  Multibox,
 } from 'react-control-panel';
+import { Color } from '@code-not-art/core';
 
 import CollapsibleSection from './CollapsibleSection';
 import { Parameter, ParameterType } from '../../sketch/Params';
@@ -94,6 +95,18 @@ const renderParam = (section: string) => (param: Parameter) => {
           key={elementKey}
           label={param.key}
           options={param.selectOptions || []}
+        />
+      );
+    case ParameterType.MultiSelect:
+      const labels = Object.keys(param?.multiSelectValues || {});
+      return (
+        <Multibox
+          key={elementKey}
+          label={param.key}
+          colors={
+            labels?.map((option) => new Color({ seed: option }).rgb()) || []
+          }
+          names={labels}
         />
       );
     default:
