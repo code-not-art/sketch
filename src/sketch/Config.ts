@@ -3,8 +3,8 @@ export type ConfigInput = {
   height?: number;
   seed?: string;
   menuDelay?: number;
-  loopControls?: boolean;
-  imageControls?: boolean;
+  enableLoopControls?: boolean;
+  enableImageControls?: boolean;
 };
 
 const Config = (input: ConfigInput) => {
@@ -13,8 +13,8 @@ const Config = (input: ConfigInput) => {
     height: input.height || 1080,
     seed: input.seed || new Date().toISOString(),
     menuDelay: input.menuDelay,
-    loopControls: input.loopControls || false,
-    imageControls: input.loopControls || true,
+    enableLoopControls: input.enableLoopControls || false,
+    enableImageControls: input.enableImageControls || true,
   };
 };
 
