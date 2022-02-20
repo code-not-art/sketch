@@ -20,7 +20,7 @@ export interface Parameter {
   selectOptions?: string[];
   multiSelectValues?: MultiSelectOptions;
 }
-export type RangeOptionsObject = { min: number; max: number; step: number };
+export type RangeOptionsObject = { min?: number; max?: number; step?: number };
 export type MultiSelectOptions = StringMap<boolean>;
 
 /**
@@ -77,7 +77,11 @@ const parseRangeOptions = (
       step: options[2] || 0.01,
     };
   } else {
-    return options;
+    return {
+      min: options.min || 0,
+      max: options.max || 1,
+      step: options.step || 0.01,
+    };
   }
 };
 /**
