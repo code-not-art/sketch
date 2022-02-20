@@ -12,15 +12,12 @@ const repeat = Utils.repeat;
 class Palette {
   rng: Random;
   colors: Color[];
-  custom: { [name: string]: Color };
   constructor(rng?: Random) {
     this.rng = rng || new Random('random palette');
 
     this.colors = [];
     // Stick 5 random colours in our pallete
     repeat(5, () => this.colors.push(new Color({ seed: phrase(this.rng) })));
-
-    this.custom = {};
   }
 
   next() {
@@ -28,12 +25,6 @@ class Palette {
   }
 
   // TODO: System for generating random colours with restrictions, ex. specific hue or range of hue and saturation.
-  create(name: string, color: Color) {
-    this.custom[name] = color;
-  }
-  get(name: string) {
-    return this.custom[name];
-  }
 }
 
 export default Palette;
