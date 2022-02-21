@@ -1,22 +1,18 @@
 import { Vec2, Utils } from '@code-not-art/core';
-import {
-  Config,
-  Sketch,
-  SketchProps,
-  Params,
-  Parameter,
-  MultiSelectOptions,
-} from '../sketch';
+import { PaletteType } from '../sketch/Config';
+import { Config, Sketch, SketchProps, Params, Parameter } from '../sketch';
 const { repeat } = Utils;
 
 const config = Config({
   menuDelay: 0,
+  paletteType: PaletteType.Random,
 });
 const params: Parameter[] = [
   Params.header('Size and Scale'),
   Params.range('canvasFill', 0.76, [0.5, 1.1]),
   Params.range('gridWidth', 10, [1, 55, 1]),
   Params.range('circleFill', 0.72, [0.1, 2]),
+
   Params.header('Mask Layer'),
   Params.range('chanceHidden', 0.72),
   Params.range('chanceNoMask', 0.15),
