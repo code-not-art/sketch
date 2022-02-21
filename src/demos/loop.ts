@@ -10,7 +10,7 @@ import { Constants, Gradient, Vec2, Utils } from '@code-not-art/core';
 const TAU = Constants.TAU;
 
 const config = Config({
-  loopControls: true,
+  enableLoopControls: true,
   menuDelay: 0,
 });
 
