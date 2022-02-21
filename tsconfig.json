@@ -52,6 +52,7 @@
     "baseUrl": "./src" /* Base directory to resolve non-absolute module names. */,
     "paths": {
       "react-control-panel": ["types/react-control-panel.d.ts"],
+      "nice-color-palettes/1000": ["types/nice-color-palettes/1000.d.ts"],
       "jsurl": ["types/jsurl.d.ts"]
     } /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */,
     // "rootDirs": [],                              /* List of root folders whose combined content represents the structure of the project at runtime. */

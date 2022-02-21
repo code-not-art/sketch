@@ -25,8 +25,8 @@ class Palette {
     switch (type) {
       case PaletteType.Curated:
         // Get a set of 5 colours from nice-color-palettes
-        const selection = rng?.chooseOne(niceColors);
-        selection?.forEach((color) => this.colors.push(new Color(color)));
+        const selection = this.rng.chooseOne(niceColors);
+        selection.forEach((color) => this.colors.push(new Color(color)));
         break;
       case PaletteType.Random:
         // Stick 5 random colours in our pallete
