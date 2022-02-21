@@ -2,19 +2,40 @@ export type ConfigInput = {
   width?: number;
   height?: number;
   seed?: string;
+
   menuDelay?: number;
-  enableLoopControls?: boolean;
   enableImageControls?: boolean;
+  enableLoopControls?: boolean;
+
+  paletteType?: PaletteType;
 };
 
-const Config = (input: ConfigInput) => {
+export enum PaletteType {
+  Random,
+  Curated,
+}
+
+const Config = ({
+  width = 1080,
+  height = 1080,
+  seed,
+  menuDelay,
+  enableImageControls = true,
+  enableLoopControls = false,
+  paletteType = PaletteType.Random,
+}: ConfigInput) => {
   return {
-    width: input.width || 1080,
-    height: input.height || 1080,
-    seed: input.seed || new Date().toISOString(),
-    menuDelay: input.menuDelay,
-    enableLoopControls: input.enableLoopControls || false,
-    enableImageControls: input.enableImageControls || true,
+    width: width,
+    height: height,
+    seed: seed || new Date().toISOString(),
+
+    // controls
+    menuDelay: menuDelay,
+    enableImageControls: enableImageControls,
+    enableLoopControls: enableLoopControls,
+
+    // palettes
+    paletteType: paletteType,
   };
 };
 
