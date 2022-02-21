@@ -41,11 +41,11 @@ const ImageController = ({
   const [showMenu, setShowMenu] = useState<boolean>(true);
   const toggleMenu = () => setShowMenu(!showMenu);
 
-  // All these state variables could just be local references, except they would get wiped during hotload
-  //  by stashing them in state, they keep their values as the user edits their sketch
-  //  Some of the classes used here (PageState) could be managed in the Page react state, but this was a
-  //  convenient way of separating the code
-  const [state] = useState<ImageState>(new ImageState(config.seed));
+  // All these state variables could just be local references, except they would get wiped during hotload.
+  // By stashing them in state, they keep their values as the user edits their sketch.
+  const [state] = useState<ImageState>(
+    new ImageState({ seed: config.seed, paletteType: config.paletteType }),
+  );
   const [eventHandlers] = useState<any>({});
   const [params] = useState<StringMap<any>>(convertSketchParameters());
   const [loopState] = useState<LoopState>(new LoopState());
@@ -145,6 +145,7 @@ const ImageController = ({
     sketchProps.canvas.set.size(config.width, config.height);
 
     // TODO: Improve the state logging.
+    // - Dont console log the headers in the params
     console.log(state.getImage(), '-', state.getColor(), params);
 
     state.startRender();
@@ -286,7 +287,7 @@ const ImageController = ({
           params={params}
           draw={triggerRedraw}
           download={download}
-          videoControls={sketch.config.loopControls}
+          videoControls={sketch.config.enableLoopControls}
         />
       )}
     </>

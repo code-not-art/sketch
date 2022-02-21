@@ -1,12 +1,18 @@
 import { Random } from '@code-not-art/core';
+import { PaletteType } from '../../sketch/Config';
 import { Palette } from '../../sketch';
 import phrase from '../../utils/phrase';
 
+type ImageStateParams = {
+  seed?: string;
+  paletteType?: PaletteType;
+};
 export default class ImageState {
   _rng: Random;
   _imageSeedGenerator: Random;
   _colorSeedGenerator: Random;
   _seed: string;
+  _paletteType: PaletteType;
 
   imageSeeds: string[];
   colorSeeds: string[];
@@ -21,9 +27,13 @@ export default class ImageState {
   userImageSeed?: string;
   userColorSeed?: string;
 
-  constructor(seed?: string) {
+  constructor({
+    seed,
+    paletteType = PaletteType.Random,
+  }: ImageStateParams = {}) {
     // definte the state from the seed or from the current Date/time
     this._seed = seed || new Date().toISOString();
+    this._paletteType = paletteType;
     this._rng = new Random('sketch root', this._seed);
 
     // Initialize rngenerators for the image seeds and the color seeds
@@ -41,7 +51,7 @@ export default class ImageState {
     this.colorSeeds = [];
     this.activeImage = 0;
     this.activeColor = 0;
-    this.palette = new Palette();
+    this.palette = new Palette({ type: this._paletteType });
     this.random();
 
     this.renderCount = 0;
@@ -76,7 +86,7 @@ export default class ImageState {
       if (this.activeColor < 0) {
         this.activeColor = 0;
       }
-      this.palette = new Palette(this.getColorRng());
+      this.regenPalette();
     }
   }
 
@@ -120,7 +130,11 @@ export default class ImageState {
   }
   setUserColor(seed: string): void {
     this.userColorSeed = seed;
-    this.palette = new Palette(this.getColorRng());
+    this.regenPalette();
+  }
+  setPaletteType(type: PaletteType): void {
+    this._paletteType = type;
+    this.regenPalette();
   }
 
   getImage(): string {
@@ -142,5 +156,11 @@ export default class ImageState {
   }
   private getColorRng(): Random {
     return new Random('color rng', this.getColor());
+  }
+  private regenPalette(): void {
+    this.palette = new Palette({
+      rng: this.getColorRng(),
+      type: this._paletteType,
+    });
   }
 }
