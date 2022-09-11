@@ -70,7 +70,7 @@ const loop = (
       .rotate(data.absoluteAngle);
 
     canvas.draw.circle({
-      origin: circleOrigin,
+      center: circleOrigin,
       radius: canvas.get.minDim() * dotSize,
       fill: gradient.at(i / (dotCount > 1 ? dotCount - 1 : 1)),
     });

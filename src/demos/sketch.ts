@@ -63,7 +63,7 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
         .scale(circleRadius * 2);
       // .add(new Vec2(-circleRadius, -circleRadius));
       canvas.draw.circle({
-        origin: origin,
+        center: origin,
         radius: circleRadius * circleFill,
         fill: palette.colors[1],
       });
@@ -109,7 +109,7 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
       const hideMask = !rng.bool(chanceNoMask);
       hideMask &&
         canvas.draw.circle({
-          origin: origin,
+          center: origin,
           radius: circleRadius * circleFill + 1,
           fill: palette.colors[0]
             .color()
