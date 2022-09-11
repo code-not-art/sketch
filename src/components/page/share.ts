@@ -1,10 +1,9 @@
 import JSURL from 'jsurl';
-import StringMap from '../../utils/StringMap';
 import ImageState from './ImageState';
 
 export function buildQueryString(
   state: ImageState,
-  params: StringMap<any>,
+  params: Record<string, any>,
 ): string {
   return JSURL.stringify({
     ...params,
@@ -34,7 +33,7 @@ export function copyUrlToClipboard() {
  * @param state
  * @param params
  */
-export function shareViaUrl(state: ImageState, params: StringMap<any>) {
+export function shareViaUrl(state: ImageState, params: Record<string, any>) {
   const paramsQuery = buildQueryString(state, params);
   attachQueryStringToWindow(paramsQuery);
   copyUrlToClipboard();
@@ -43,7 +42,7 @@ export function shareViaUrl(state: ImageState, params: StringMap<any>) {
 export function applyQuery(
   query: string,
   state: ImageState,
-  params: StringMap<any>,
+  params: Record<string, any>,
 ) {
   const parsed = JSURL.parse(query);
 

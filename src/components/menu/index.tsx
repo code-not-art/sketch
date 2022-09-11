@@ -15,7 +15,6 @@ import { Color } from '@code-not-art/core';
 
 import CollapsibleSection from './CollapsibleSection';
 import { Parameter, ParameterType } from '../../sketch/Params';
-import StringMap from 'utils/StringMap';
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
 import ImageState from '../../components/page/ImageState';
 import SummarySection from './SummarySection';
@@ -137,11 +136,11 @@ const renderSections = (sections: Section[]) => {
 
 type MenuProps = {
   sketchParameters: Parameter[];
-  params: StringMap<any>;
+  params: Record<string, any>;
   updateHandler: (
     property: string,
     value: any,
-    updatedState: StringMap<any>,
+    updatedState: Record<string, any>,
   ) => void;
   debounce?: number;
   imageState: ImageState;

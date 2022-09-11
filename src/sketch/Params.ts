@@ -1,5 +1,4 @@
 import { Color } from '@code-not-art/core';
-import StringMap from 'utils/StringMap';
 
 export enum ParameterType {
   Checkbox = 'checkbox',
@@ -21,7 +20,7 @@ export interface Parameter {
   multiSelectValues?: MultiSelectOptions;
 }
 export type RangeOptionsObject = { min?: number; max?: number; step?: number };
-export type MultiSelectOptions = StringMap<boolean>;
+export type MultiSelectOptions = Record<string, boolean>;
 
 /**
  * Define a boolean checkbox Parameter

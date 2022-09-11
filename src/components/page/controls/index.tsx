@@ -10,7 +10,6 @@ import {
   Share2,
 } from 'react-feather';
 import styled from 'styled-components';
-import StringMap from 'utils/StringMap';
 import ImageState from '../ImageState';
 import LoopState from '../LoopState';
 import { shareViaUrl } from '../share';
@@ -70,7 +69,7 @@ const ICON_SIZE = 25;
 type ControlsProps = {
   state: ImageState;
   loopState: LoopState;
-  params: StringMap<any>;
+  params: Record<string, any>;
   draw: () => void;
   download: () => void;
   videoControls: boolean;

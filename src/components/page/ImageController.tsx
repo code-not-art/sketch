@@ -9,7 +9,6 @@ import ImageState from './ImageState';
 import ControlButtons from './controls';
 
 import Menu from '../menu';
-import StringMap from 'utils/StringMap';
 import LoopState from './LoopState';
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
 
@@ -30,7 +29,7 @@ const ImageController = ({
 
   // Converter needed to initialize state
   const convertSketchParameters = () => {
-    const output: StringMap<any> = {};
+    const output: Record<string, any> = {};
     sketch.params.forEach((p) => {
       output[p.key] = p.value;
     });
@@ -47,9 +46,9 @@ const ImageController = ({
     new ImageState({ seed: config.seed, paletteType: config.paletteType }),
   );
   const [eventHandlers] = useState<any>({});
-  const [params] = useState<StringMap<any>>(convertSketchParameters());
+  const [params] = useState<Record<string, any>>(convertSketchParameters());
   const [loopState] = useState<LoopState>(new LoopState());
-  const [sketchData] = useState<StringMap<any>>({});
+  const [sketchData] = useState<Record<string, any>>({});
 
   const [redraws, setRedraws] = useState<number>(0);
   const triggerRedraw = () => {
@@ -64,7 +63,7 @@ const ImageController = ({
           output[originalParam.key] = new Color(params[originalParam.key]);
           break;
         case ParameterType.MultiSelect:
-          const value: StringMap<boolean> = {};
+          const value: Record<string, boolean> = {};
           const updatedBooleans: boolean[] = params[originalParam.key];
           Object.keys(originalParam.multiSelectValues || []).forEach(
             (key, index) => (value[key] = updatedBooleans[index]),
@@ -222,7 +221,7 @@ const ImageController = ({
   const controlPanelUpdateHandler = (
     property: string,
     value: any,
-    // updatedState: StringMap<any>,
+    // updatedState: Record<string,any>,
   ) => {
     // The menu provides two special inputs for 'image' and 'color'
     //  which we want to use on the user provided image and color seeds

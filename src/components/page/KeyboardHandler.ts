@@ -1,9 +1,8 @@
-import StringMap from 'utils/StringMap';
 import LoopState from './LoopState';
 import ImageState from './ImageState';
 import { shareViaUrl } from './share';
 
-const keyActionDescriptions: StringMap<string> = {
+const keyActionDescriptions: Record<string, string> = {
   KeyS: 'Saving Image',
 
   Space: 'Randomizing all seeds',
@@ -28,7 +27,7 @@ const keyActionDescriptions: StringMap<string> = {
 export default function KeyboardHandler(
   state: ImageState,
   loopState: LoopState,
-  params: StringMap<any>,
+  params: Record<string, any>,
   draw: () => void,
   restart: () => void,
   download: () => void,

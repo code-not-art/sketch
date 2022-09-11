@@ -1,13 +1,12 @@
 import { Canvas, Random } from '@code-not-art/core';
-import StringMap from '../utils/StringMap';
 import Palette from './Palette';
 
 type SketchProps = {
   canvas: Canvas;
   palette: Palette;
   rng: Random;
-  params: StringMap<any>;
-  data: StringMap<any>;
+  params: Record<string, any>;
+  data: Record<string, any>;
 };
 
 export default SketchProps;
