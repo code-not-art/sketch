@@ -107,3 +107,6 @@ export
 
 # Parcel Cache
 .parcel-cache/
+
+# OS File
+.DS_Store
