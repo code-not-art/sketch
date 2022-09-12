@@ -3,13 +3,28 @@ import Config, { ConfigInput } from './Config';
 import SketchProps from './SketchProps';
 import FrameData from './FrameData';
 
-export type SketchDefinition = {
-  reset?: (props: SketchProps) => void;
-  init?: (props: SketchProps) => void;
-  draw: (props: SketchProps) => void;
-  loop?: (props: SketchProps, frameData: FrameData) => boolean;
-  params?: Parameter[];
+export interface ParameterModel {
+  [key: string]: Parameter;
+}
+
+export type SketchInputs<PM extends ParameterModel, DataModel> = {
   config?: ConfigInput;
+  initialData: DataModel;
+  params: PM;
+  reset?: (props: SketchProps<PM, DataModel>) => void;
+  init?: (props: SketchProps<PM, DataModel>) => void;
+  draw: (props: SketchProps<PM, DataModel>) => void;
+  loop?: (props: SketchProps<PM, DataModel>, frameData: FrameData) => boolean;
+};
+
+export type SketchDefinition<PM extends ParameterModel, DataModel> = {
+  config: ReturnType<typeof Config>;
+  initialData: DataModel;
+  params: PM;
+  reset: (props: SketchProps<PM, DataModel>) => void;
+  init: (props: SketchProps<PM, DataModel>) => void;
+  draw: (props: SketchProps<PM, DataModel>) => void;
+  loop: (props: SketchProps<PM, DataModel>, frameData: FrameData) => boolean;
 };
 
 const defaultInit = () => {
@@ -19,27 +34,38 @@ const defaultLoop = () => {
   // Do nothing EVERY FRAME
   return true;
 };
-const defaultReset = (props: SketchProps) => {
+const defaultReset = <PM extends ParameterModel, DataModel>(
+  props: SketchProps<PM, DataModel>,
+) => {
   props.canvas.clear();
 };
 
-const Sketch = (
-  definition: SketchDefinition,
-): {
-  init: (props: SketchProps) => void;
-  draw: (props: SketchProps) => void;
-  loop: (props: SketchProps, frameData: FrameData) => boolean;
-  reset: (props: SketchProps) => void;
-  params: Parameter[];
-  config: ReturnType<typeof Config>;
-} => ({
-  config: Config(definition.config || {}),
-  params: definition.params || [],
+export type SketchReset<PM extends ParameterModel, DataModel> = (
+  props: SketchProps<PM, DataModel>,
+) => void;
+export type SketchInit<PM extends ParameterModel, DataModel> = (
+  props: SketchProps<PM, DataModel>,
+) => void;
+export type SketchDraw<PM extends ParameterModel, DataModel> = (
+  props: SketchProps<PM, DataModel>,
+) => void;
+export type SketchLoop<PM extends ParameterModel, DataModel> = (
+  props: SketchProps<PM, DataModel>,
+  frameData: FrameData,
+) => boolean;
 
-  init: definition.init || defaultInit,
-  draw: definition.draw,
-  loop: definition.loop || defaultLoop,
-  reset: definition.reset || defaultReset,
-});
+function Sketch<PM extends ParameterModel, DataModel>(
+  definition: SketchInputs<PM, DataModel>,
+): SketchDefinition<PM, DataModel> {
+  return {
+    config: Config(definition.config || {}),
+    initialData: definition.initialData,
+    params: definition.params,
+    init: definition.init || defaultInit,
+    draw: definition.draw,
+    loop: definition.loop || defaultLoop,
+    reset: definition.reset || defaultReset,
+  };
+}
 
 export default Sketch;

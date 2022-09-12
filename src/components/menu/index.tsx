@@ -18,6 +18,7 @@ import { Parameter, ParameterType } from '../../sketch/Params';
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
 import ImageState from '../../components/page/ImageState';
 import SummarySection from './SummarySection';
+import { ParameterModel } from '../../sketch/Sketch';
 
 const FixedPositionWrapper = styled.div`
   position: fixed;
@@ -41,9 +42,9 @@ type Section = {
   params: Parameter[];
 };
 const sectionReducer = (sections: Section[], parameter: Parameter) => {
-  if (parameter.value === undefined) {
+  if (parameter.type === ParameterType.Header) {
     // This parameter is a header, create a new section
-    sections.push({ title: parameter.key, params: [] });
+    sections.push({ title: parameter.display, params: [] });
     return sections;
   }
   if (sections.length === 0) {
@@ -55,16 +56,16 @@ const sectionReducer = (sections: Section[], parameter: Parameter) => {
   return sections;
 };
 
-const renderParam = (section: string) => (param: Parameter) => {
-  const elementKey = `${section}-${param.key}`;
+const renderParam = (section: string) => (param: Parameter, index: number) => {
+  const elementKey = `${section}-${index}-${param.display}`;
   switch (param.type) {
     case ParameterType.Checkbox:
-      return <Checkbox key={elementKey} label={param.key}></Checkbox>;
+      return <Checkbox key={elementKey} label={param.display}></Checkbox>;
     case ParameterType.Color:
       return (
         <ColorControl
           key={elementKey}
-          label={param.key}
+          label={param.display}
           format="hex"
         ></ColorControl>
       );
@@ -72,36 +73,36 @@ const renderParam = (section: string) => (param: Parameter) => {
       return (
         <Range
           key={elementKey}
-          label={param.key}
-          min={param?.rangeOptions?.min || Math.min(0, param.value)}
-          max={param?.rangeOptions?.max || Math.max(1, param.value)}
-          step={param?.rangeOptions?.step || 0.01}
+          label={param.display}
+          min={param.options.min || Math.min(0, param.value)}
+          max={param.options.max || Math.max(1, param.value)}
+          step={param.options.step || 0.01}
         ></Range>
       );
     case ParameterType.Interval:
       return (
         <Interval
           key={elementKey}
-          label={param.key}
-          min={param?.rangeOptions?.min || Math.min(0, param.value[0])}
-          max={param?.rangeOptions?.max || Math.max(1, param.value[1])}
-          step={param?.rangeOptions?.step || 0.01}
+          label={param.display}
+          min={param.options.min || Math.min(0, param.values[0])}
+          max={param.options.max || Math.max(1, param.values[1])}
+          step={param.options.step || 0.01}
         ></Interval>
       );
     case ParameterType.Select:
       return (
         <Select
           key={elementKey}
-          label={param.key}
-          options={param.selectOptions || []}
+          label={param.display}
+          options={param.options || []}
         />
       );
     case ParameterType.MultiSelect:
-      const labels = Object.keys(param?.multiSelectValues || {});
+      const labels = Object.keys(param.values || {});
       return (
         <Multibox
           key={elementKey}
-          label={param.key}
+          label={param.display}
           colors={
             labels?.map((option) => new Color({ seed: option }).rgb()) || []
           }
@@ -110,9 +111,8 @@ const renderParam = (section: string) => (param: Parameter) => {
       );
     default:
       console.log(
-        `Parameter not displayed due to unknown type:`,
+        `Parameter type not handled in sketch menu:`,
         JSON.stringify(param),
-        typeof param.value,
       );
       return null;
   }
@@ -134,22 +134,21 @@ const renderSections = (sections: Section[]) => {
   );
 };
 
-type MenuProps = {
-  sketchParameters: Parameter[];
-  params: Record<string, any>;
-  updateHandler: (
-    property: string,
-    value: any,
-    updatedState: Record<string, any>,
-  ) => void;
+type MenuProps<PM extends ParameterModel> = {
+  params: PM;
+  updateHandler: (property: string, value: any, updatedState: PM) => void;
   debounce?: number;
   imageState: ImageState;
 };
-const Menu = (props: MenuProps) => {
+
+function Menu<PM extends ParameterModel>(props: MenuProps<PM>) {
   const debounceTime = props.debounce === undefined ? 25 : props.debounce;
   const debouncedUpdate = debounce(props.updateHandler, debounceTime);
 
-  const sections = props.sketchParameters.reduce<Section[]>(sectionReducer, []);
+  const sections = Object.values(props.params).reduce<Section[]>(
+    sectionReducer,
+    [],
+  );
 
   return (
     <FixedPositionWrapper>
@@ -173,6 +172,6 @@ const Menu = (props: MenuProps) => {
       </ControlPanel>
     </FixedPositionWrapper>
   );
-};
+}
 
 export default Menu;

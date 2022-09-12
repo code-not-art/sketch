@@ -1,35 +1,46 @@
 import { Vec2, Utils } from '@code-not-art/core';
 import { PaletteType } from '../sketch/Config';
-import { Config, Sketch, SketchProps, Params, Parameter } from '../sketch';
+import { Config, Sketch, SketchProps, Params } from '../sketch';
 const { repeat } = Utils;
 
 const config = Config({
   menuDelay: 0,
   paletteType: PaletteType.Random,
 });
-const params: Parameter[] = [
-  Params.header('Size and Scale'),
-  Params.range('canvasFill', 0.76, [0.5, 1.1]),
-  Params.range('gridWidth', 10, [1, 55, 1]),
-  Params.range('circleFill', 0.72, [0.1, 2]),
 
-  Params.header('Mask Layer'),
-  Params.range('chanceHidden', 0.72),
-  Params.range('chanceNoMask', 0.15),
-  Params.range('darkenRange', 5, [0, 20]),
-  Params.range('lightenRange', 0, [0, 20]),
-  Params.range('positionExponent', 1, [0, 5]),
-];
+// Warning: Display Names must all be unique
+// TODO: Remove warning once we replace the control panel library
+const parameters = {
+  sizeHeader: Params.header('Size and Scale'),
+  canvasFill: Params.range('Image Fill', 0.76, [0.5, 1.1]),
+  gridWidth: Params.range('Grid Size', 10, [1, 55, 1]),
+  circleFill: Params.range('Circle Fill', 0.72, [0.1, 2]),
 
-const draw = ({ canvas, rng, palette, params }: SketchProps) => {
-  const canvasFill = params.canvasFill as number;
-  const gridWidth = params.gridWidth as number;
-  const circleFill = params.circleFill as number;
-  const chanceHidden = params.chanceHidden as number;
-  const chanceNoMask = params.chanceNoMask as number;
-  const darkenRange = params.darkenRange as number;
-  const lightenRange = params.lightenRange as number;
-  const positionExponent = params.positionExponent as number;
+  maskLayerHeader: Params.header('Mask Layer'),
+  chanceHidden: Params.range('Chance Hidden', 0.72),
+  chanceNoMask: Params.range('Chance No Mask', 0.15),
+  darkenRange: Params.range('Darken Masks', 5, [0, 20]),
+  lightenRange: Params.range('Lighten Masks', 0, [0, 20]),
+  positionExponent: Params.range('Circle Position Spread', 1, [0, 5]),
+};
+
+const initialData = {};
+
+const draw = ({
+  canvas,
+  rng,
+  palette,
+  params,
+}: SketchProps<typeof parameters, typeof initialData>) => {
+  const canvasFill = params.canvasFill.value;
+  const gridWidth = params.gridWidth.value;
+  const circleFill = params.circleFill.value;
+
+  const chanceHidden = params.chanceHidden.value;
+  const chanceNoMask = params.chanceNoMask.value;
+  const darkenRange = params.darkenRange.value;
+  const lightenRange = params.lightenRange.value;
+  const positionExponent = params.positionExponent.value;
 
   // Background
   canvas.fill(palette.colors[0]);
@@ -39,31 +50,16 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
     new Vec2(canvas.get.width() / 2, canvas.get.height() / 2),
   );
 
-  // const edgeGap = new Vec2(
-  //   (width / 2) * (1 / canvasFill - 1),
-  //   (height / 2) * (1 / canvasFill - 1),
-  // );
-  // canvas.translate(edgeGap);
-
-  // canvas.draw.rect({
-  //   point: new Vec2(-width / 2, -height / 2),
-  //   height,
-  //   width,
-  //   fill: palette.colors[1],
-  // });
-
   const circleRadius = (canvas.get.minDim() * canvasFill) / gridWidth / 2;
 
   // Base layer dots
   repeat(gridWidth, (x) => {
     repeat(gridWidth, (y) => {
-      const origin = new Vec2(x, y)
+      const center = new Vec2(x, y)
         .add(0.5 - gridWidth / 2)
-
         .scale(circleRadius * 2);
-      // .add(new Vec2(-circleRadius, -circleRadius));
       canvas.draw.circle({
-        center: origin,
+        center,
         radius: circleRadius * circleFill,
         fill: palette.colors[1],
       });
@@ -79,28 +75,12 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
         positionExponent,
       );
 
-      // inverse diagonal
-      // const offsetPostitionScale = Math.pow(
-      //  1 - Math.abs(x - y) / gridWidth,
-      //   positionExponent,
-      // );
-
-      // Square Radial distance
-      // const distanceFromCenter = Math.sqrt(
-      //   Math.pow(1 - Math.abs(gridWidth - 2 * x) / gridWidth, 2) +
-      //     Math.pow(1 - Math.abs(gridWidth - 2 * y) / gridWidth, 2),
-      // );
-      // const offsetPostitionScale = Math.pow(
-      //   distanceFromCenter,
-      //   positionExponent,
-      // );
-
       const offset = Vec2.unit()
         .rotate(rng.angle())
         .scale(rng.int(0, circleRadius * circleFill))
         .scale(offsetPostitionScale);
 
-      const origin = new Vec2(x, y)
+      const center = new Vec2(x, y)
         .add(0.5 - gridWidth / 2)
         .scale(circleRadius * 2)
         .add(rng.bool(chanceHidden) ? 0 : offset);
@@ -109,7 +89,7 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
       const hideMask = !rng.bool(chanceNoMask);
       hideMask &&
         canvas.draw.circle({
-          center: origin,
+          center,
           radius: circleRadius * circleFill + 1,
           fill: palette.colors[0]
             .color()
@@ -121,19 +101,20 @@ const draw = ({ canvas, rng, palette, params }: SketchProps) => {
   });
 };
 
-// const init = ({}: SketchProps) => {};
+// const init = ({}: SketchProps<typeof parameters, typeof initialData>) => {};
 
-// const loop = ({}: SketchProps, {}: FrameData): boolean => {};
+// const loop = ({}: SketchProps<typeof parameters, typeof initialData>, {}: FrameData): boolean => {};
 
-// const reset = ({}: SketchProps) => {};
+// const reset = ({}: SketchProps<typeof parameters, typeof initialData>) => {};
 
-const Art = Sketch({
+const Art = Sketch<typeof parameters, typeof initialData>({
   config,
-  params,
-  draw,
-  // init,
-  // loop,
+  params: parameters,
+  initialData,
   // reset,
+  // init,
+  draw,
+  // loop,
 });
 
 export default Art;

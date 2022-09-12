@@ -3,7 +3,7 @@ import querystring from 'query-string';
 
 import { Canvas, Color } from '@code-not-art/core';
 
-import { Sketch, SketchProps } from '../../sketch';
+import { SketchProps } from '../../sketch';
 import KeyboardHandler from './KeyboardHandler';
 import ImageState from './ImageState';
 import ControlButtons from './controls';
@@ -13,28 +13,22 @@ import LoopState from './LoopState';
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
 
 import { applyQuery } from './share';
+import { ParameterModel, SketchDefinition } from '../../sketch/Sketch';
 import { ParameterType } from '../../sketch/Params';
+import { isArray, isBoolean, isNumber, isObjectLike, isString } from 'lodash';
+import { clamp } from '@code-not-art/core/dist/utils';
 
-type ImageControllerProps = {
+type ImageControllerProps<PM extends ParameterModel, DataModel> = {
   canvasId: string;
   downloaderId: string;
-  sketch: ReturnType<typeof Sketch>;
+  sketch: SketchDefinition<PM, DataModel>;
 };
-const ImageController = ({
+const ImageController = <PM extends ParameterModel, DataModel>({
   canvasId,
   downloaderId,
   sketch,
-}: ImageControllerProps) => {
+}: ImageControllerProps<PM, DataModel>) => {
   const config = sketch.config;
-
-  // Converter needed to initialize state
-  const convertSketchParameters = () => {
-    const output: Record<string, any> = {};
-    sketch.params.forEach((p) => {
-      output[p.key] = p.value;
-    });
-    return output;
-  };
 
   const [initialized, setInitialized] = useState<boolean>(false);
   const [showMenu, setShowMenu] = useState<boolean>(true);
@@ -46,41 +40,19 @@ const ImageController = ({
     new ImageState({ seed: config.seed, paletteType: config.paletteType }),
   );
   const [eventHandlers] = useState<any>({});
-  const [params] = useState<Record<string, any>>(convertSketchParameters());
+  const [params] = useState<PM>({ ...sketch.params });
   const [loopState] = useState<LoopState>(new LoopState());
-  const [sketchData] = useState<Record<string, any>>({});
+  const [sketchData] = useState<DataModel>(sketch.initialData);
 
   const [redraws, setRedraws] = useState<number>(0);
   const triggerRedraw = () => {
     setRedraws(redraws + 1);
   };
 
-  const getTypeCorrectedProps = () => {
-    const output = { ...params };
-    sketch.params.forEach((originalParam) => {
-      switch (originalParam.type) {
-        case ParameterType.Color:
-          output[originalParam.key] = new Color(params[originalParam.key]);
-          break;
-        case ParameterType.MultiSelect:
-          const value: Record<string, boolean> = {};
-          const updatedBooleans: boolean[] = params[originalParam.key];
-          Object.keys(originalParam.multiSelectValues || []).forEach(
-            (key, index) => (value[key] = updatedBooleans[index]),
-          );
-          output[originalParam.key] = value;
-          break;
-        default:
-        // Do nothing
-      }
-    });
-    return output;
-  };
-
-  const getSketchProps: () => SketchProps = () => {
+  const getSketchProps: () => SketchProps<PM, DataModel> = () => {
     return {
       canvas: getCanvas(),
-      params: getTypeCorrectedProps(),
+      params,
       rng: state.getImageRng(),
       palette: state.getPalette(),
       data: sketchData,
@@ -221,7 +193,7 @@ const ImageController = ({
   const controlPanelUpdateHandler = (
     property: string,
     value: any,
-    // updatedState: Record<string,any>,
+    _updatedState: PM,
   ) => {
     // The menu provides two special inputs for 'image' and 'color'
     //  which we want to use on the user provided image and color seeds
@@ -234,7 +206,60 @@ const ImageController = ({
         state.setUserColor(value);
         break;
       default:
-        params[property] = value;
+        // This here is a terrible situation caused by a couple issues with the control panel library.
+        // First, the control panel doesn't differentiate between display labels and property names,
+        //   forcing us to identify the parameter by the display name
+        // Second, the value returned is untyped (consequence of returning an)
+        const param = Object.values(params).find((p) => p.display === property);
+        if (param) {
+          switch (param.type) {
+            case ParameterType.Checkbox:
+              if (isBoolean(value)) {
+                param.value = value;
+              }
+              break;
+            case ParameterType.Color:
+              if (isString(value)) {
+                param.value = new Color(value);
+              }
+              break;
+            case ParameterType.Interval:
+              if (
+                isArray(value) &&
+                value.length === 2 &&
+                value.every((x) => isNumber(x))
+              ) {
+                param.values = value as [number, number];
+              }
+              break;
+            case ParameterType.MultiSelect:
+              if (
+                isObjectLike(value) &&
+                Object.values(value).every((x) => isBoolean(x))
+              ) {
+                param.values = value as Record<string, boolean>;
+              }
+              break;
+            case ParameterType.Range:
+              if (isNumber(value)) {
+                param.value = clamp(value, param.options);
+              }
+              break;
+            case ParameterType.Select:
+              if (isString(value)) {
+                param.value = value;
+              }
+              break;
+            case ParameterType.Text:
+              if (isString(value)) {
+                param.value = value;
+              }
+              break;
+            default:
+              // do nothing, header param is the only uncontrolled case
+              break;
+          }
+        }
         break;
     }
     triggerRedraw();
@@ -272,7 +297,6 @@ const ImageController = ({
     <>
       {showMenu && (
         <Menu
-          sketchParameters={sketch.params}
           params={params}
           updateHandler={controlPanelUpdateHandler}
           debounce={config.menuDelay}
@@ -286,7 +310,7 @@ const ImageController = ({
           params={params}
           draw={triggerRedraw}
           download={download}
-          videoControls={sketch.config.enableLoopControls}
+          videoControls={!!sketch.config.enableLoopControls}
         />
       )}
     </>

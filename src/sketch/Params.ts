@@ -11,56 +11,111 @@ export enum ParameterType {
   Text = 'string',
 }
 
-export interface Parameter {
-  type: ParameterType;
-  key: string;
-  value?: any;
-  rangeOptions?: RangeOptionsObject;
-  selectOptions?: string[];
-  multiSelectValues?: MultiSelectOptions;
-}
+type BaseParameter = {
+  display: string;
+  hidden: boolean;
+  fixed: boolean;
+};
+
+type CheckboxParameter = BaseParameter & {
+  type: ParameterType.Checkbox;
+  value: boolean;
+};
+type ColorParameter = BaseParameter & {
+  type: ParameterType.Color;
+  value: Color;
+};
+type HeaderParameter = BaseParameter & {
+  type: ParameterType.Header;
+};
+type IntervalParameter = BaseParameter & {
+  type: ParameterType.Interval;
+  options: RangeOptionsObject;
+  values: [number, number];
+};
+type MultiSelectParameter = BaseParameter & {
+  type: ParameterType.MultiSelect;
+  values: Record<string, boolean>;
+};
+type RangeParameter = BaseParameter & {
+  type: ParameterType.Range;
+  options: RangeOptionsObject;
+  value: number;
+};
+type SelectParameter = BaseParameter & {
+  type: ParameterType.Select;
+  options: string[];
+  value: string;
+};
+type TextParameter = BaseParameter & {
+  type: ParameterType.Text;
+  value: string;
+};
+
+export type Parameter =
+  | CheckboxParameter
+  | ColorParameter
+  | HeaderParameter
+  | IntervalParameter
+  | MultiSelectParameter
+  | RangeParameter
+  | SelectParameter
+  | TextParameter;
+
 export type RangeOptionsObject = { min?: number; max?: number; step?: number };
 export type MultiSelectOptions = Record<string, boolean>;
 
 /**
  * Define a boolean checkbox Parameter
- * @param key {string}
+ * @param display {string}
  * @param value {boolean}
  * @returns {Parameter}
  */
-const checkbox = (key: string, value: boolean): Parameter => ({
+const checkbox = (display: string, value: boolean): CheckboxParameter => ({
+  display,
+  hidden: false,
+  fixed: false,
   type: ParameterType.Checkbox,
-  key,
   value,
 });
 
 /**
  * Define a color selection Parameter
- * @param key
+ * @param display
  * @param value
  * @returns
  */
-const color = (key: string, value: Color): Parameter => ({
+const color = (display: string, value: Color): ColorParameter => ({
   type: ParameterType.Color,
-  key,
-  value: value.get.hex(),
+  hidden: false,
+  fixed: false,
+  display,
+  value,
 });
 
 /**
  * Define a header for the Parameter control menu
- * @param key {string}
+ * @param display {string}
  * @returns {Parameter}
  */
-const header = (key: string): Parameter => ({
+const header = (display: string): HeaderParameter => ({
   type: ParameterType.Header,
-  key,
+  hidden: false,
+  fixed: false,
+  display,
 });
 
-const select = (key: string, value: string, options: string[]) => ({
+const select = (
+  display: string,
+  value: string,
+  options: string[],
+): SelectParameter => ({
   type: ParameterType.Select,
-  key,
+  hidden: false,
+  fixed: false,
+  display,
+  options,
   value,
-  selectOptions: options,
 });
 
 // ===== Range and Interval selects with their complicated options
@@ -85,46 +140,54 @@ const parseRangeOptions = (
 };
 /**
  * Define a range Parameter
- * @param key {string}
+ * @param display {string}
  * @param value {number}
  * @param options {RangeOptionsObject | RangeOptionsArray} [min, max, step] with default [0, 1, 0.01] Specifies the min, max, and step for the range. If the 3rd element of the tuple is omitted, the step will default to 0.01 . Default range if no options are provided is from 0 to 1 with step size of 0.01 . Can also be given an object with each property defined.
  * @returns {Parameter}
  */
 const range = (
-  key: string,
+  display: string,
   value: number,
   options: RangeOptionsObject | RangeOptionsArray = [0, 1, 0.01],
-): Parameter => ({
+): RangeParameter => ({
   type: ParameterType.Range,
-  key,
+  hidden: false,
+  fixed: false,
+  display,
+  options: parseRangeOptions(options),
   value,
-  rangeOptions: parseRangeOptions(options),
 });
 
 /**
  * Define an interval Parameter
- * @param key {string}
+ * @param display {string}
  * @param value {[number, number]} low and high limits of the initial interval value, as a tuple: ex. [0.25, 0.75]
  * @param options {RangeOptionsObject | RangeOptionsArray} [min, max, step] with default [0, 1, 0.01] Specifies the min, max, and step for the range. If the 3rd element of the tuple is omitted, the step will default to 0.01 . Default range if no options are provided is from 0 to 1 with step size of 0.01 . Can also be given an object with each property defined.
  * @returns {Parameter}
  */
 const interval = (
-  key: string,
-  value: [number, number],
+  display: string,
+  values: [number, number],
   options: RangeOptionsObject | RangeOptionsArray = [0, 1, 0.01],
-): Parameter => ({
+): IntervalParameter => ({
   type: ParameterType.Interval,
-  key,
-  value,
-  rangeOptions: parseRangeOptions(options),
+  hidden: false,
+  fixed: false,
+  display,
+  options: parseRangeOptions(options),
+  values,
 });
 
-const multiselect = (key: string, options: MultiSelectOptions): Parameter => {
+const multiselect = (
+  display: string,
+  values: MultiSelectOptions,
+): MultiSelectParameter => {
   return {
     type: ParameterType.MultiSelect,
-    key,
-    value: Object.values(options),
-    multiSelectValues: options,
+    hidden: false,
+    fixed: false,
+    display,
+    values,
   };
 };
 
