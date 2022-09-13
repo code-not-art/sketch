@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/code-not-art/sketch#readme",
   "dependencies": {
-    "@code-not-art/core": "^0.3.0",
+    "@code-not-art/core": "^0.4.0",
     "jsurl": "^0.1.5",
     "lodash": "^4.17.21",
     "nice-color-palettes": "^3.0.0",
