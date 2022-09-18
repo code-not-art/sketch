@@ -146,7 +146,6 @@ const Controls = ({
         <ControlButton
           disabled={state.activeImage === 0}
           onTouch={() => {
-            console.log('prev image button');
             state.prevImage();
             draw();
           }}
