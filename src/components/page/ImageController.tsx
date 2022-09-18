@@ -15,7 +15,14 @@ import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
 import { applyQuery } from './share';
 import { ParameterModel, SketchDefinition } from '../../sketch/Sketch';
 import { ParameterType } from '../../sketch/Params';
-import { isArray, isBoolean, isNumber, isObjectLike, isString } from 'lodash';
+import {
+  get,
+  isArray,
+  isBoolean,
+  isNumber,
+  isObjectLike,
+  isString,
+} from 'lodash';
 import { clamp } from '@code-not-art/core/dist/utils';
 
 type ImageControllerProps<PM extends ParameterModel, DataModel> = {
@@ -115,9 +122,17 @@ const ImageController = <PM extends ParameterModel, DataModel>({
     //      when this is run, the canvas bitmap content is lost, so do not do this in the resize loop.
     sketchProps.canvas.set.size(config.width, config.height);
 
-    // TODO: Improve the state logging.
-    // - Dont console log the headers in the params
-    console.log(state.getImage(), '-', state.getColor(), params);
+    console.log(
+      state.getImage(),
+      '-',
+      state.getColor(),
+      Object.entries(params)
+        .filter(([_key, value]) => value.type !== ParameterType.Header)
+        .reduce<Record<string, any>>((acc, [key, value]) => {
+          acc[key] = get(value, 'value', undefined);
+          return acc;
+        }, {}),
+    );
 
     state.startRender();
     sketch.draw(getSketchProps());
