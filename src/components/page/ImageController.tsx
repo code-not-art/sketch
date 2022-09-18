@@ -42,7 +42,7 @@ const ImageController = <PM extends ParameterModel, DataModel>({
   const toggleMenu = () => setShowMenu(!showMenu);
 
   // All these state variables could just be local references, except they would get wiped during hotload.
-  // By stashing them in state, they keep their values as the user edits their sketch.
+  // By stashing them in state, they keep their values as the developer edits their sketch.
   const [state] = useState<ImageState>(
     new ImageState({ seed: config.seed, paletteType: config.paletteType }),
   );
@@ -50,11 +50,6 @@ const ImageController = <PM extends ParameterModel, DataModel>({
   const [params] = useState<PM>({ ...sketch.params });
   const [loopState] = useState<LoopState>(new LoopState());
   const [sketchData] = useState<DataModel>(sketch.initialData);
-
-  const [redraws, setRedraws] = useState<number>(0);
-  const triggerRedraw = () => {
-    setRedraws(redraws + 1);
-  };
 
   const getSketchProps: () => SketchProps<PM, DataModel> = () => {
     return {
@@ -100,11 +95,10 @@ const ImageController = <PM extends ParameterModel, DataModel>({
     canvas.canvas.style.width = newWidth + 'px';
   };
 
-  const restart = () => {
+  const redraw = () => {
     const sketchProps = getSketchProps();
     sketch.reset(sketchProps);
-    sketch.init(sketchProps);
-    triggerRedraw();
+    draw();
     loopState.restart();
   };
 
@@ -176,15 +170,14 @@ const ImageController = <PM extends ParameterModel, DataModel>({
     // ===== Keydown
     document.removeEventListener('keydown', eventHandlers.keydown);
     eventHandlers.keydown = (event: KeyboardEvent) => {
-      KeyboardHandler(
+      KeyboardHandler({
         state,
         loopState,
         params,
-        triggerRedraw,
-        restart,
+        redraw,
         download,
         toggleMenu,
-      )(event);
+      })(event);
     };
     document.addEventListener('keydown', eventHandlers.keydown, false);
 
@@ -200,7 +193,7 @@ const ImageController = <PM extends ParameterModel, DataModel>({
         return;
       }
       state.random();
-      triggerRedraw();
+      redraw();
     };
     document.addEventListener('touchend', eventHandlers.touchend, false);
   };
@@ -277,11 +270,11 @@ const ImageController = <PM extends ParameterModel, DataModel>({
         }
         break;
     }
-    triggerRedraw();
+    redraw();
   };
 
   /**
-   * Run with every page load and again on hot load
+   * Run on page load, hot reload, and every state update
    */
   useEffect(() => {
     // ===== Attach event handlers
@@ -323,7 +316,7 @@ const ImageController = <PM extends ParameterModel, DataModel>({
           state={state}
           loopState={loopState}
           params={params}
-          draw={triggerRedraw}
+          draw={redraw}
           download={download}
           videoControls={!!sketch.config.enableLoopControls}
         />

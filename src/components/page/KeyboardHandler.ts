@@ -24,16 +24,17 @@ const keyActionDescriptions: Record<string, string> = {
   KeyU: 'Copy Shareable URL to Clipboard',
 };
 
-export default function KeyboardHandler(
-  state: ImageState,
-  loopState: LoopState,
-  params: Record<string, any>,
-  draw: () => void,
-  restart: () => void,
-  download: () => void,
-  toggleMenu: () => void,
-) {
+export default function KeyboardHandler(inputs: {
+  state: ImageState;
+  loopState: LoopState;
+  params: Record<string, any>;
+  redraw: () => void;
+  download: () => void;
+  toggleMenu: () => void;
+}) {
   return function handler(event: KeyboardEvent) {
+    const { state, loopState, params, redraw, download, toggleMenu } = inputs;
+
     // This line gets complaints from the TypeScript linter, but runs in the browser without fail.
     if (event.target && (<HTMLElement>event.target).localName === 'input') {
       return;
@@ -62,37 +63,37 @@ export default function KeyboardHandler(
 
       // ===== Randomize
       case 'Space':
-        // Space Bar - Randomize settings and draw a new image
+        // Space Bar - Randomize settings and redraw a new image
         state.random();
-        draw();
+        redraw();
         break;
       case 'KeyI':
         // I - random image seed
         state.randomImage();
-        draw();
+        redraw();
         break;
       case 'KeyC':
         // C - random color seed
         state.randomColor();
-        draw();
+        redraw();
         break;
 
       // ===== Arrow keys to navigate through image and color seeds
       case 'ArrowRight':
         state.nextImage();
-        draw();
+        redraw();
         break;
       case 'ArrowLeft':
         state.prevImage();
-        draw();
+        redraw();
         break;
       case 'ArrowUp':
         state.nextColor();
-        draw();
+        redraw();
         break;
       case 'ArrowDown':
         state.prevColor();
-        draw();
+        redraw();
         break;
 
       // ===== Animation Controls
@@ -102,7 +103,7 @@ export default function KeyboardHandler(
         break;
 
       case 'KeyR':
-        restart();
+        redraw();
         break;
 
       // ===== UI Controls
