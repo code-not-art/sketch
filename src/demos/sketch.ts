@@ -1,6 +1,6 @@
 import { Vec2, Utils } from '@code-not-art/core';
 import { PaletteType } from '../sketch/Config';
-import { Config, Sketch, SketchProps, Params } from '../sketch';
+import { Config, Sketch, SketchProps, Params, FrameData } from '../sketch';
 const { repeat } = Utils;
 
 const config = Config({
@@ -26,12 +26,9 @@ const parameters = {
 
 const initialData = {};
 
-const draw = ({
-  canvas,
-  rng,
-  palette,
-  params,
-}: SketchProps<typeof parameters, typeof initialData>) => {
+type Props = SketchProps<typeof parameters, typeof initialData>;
+
+const draw = ({ canvas, rng, palette, params }: Props) => {
   const canvasFill = params.canvasFill.value;
   const gridWidth = params.gridWidth.value;
   const circleFill = params.circleFill.value;
@@ -101,11 +98,11 @@ const draw = ({
   });
 };
 
-// const init = ({}: SketchProps<typeof parameters, typeof initialData>) => {};
+// const init = ({}: Props) => {};
 
-// const loop = ({}: SketchProps<typeof parameters, typeof initialData>, {}: FrameData): boolean => {};
+// const loop = ({}: Props, {}: FrameData): boolean => {};
 
-// const reset = ({}: SketchProps<typeof parameters, typeof initialData>) => {};
+// const reset = ({}: Props) => {};
 
 const Art = Sketch<typeof parameters, typeof initialData>({
   config,
