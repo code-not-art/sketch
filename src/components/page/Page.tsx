@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import ImageController from './ImageController';
-import { Sketch } from '../../sketch';
 
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
+import { ParameterModel, SketchDefinition } from 'sketch/Sketch';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
@@ -42,7 +42,11 @@ const ShadowFrameCanvas = styled.canvas`
   box-shadow: 0px 0px 34px 4px rgba(0, 0, 0, 0.7);
 `;
 
-const Page = ({ sketch }: { sketch: ReturnType<typeof Sketch> }) => {
+const Page = <PM extends ParameterModel, DataModel>({
+  sketch,
+}: {
+  sketch: SketchDefinition<PM, DataModel>;
+}) => {
   const canvasId = 'sketch-canvas';
   const downloaderId = 'canvas-downloader';
 
