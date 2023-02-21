@@ -1,6 +1,6 @@
 {
   "name": "@code-not-art/sketch",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Quick start framework for HTML Canvas sketches",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
