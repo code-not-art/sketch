@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import querystring from 'query-string';
 
 import { Canvas, Color } from '@code-not-art/core';
