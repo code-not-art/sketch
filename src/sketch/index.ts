@@ -9,3 +9,5 @@ export {
   RangeOptionsObject,
 } from './Params';
 export { default as Palette } from './Palette';
+
+export { PaletteType, ConfigInput } from './Config';
