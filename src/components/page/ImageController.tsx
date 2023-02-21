@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import querystring from 'query-string';
 
 import { Canvas, Color } from '@code-not-art/core';
@@ -36,6 +36,10 @@ const ImageController = <PM extends ParameterModel, DataModel>({
   sketch,
 }: ImageControllerProps<PM, DataModel>) => {
   const config = sketch.config;
+
+  // Mechanism for triggering react to render via a state change, used for getting our menus to redraw
+  const [, updateState] = React.useState<{}>(new Date());
+  const forceUpdate = React.useCallback(() => updateState({}), []);
 
   const [initialized, setInitialized] = useState<boolean>(false);
   const [showMenu, setShowMenu] = useState<boolean>(true);
@@ -95,10 +99,15 @@ const ImageController = <PM extends ParameterModel, DataModel>({
     canvas.canvas.style.width = newWidth + 'px';
   };
 
+  /**
+   * Redraw triggers the sketch to run for every time after the initial draw
+   * This runs the sketch.reset() code before the draw() function.
+   * The react state is forced to update to get the menu to re-render with the new sketch props.
+   */
   const redraw = () => {
     const sketchProps = getSketchProps();
     sketch.reset(sketchProps);
-    draw();
+    forceUpdate(); // will cause draw in the use effect
     loopState.restart();
   };
 
@@ -275,15 +284,16 @@ const ImageController = <PM extends ParameterModel, DataModel>({
 
   /**
    * Run on page load, hot reload, and every state update
+   * This triggers draw, so forcing state update will cause the sketch to draw
    */
   useEffect(() => {
     // ===== Attach event handlers
     resetEventHandlers();
 
-    // ===== Draw Sketch
+    // ===== Draw Sketch, only after initialization
     initialized && draw();
 
-    // ===== Run once only!
+    // ===== Run once only
     if (!initialized) {
       console.log('### ===== Sketch! ===== ###');
       // ===== Initialize Sketch
@@ -296,7 +306,6 @@ const ImageController = <PM extends ParameterModel, DataModel>({
       resize();
       getCanvas().set.size(config.width, config.height);
       sketch.init(getSketchProps());
-
       setInitialized(true);
     }
   });
