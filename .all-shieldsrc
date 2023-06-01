@@ -1,0 +1,35 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "shields": [
+    {
+      "id": "badges",
+      "badges": [
+        {
+          "url": "https://github.com/code-not-art/sketch/blob/main/LICENSE",
+          "title": "Code and Contributions License",
+          "platform": "shields",
+          "custom": "/github/license/code-not-art/sketch?color=%230bd611&style=for-the-badge"
+        },
+        {
+          "url": "https://github.com/code-not-art/sketch/blob/main/LICENSE",
+          "title": "NPM Version",
+          "platform": "shields",
+          "custom": "/npm/v/{{name}}?color=%23cb3837&style=for-the-badge&logo=npm",
+          "logo": "npm"
+        },
+        {
+          "url": "https://www.typescriptlang.org/",
+          "color": "blue",
+          "label": "language",
+          "message": "typescript",
+          "title": "Language: TypeScript",
+          "style": "for-the-badge",
+          "logo": "typescript",
+          "platform": "shields"
+        }
+      ]
+    }
+  ]
+}
