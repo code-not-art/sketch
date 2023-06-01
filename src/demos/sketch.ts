@@ -82,7 +82,7 @@ const draw = ({ canvas, rng, palette, params }: Props) => {
         .scale(circleRadius * 2)
         .add(rng.bool(chanceHidden) ? 0 : offset);
 
-      rng.push('skippable draw');
+      rng.push('draw masks');
       const hideMask = !rng.bool(chanceNoMask);
       hideMask &&
         canvas.draw.circle({
