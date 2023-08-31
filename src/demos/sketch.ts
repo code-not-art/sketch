@@ -1,6 +1,6 @@
-import { Vec2, Utils } from '@code-not-art/core';
+import { Utils, Vec2 } from '@code-not-art/core';
+import { Config, Params, Sketch, SketchProps } from '../sketch';
 import { PaletteType } from '../sketch/Config';
-import { Config, Sketch, SketchProps, Params, FrameData } from '../sketch';
 const { repeat } = Utils;
 
 const config = Config({
