@@ -55,7 +55,7 @@ const ImageController = <PM extends ParameterModel, DataModel>({
   const [loopState] = useState<LoopState>(new LoopState());
   const [sketchData] = useState<DataModel>(sketch.initialData);
 
-  const getSketchProps: () => SketchProps<PM, DataModel> = () => {
+  const getSketchProps = (): SketchProps<PM, DataModel> => {
     return {
       canvas: getCanvas(),
       params,
