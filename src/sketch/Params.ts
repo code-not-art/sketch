@@ -1,15 +1,17 @@
 import { Color } from '@code-not-art/core';
 
-export enum ParameterType {
-  Checkbox = 'checkbox',
-  Color = 'color',
-  Header = 'header',
-  Interval = 'interval',
-  MultiSelect = 'multiselect',
-  Range = 'range',
-  Select = 'select',
-  Text = 'string',
-}
+export const ParameterType = {
+  Checkbox: 'checkbox',
+  Color: 'color',
+  Header: 'header',
+  Interval: 'interval',
+  MultiSelect: 'multiselect',
+  Range: 'range',
+  Select: 'select',
+  Text: 'string',
+} as const;
+
+export type ParameterType = typeof ParameterType;
 
 type BaseParameter = {
   display: string;
@@ -18,37 +20,37 @@ type BaseParameter = {
 };
 
 type CheckboxParameter = BaseParameter & {
-  type: ParameterType.Checkbox;
+  type: ParameterType['Checkbox'];
   value: boolean;
 };
 type ColorParameter = BaseParameter & {
-  type: ParameterType.Color;
+  type: ParameterType['Color'];
   value: Color;
 };
 type HeaderParameter = BaseParameter & {
-  type: ParameterType.Header;
+  type: ParameterType['Header'];
 };
 type IntervalParameter = BaseParameter & {
-  type: ParameterType.Interval;
+  type: ParameterType['Interval'];
   options: RangeOptionsObject;
   values: [number, number];
 };
 type MultiSelectParameter = BaseParameter & {
-  type: ParameterType.MultiSelect;
+  type: ParameterType['MultiSelect'];
   values: Record<string, boolean>;
 };
 type RangeParameter = BaseParameter & {
-  type: ParameterType.Range;
+  type: ParameterType['Range'];
   options: RangeOptionsObject;
   value: number;
 };
 type SelectParameter = BaseParameter & {
-  type: ParameterType.Select;
+  type: ParameterType['Select'];
   options: string[];
   value: string;
 };
 type TextParameter = BaseParameter & {
-  type: ParameterType.Text;
+  type: ParameterType['Text'];
   value: string;
 };
 
