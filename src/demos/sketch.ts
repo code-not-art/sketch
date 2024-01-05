@@ -1,5 +1,5 @@
 import { Utils, Vec2 } from '@code-not-art/core';
-import { Config, Params, Sketch, SketchProps } from '../sketch';
+import { Config, ParameterModel, Params, Sketch, SketchProps } from '../sketch';
 import { PaletteType } from '../sketch/Config';
 const { repeat } = Utils;
 
@@ -22,7 +22,7 @@ const parameters = {
   darkenRange: Params.range('Darken Masks', 5, [0, 20]),
   lightenRange: Params.range('Lighten Masks', 0, [0, 20]),
   positionExponent: Params.range('Circle Position Spread', 1, [0, 5]),
-};
+} satisfies ParameterModel;
 
 const initialData = {};
 

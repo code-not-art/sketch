@@ -1,11 +1,5 @@
-import {
-  Config,
-  FrameData,
-  Sketch,
-  SketchProps,
-  Params,
-  Parameter,
-} from '../sketch';
+import { ParameterModel } from 'sketch/Sketch';
+import { Config, FrameData, Sketch, SketchProps, Params } from '../sketch';
 import { Constants, Gradient, Vec2, Utils } from '@code-not-art/core';
 const TAU = Constants.TAU;
 
@@ -14,15 +8,27 @@ const config = Config({
   menuDelay: 0,
 });
 
-const params: Parameter[] = [
-  Params.range('speed', 2, [0, 10]),
-  Params.range('rotationSpeed', 1, [0, 10]),
-  Params.range('dotSize', 0.04, [0.005, 0.2, 0.001]),
-  Params.range('dotCount', 24, [1, 89, 1]),
-  Params.range('twists', 5, [1, 8, 1]),
-];
+const params = {
+  speed: Params.range('speed', 2, [0, 10]),
+  rotationSpeed: Params.range('rotationSpeed', 1, [0, 10]),
+  dotSize: Params.range('dotSize', 0.04, [0.005, 0.2, 0.001]),
+  dotCount: Params.range('dotCount', 24, [1, 89, 1]),
+  twists: Params.range('twists', 5, [1, 8, 1]),
+} satisfies ParameterModel;
 
-const draw = ({ canvas, palette, data }: SketchProps) => {
+type Data = {
+  gradient?: Gradient;
+  angle: number;
+  absoluteAngle: number;
+};
+const initialData: Data = {
+  angle: 0,
+  absoluteAngle: 0,
+};
+
+type Props = SketchProps<typeof params, Data>;
+
+const draw = ({ canvas, palette, data }: Props) => {
   // One time setup instructions that we don't need to repeat every frame:
   canvas.transform.translate(canvas.get.size().scale(0.5));
 
@@ -32,22 +38,22 @@ const draw = ({ canvas, palette, data }: SketchProps) => {
   data.gradient = new Gradient(palette.colors[1], palette.colors[2]).loop();
 };
 
-const init = ({ palette, data }: SketchProps) => {
+const init = ({ data }: Props) => {
   data.angle = 0;
   data.absoluteAngle = 0;
 };
 
 const loop = (
-  { canvas, palette, rng, params, data }: SketchProps,
+  { canvas, palette, params, data }: Props,
   { frameTime }: FrameData,
 ) => {
-  const speed = params.speed as number;
-  const rotationSpeed = params.rotationSpeed as number;
-  const dotSize = params.dotSize as number;
-  const dotCount = params.dotCount as number;
-  const twists = params.twists as number;
+  const speed = params.speed.value;
+  const rotationSpeed = params.rotationSpeed.value;
+  const dotSize = params.dotSize.value;
+  const dotCount = params.dotCount.value;
+  const twists = params.twists.value;
 
-  const gradient = data.gradient as Gradient;
+  const gradient = data.gradient;
 
   canvas.fill(palette.colors[0]);
 
@@ -72,7 +78,7 @@ const loop = (
     canvas.draw.circle({
       center: circleOrigin,
       radius: canvas.get.minDim() * dotSize,
-      fill: gradient.at(i / (dotCount > 1 ? dotCount - 1 : 1)),
+      fill: gradient?.at(i / (dotCount > 1 ? dotCount - 1 : 1)),
     });
   });
   return false;
@@ -87,6 +93,7 @@ const Art = Sketch({
   init,
   loop,
   // reset,
+  initialData,
 });
 
 export default Art;
