@@ -1,5 +1,5 @@
 import React, { TouchEventHandler } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 const Button = styled.div`
   background-color: rgb(30, 30, 30, 0.7);

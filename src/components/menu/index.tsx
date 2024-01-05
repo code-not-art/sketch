@@ -1,24 +1,21 @@
-import React from 'react';
-import styled from 'styled-components';
+import { Color } from '@code-not-art/core';
 import { debounce } from 'lodash';
-import ControlPanel from 'react-control-panel';
-import {
+import ControlPanel, {
   Checkbox,
   Color as ColorControl,
   Interval,
-  Range,
-  Text,
-  Select,
   Multibox,
+  Range,
+  Select,
+  Text,
 } from 'react-control-panel';
-import { Color } from '@code-not-art/core';
-
-import CollapsibleSection from './CollapsibleSection';
-import { Parameter, ParameterType } from '../../sketch/Params';
-import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
-import ImageState from '../../components/page/ImageState';
-import SummarySection from './SummarySection';
-import { ParameterModel } from '../../sketch/Sketch';
+import { styled } from 'styled-components';
+import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants.js';
+import { Parameter, ParameterType } from '../../sketch/Params.js';
+import { ParameterModel } from '../../sketch/Sketch.js';
+import ImageState from '../state/ImageState.js';
+import CollapsibleSection from './CollapsibleSection.js';
+import SummarySection from './SummarySection.js';
 
 const FixedPositionWrapper = styled.div`
   position: fixed;
@@ -134,14 +131,14 @@ const renderSections = (sections: Section[]) => {
   );
 };
 
-type MenuProps<PM extends ParameterModel> = {
-  params: PM;
-  updateHandler: (property: string, value: any, updatedState: PM) => void;
+type MenuProps<Params extends ParameterModel> = {
+  params: Params;
+  updateHandler: (property: string, value: any, updatedState: Params) => void;
   debounce?: number;
   imageState: ImageState;
 };
 
-function Menu<PM extends ParameterModel>(props: MenuProps<PM>) {
+function Menu<Params extends ParameterModel>(props: MenuProps<Params>) {
   const debounceTime = props.debounce === undefined ? 25 : props.debounce;
   const debouncedUpdate = debounce(props.updateHandler, debounceTime);
 

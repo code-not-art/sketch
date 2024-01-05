@@ -1,14 +1,17 @@
 {
   "name": "@code-not-art/sketch",
-  "version": "0.9.4",
+  "version": "1.0.0",
   "description": "Quick start framework for HTML Canvas sketches",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "start": "parcel src/public/index.html",
-    "build-parcel": "parcel build src/public/index.html",
-    "build": "tsc --project tsconfig.module.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "vite --port 1234",
+    "build": "rm -rf ./dist && tsc --project tsconfig.package.json"
   },
   "repository": {
     "type": "git",
@@ -25,7 +28,6 @@
     "codenotart",
     "codeart"
   ],
-  "type": "module",
   "author": "Jon Eubank <joneubank@gmail.com>",
   "license": "GPL-3.0-or-later",
   "bugs": {
@@ -33,29 +35,28 @@
   },
   "homepage": "https://github.com/code-not-art/sketch#readme",
   "dependencies": {
-    "@code-not-art/core": "^0.6.0",
+    "@code-not-art/core": "^1.0.0",
     "jsurl": "^0.1.5",
     "lodash": "^4.17.21",
     "nice-color-palettes": "^3.0.0",
-    "query-string": "^7.0.1",
-    "react": "^17.0.2",
-    "react-control-panel": "^0.8.10",
-    "react-dom": "^17.0.2",
-    "react-feather": "^2.0.9",
+    "query-string": "^7.1.3",
+    "react": "^18.2.0",
+    "react-control-panel": "^0.10.2",
+    "react-dom": "^18.2.0",
+    "react-feather": "^2.0.10",
     "react-helmet": "^6.1.0",
-    "styled-components": "^5.3.1"
+    "styled-components": "^6.1.6"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.172",
-    "@types/node": "^16.7.10",
-    "@types/react": "^17.0.19",
-    "@types/react-dom": "^17.0.9",
-    "@types/react-helmet": "^6.1.2",
-    "@types/styled-components": "^5.1.13",
-    "parcel-bundler": "^1.12.5",
-    "react-hot-loader": "^4.13.0",
-    "ts-node": "^10.2.1",
-    "typescript": "^4.4.2"
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^20.10.6",
+    "@types/react": "^18.2.46",
+    "@types/react-dom": "^18.2.18",
+    "@types/react-helmet": "^6.1.11",
+    "@vitejs/plugin-react": "^4.2.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^4.9.5",
+    "vite": "^5.0.10"
   },
   "prettier": {
     "trailingComma": "all",

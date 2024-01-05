@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import ImageState from '../page/ImageState';
-import styled from 'styled-components';
-
-import CollapsibleSection from './CollapsibleSection';
+import { useEffect, useState } from 'react';
+import { styled } from 'styled-components';
+import ImageState from '../state/ImageState.js';
+import CollapsibleSection from './CollapsibleSection.js';
 
 const Row = styled.div`
   height: 20px;

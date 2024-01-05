@@ -1,20 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import querystring from 'query-string';
-
-import { Canvas, Color } from '@code-not-art/core';
-
-import { SketchProps } from '../../sketch';
-import KeyboardHandler from './KeyboardHandler';
-import ImageState from './ImageState';
-import ControlButtons from './controls';
-
-import Menu from '../menu';
-import LoopState from './LoopState';
-import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
-
-import { applyQuery } from './share';
-import { ParameterModel, SketchDefinition } from '../../sketch/Sketch';
-import { ParameterType } from '../../sketch/Params';
+import { Canvas, Color, Utils } from '@code-not-art/core';
 import {
   get,
   isArray,
@@ -23,18 +7,34 @@ import {
   isObjectLike,
   isString,
 } from 'lodash';
-import { clamp } from '@code-not-art/core/dist/utils';
+import querystring from 'query-string';
+import React, { useEffect, useState } from 'react';
+import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
+import { ParameterType } from '../sketch/Params.js';
+import { ParameterModel, SketchDefinition } from '../sketch/Sketch.js';
+import { SketchProps } from '../sketch/index.js';
+import Menu from './menu/index.js';
+import { ImageState, LoopState } from './state/index.js';
+import KeyboardHandler from './KeyboardHandler.js';
+import ControlButtons from './controls/index.js';
+import { applyQuery } from './share.js';
 
-type ImageControllerProps<PM extends ParameterModel, DataModel> = {
+type SketchControllerProps<
+  Params extends ParameterModel,
+  DataModel extends object,
+> = {
   canvasId: string;
   downloaderId: string;
-  sketch: SketchDefinition<PM, DataModel>;
+  sketch: SketchDefinition<Params, DataModel>;
 };
-const ImageController = <PM extends ParameterModel, DataModel>({
+const SketchController = <
+  Params extends ParameterModel,
+  DataModel extends object,
+>({
   canvasId,
   downloaderId,
   sketch,
-}: ImageControllerProps<PM, DataModel>) => {
+}: SketchControllerProps<Params, DataModel>) => {
   const config = sketch.config;
 
   // Mechanism for triggering react to render via a state change, used for getting our menus to redraw
@@ -51,17 +51,16 @@ const ImageController = <PM extends ParameterModel, DataModel>({
     new ImageState({ seed: config.seed, paletteType: config.paletteType }),
   );
   const [eventHandlers] = useState<any>({});
-  const [params] = useState<PM>({ ...sketch.params });
+  const [params] = useState<Params>({ ...sketch.params });
   const [loopState] = useState<LoopState>(new LoopState());
-  const [sketchData] = useState<DataModel>(sketch.initialData);
+  const [sketchData, setSketchData] = useState<DataModel>();
 
-  const getSketchProps: () => SketchProps<PM, DataModel> = () => {
+  const getSketchProps: () => SketchProps<Params> = () => {
     return {
       canvas: getCanvas(),
       params,
-      rng: state.getImageRng(),
+      rng: state.getRng(),
       palette: state.getPalette(),
-      data: sketchData,
     };
   };
 
@@ -101,20 +100,47 @@ const ImageController = <PM extends ParameterModel, DataModel>({
 
   /**
    * Redraw triggers the sketch to run for every time after the initial draw
-   * This runs the sketch.reset() code before the draw() function.
+   * This runs the sketch.reset() code before the draw() function. It also restarts the animation loop.
    * The react state is forced to update to get the menu to re-render with the new sketch props.
    */
   const redraw = () => {
     const sketchProps = getSketchProps();
-    sketch.reset(sketchProps);
+    if (!sketchData) {
+      console.warn(
+        `This code branch should not be visited regularly - this is emergency handling for a redraw before initial draw. Something may be going wrong if this is occuring on every draw.`,
+      );
+      const updatedSketchData = sketch.reset(
+        sketchProps,
+        sketch.init(sketchProps),
+      );
+      setSketchData(updatedSketchData);
+    } else {
+      const updatedSketchData = sketch.reset(sketchProps, sketchData);
+      setSketchData(updatedSketchData);
+    }
+
+    // setting the initialized sketch data should result in forced use effect run, so commenting the followign out
     forceUpdate(); // will cause draw in the use effect
     loopState.restart();
   };
 
   const getCanvas = () => {
     // Grab our canvas
-    const pageCanvas = document.getElementById(canvasId) as HTMLCanvasElement;
-    return new Canvas(pageCanvas);
+    const pageCanvas = document.getElementById(canvasId);
+    if (pageCanvas instanceof HTMLCanvasElement) {
+      return new Canvas(pageCanvas);
+    }
+
+    // We did not find a canvas where expected, throw an error instead.
+    // TODO: System to communicate that the canvas was not available to the sketch.
+    if (pageCanvas === null) {
+      throw new Error(
+        `Cannot render Sketch, Canvas with id '${canvasId}' is not found.`,
+      );
+    }
+    throw new Error(
+      `Cannot render Sketch, element with the expected id '${canvasId}' is not an HTML Canvas.`,
+    );
   };
 
   const draw = () => {
@@ -138,7 +164,7 @@ const ImageController = <PM extends ParameterModel, DataModel>({
     );
 
     state.startRender();
-    sketch.draw(getSketchProps());
+    sketchData !== undefined && sketch.draw(getSketchProps(), sketchData);
     state.stopRender();
 
     if (loopState.animationFrameRequest) {
@@ -146,8 +172,12 @@ const ImageController = <PM extends ParameterModel, DataModel>({
     }
 
     const animate = () => {
-      if (loopState.nextFrame()) {
-        loopState.finished = sketch.loop(getSketchProps(), loopState.frameData);
+      if (loopState.nextFrame() && sketchData !== undefined) {
+        loopState.finished = sketch.loop(
+          getSketchProps(),
+          sketchData,
+          loopState.frameData,
+        );
       }
       loopState.animationFrameRequest = window.requestAnimationFrame(animate);
     };
@@ -210,7 +240,7 @@ const ImageController = <PM extends ParameterModel, DataModel>({
   const controlPanelUpdateHandler = (
     property: string,
     value: any,
-    _updatedState: PM,
+    _updatedState: Params,
   ) => {
     // The menu provides two special inputs for 'image' and 'color'
     //  which we want to use on the user provided image and color seeds
@@ -259,7 +289,7 @@ const ImageController = <PM extends ParameterModel, DataModel>({
               break;
             case ParameterType.Range:
               if (isNumber(value)) {
-                param.value = clamp(value, param.options);
+                param.value = Utils.clamp(value, param.options);
               }
               break;
             case ParameterType.Select:
@@ -305,7 +335,8 @@ const ImageController = <PM extends ParameterModel, DataModel>({
 
       resize();
       getCanvas().set.size(config.width, config.height);
-      sketch.init(getSketchProps());
+      const initData = sketch.init(getSketchProps());
+      setSketchData(initData);
       setInitialized(true);
     }
   });
@@ -334,4 +365,4 @@ const ImageController = <PM extends ParameterModel, DataModel>({
   );
 };
 
-export default ImageController;
+export default SketchController;

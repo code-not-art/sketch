@@ -1,61 +1,95 @@
+import { Constants, Gradient, Utils, Vec2 } from '@code-not-art/core';
 import {
-  Config,
-  FrameData,
-  Sketch,
-  SketchProps,
-  Params,
-  Parameter,
-} from '../sketch';
-import { Constants, Gradient, Vec2, Utils } from '@code-not-art/core';
-const TAU = Constants.TAU;
+  ParameterModel,
+  SketchDraw,
+  SketchInit,
+  SketchLoop,
+  SketchReset,
+} from 'sketch/Sketch.js';
+import { Config, FrameData, Palette, Params, Sketch } from '../sketch/index.js';
+const { TAU } = Constants;
+const { clamp, repeat } = Utils;
+
+type SketchData = {
+  angle: number;
+  absoluteAngle: number;
+  gradient: Gradient;
+};
 
 const config = Config({
   enableLoopControls: true,
   menuDelay: 0,
 });
 
-const params: Parameter[] = [
-  Params.range('speed', 2, [0, 10]),
-  Params.range('rotationSpeed', 1, [0, 10]),
-  Params.range('dotSize', 0.04, [0.005, 0.2, 0.001]),
-  Params.range('dotCount', 24, [1, 89, 1]),
-  Params.range('twists', 5, [1, 8, 1]),
-];
+// Warning: Display Names must all be unique
+// TODO: Remove warning once we replace the control panel library
+const params = {
+  speed: Params.range('Speed', 2, [0, 10]),
+  rotationSpeed: Params.range('Rotation Speed', 1, [0, 10]),
+  dotSize: Params.range('Dot Size', 0.04, [0.005, 0.2, 0.001]),
+  dotCount: Params.range('Dot Count', 24, [1, 89, 1]),
+  twists: Params.range('Twists', 5, [1, 8, 1]),
+} satisfies ParameterModel;
 
-const draw = ({ canvas, palette, data }: SketchProps) => {
+const createGradient = (palette: Palette) =>
+  new Gradient(palette.colors[1], palette.colors[2]).loop();
+
+const init: SketchInit<typeof params, SketchData> = ({ palette }) => {
+  const data: SketchData = {
+    angle: 0,
+    absoluteAngle: 0,
+    gradient: createGradient(palette),
+  };
+  return data;
+};
+
+const reset: SketchReset<typeof params, SketchData> = ({ palette }, data) => {
+  // Keep position of animation, only update color gradient (if changed)
+  return { ...data, gradient: createGradient(palette) };
+
+  // If there were any canvas cleanup after the draw we could run that here in reset().
+  // If you want to preserve some data between runs, that can also be done here, though you would not have reproducible drawings then...
+  // Finally, if init is doing some expensive calculations upfront that you don't want to repeat on each draw, you can reference those results here instead of re-computing them.
+};
+
+type DataModel = {
+  gradient?: Gradient;
+  angle: number;
+  absoluteAngle: number;
+};
+const initialData: DataModel = {
+  angle: 0,
+  absoluteAngle: 0,
+};
+
+const draw: SketchDraw<typeof params, SketchData> = ({ canvas }, _data) => {
   // One time setup instructions that we don't need to repeat every frame:
   canvas.transform.translate(canvas.get.size().scale(0.5));
-
-  // define the gradient in the draw step so that when the color is updated the gradient is regenerated.
-  // if this is done in the init, the gradient won't be updated until the whole image is refreshed.
-  // if this is done in the loop, it will be regenerated every frame which is unnecessary work
-  data.gradient = new Gradient(palette.colors[1], palette.colors[2]).loop();
 };
 
-const init = ({ palette, data }: SketchProps) => {
-  data.angle = 0;
-  data.absoluteAngle = 0;
-};
-
-const loop = (
-  { canvas, palette, rng, params, data }: SketchProps,
+const loop: SketchLoop<typeof params, SketchData> = (
+  { canvas, palette, params },
+  data,
   { frameTime }: FrameData,
 ) => {
-  const speed = params.speed as number;
-  const rotationSpeed = params.rotationSpeed as number;
-  const dotSize = params.dotSize as number;
-  const dotCount = params.dotCount as number;
-  const twists = params.twists as number;
+  const speed = params.speed.value;
+  const rotationSpeed = params.rotationSpeed.value;
+  const dotSize = params.dotSize.value;
+  const dotCount = params.dotCount.value;
+  const twists = params.twists.value;
 
-  const gradient = data.gradient as Gradient;
+  const gradient = data.gradient;
 
   canvas.fill(palette.colors[0]);
 
-  data.angle += ((frameTime / 10000) * TAU * speed) / twists;
+  const nextAngle = data.angle + ((frameTime / 10000) * TAU * speed) / twists;
+  data.angle = nextAngle % TAU;
 
-  data.absoluteAngle += (frameTime / 10000) * TAU * rotationSpeed;
+  const nextAbsoluteAngle =
+    data.absoluteAngle + (frameTime / 10000) * TAU * rotationSpeed;
+  data.absoluteAngle = nextAbsoluteAngle % TAU;
 
-  Utils.repeat(dotCount, (i) => {
+  repeat(dotCount, (i) => {
     const repeatFraction = i / dotCount;
     const angle = data.angle + TAU * repeatFraction;
     const spinRadius = canvas.get.minDim() * 0.25;
@@ -78,15 +112,13 @@ const loop = (
   return false;
 };
 
-// const reset = ({}: SketchProps) => {};
-
-const Art = Sketch({
+const Art = Sketch<typeof params, SketchData>({
   config,
   params,
   draw,
   init,
   loop,
-  // reset,
+  reset,
 });
 
 export default Art;

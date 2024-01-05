@@ -1,13 +1,10 @@
 import { Canvas, Random } from '@code-not-art/core';
-import Palette from './Palette';
-import { ParameterModel } from './Sketch';
+import Palette from './Palette/index.js';
+import { ParameterModel } from './Sketch.js';
 
-type SketchProps<PM extends ParameterModel, DataModel> = {
+export type SketchProps<Params extends ParameterModel> = {
   canvas: Canvas;
   palette: Palette;
   rng: Random;
-  params: PM;
-  data: DataModel;
+  params: Params;
 };
-
-export default SketchProps;

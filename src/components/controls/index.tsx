@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
-  Pause,
-  Play,
-  PenTool,
   Image,
+  Pause,
+  PenTool,
+  Play,
   Save,
   Share2,
 } from 'react-feather';
-import styled from 'styled-components';
-import ImageState from '../ImageState';
-import LoopState from '../LoopState';
-import { shareViaUrl } from '../share';
-import ControlButton from './ControlButton';
+import { styled } from 'styled-components';
+import ImageState from '../state/ImageState.js';
+import LoopState from '../state/LoopState.js';
+import { shareViaUrl } from '../share.js';
+import ControlButton from './ControlButton.js';
 
 const FixedPositionMenu = styled.div`
   position: fixed;

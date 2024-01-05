@@ -1,8 +1,7 @@
-import { Random, Color, Utils } from '@code-not-art/core';
-import { PaletteType } from '../../sketch/Config';
-
-import phrase from '../../utils/phrase';
+import { Color, Random, Utils } from '@code-not-art/core';
 import niceColors from 'nice-color-palettes/1000';
+import { PaletteType } from '../../sketch/Config.js';
+import phrase from '../../utils/phrase.js';
 
 /**
  * Pallete

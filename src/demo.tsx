@@ -1,13 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { hot } from 'react-hot-loader';
-import sketch from './demos/sketch';
-// import sketch from './demos/loop';
-
-import App from './App';
-
-declare const module: any;
-export default hot(module)(App);
+import sketch from './demos/basic.js';
+import App from './App.js';
 
 const root = document.getElementById('root');
 

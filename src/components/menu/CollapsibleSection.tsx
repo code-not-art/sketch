@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { ChevronsDown } from 'react-feather';
 
 const SectionHeader = styled.div`
