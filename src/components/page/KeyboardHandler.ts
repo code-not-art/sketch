@@ -1,6 +1,6 @@
-import LoopState from './LoopState';
-import ImageState from './ImageState';
-import { shareViaUrl } from './share';
+import ImageState from '../state/ImageState.js';
+import LoopState from '../state/LoopState.js';
+import { shareViaUrl } from './share.js';
 
 const keyActionDescriptions: Record<string, string> = {
   KeyS: 'Saving Image',
@@ -45,10 +45,12 @@ export default function KeyboardHandler(inputs: {
       return;
     }
 
-    const actionDescriptionLog = keyActionDescriptions[event.code]
-      ? ` - ${keyActionDescriptions[event.code]}`
-      : '';
-    console.log(`[Page] Key: ${event.code}${actionDescriptionLog}`);
+    const eventDescriptionLog = keyActionDescriptions[event.code]
+      ? `${event.code} - ${keyActionDescriptions[event.code]}`
+      : undefined;
+    if (eventDescriptionLog) {
+      console.log(`Handling Key Press: ${eventDescriptionLog}`);
+    }
     switch (event.code) {
       // ===== Save
       case 'KeyS':

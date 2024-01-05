@@ -1,15 +1,15 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 
-import Page from './components/page';
-import { ParameterModel, SketchDefinition } from 'sketch/Sketch';
+import Page from './components/page/index.js';
+import { ParameterModel, SketchDefinition } from 'sketch/Sketch.js';
 
-const App = <PM extends ParameterModel, DataModel>({
+const App = <Params extends ParameterModel, DataModel extends object>({
   sketch,
   title = 'Code Sketch',
   description = 'HTML Canvas sketch made by code',
 }: {
-  sketch: SketchDefinition<PM, DataModel>;
+  sketch: SketchDefinition<Params, DataModel>;
   title?: string;
   description?: string;
 }) => {

@@ -1,6 +1,7 @@
-import { Vec2, Utils } from '@code-not-art/core';
-import { PaletteType } from '../sketch/Config';
-import { Config, Sketch, SketchProps, Params, FrameData } from '../sketch';
+import { Utils, Vec2 } from '@code-not-art/core';
+import { ParameterModel, SketchDraw, SketchInit } from 'sketch/Sketch.js';
+import { PaletteType } from '../sketch/Config.js';
+import { Config, Params, Sketch } from '../sketch/index.js';
 const { repeat } = Utils;
 
 const config = Config({
@@ -10,7 +11,7 @@ const config = Config({
 
 // Warning: Display Names must all be unique
 // TODO: Remove warning once we replace the control panel library
-const parameters = {
+const params = {
   sizeHeader: Params.header('Size and Scale'),
   canvasFill: Params.range('Image Fill', 0.76, [0.5, 1.1]),
   gridWidth: Params.range('Grid Size', 10, [1, 55, 1]),
@@ -22,13 +23,14 @@ const parameters = {
   darkenRange: Params.range('Darken Masks', 5, [0, 20]),
   lightenRange: Params.range('Lighten Masks', 0, [0, 20]),
   positionExponent: Params.range('Circle Position Spread', 1, [0, 5]),
-};
+} satisfies ParameterModel;
 
-const initialData = {};
+type SketchData = {};
 
-type Props = SketchProps<typeof parameters, typeof initialData>;
-
-const draw = ({ canvas, rng, palette, params }: Props) => {
+const draw: SketchDraw<typeof params, SketchData> = (
+  { canvas, rng, palette, params },
+  _data,
+) => {
   const canvasFill = params.canvasFill.value;
   const gridWidth = params.gridWidth.value;
   const circleFill = params.circleFill.value;
@@ -98,20 +100,21 @@ const draw = ({ canvas, rng, palette, params }: Props) => {
   });
 };
 
-// const init = ({}: Props) => {};
+const init: SketchInit<typeof params, SketchData> = () => {
+  return {};
+};
 
-// const loop = ({}: Props, {}: FrameData): boolean => {};
+// const loop: SketchLoop<typeof parameters, SketchData> = ({}: Props, data: SketchData, {}: FrameData): boolean => {};
 
-// const reset = ({}: Props) => {};
+// const reset: SketchReset<typeof parameters, SketchData> = ({}: Props) => {};
 
-const Art = Sketch<typeof parameters, typeof initialData>({
+const Art = Sketch<typeof params, SketchData>({
   config,
-  params: parameters,
-  initialData,
-  // reset,
-  // init,
+  params,
+  init,
   draw,
   // loop,
+  // reset,
 });
 
 export default Art;

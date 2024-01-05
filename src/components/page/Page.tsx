@@ -1,10 +1,8 @@
-import React from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
-import ImageController from './ImageController';
-
-import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants';
-import { ParameterModel, SketchDefinition } from 'sketch/Sketch';
+import { ParameterModel, SketchDefinition } from 'sketch/Sketch.js';
+import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants.js';
+import ImageController from './ImageController.js';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
@@ -42,21 +40,16 @@ const ShadowFrameCanvas = styled.canvas`
   box-shadow: 0px 0px 34px 4px rgba(0, 0, 0, 0.7);
 `;
 
-const Page = <PM extends ParameterModel, DataModel>({
+const Page = <Params extends ParameterModel, DataModel extends object>({
   sketch,
 }: {
-  sketch: SketchDefinition<PM, DataModel>;
+  sketch: SketchDefinition<Params, DataModel>;
 }) => {
   const canvasId = 'sketch-canvas';
   const downloaderId = 'canvas-downloader';
 
   return (
     <FullscreenWrapper>
-      <ImageController
-        sketch={sketch}
-        canvasId={canvasId}
-        downloaderId={downloaderId}
-      />
       <CanvasWrapper>
         <ShadowFrameCanvas
           data-download="placeholder"
@@ -64,6 +57,11 @@ const Page = <PM extends ParameterModel, DataModel>({
           data-canvas-refresh={new Date().toISOString()}
         ></ShadowFrameCanvas>
       </CanvasWrapper>
+      <ImageController
+        sketch={sketch}
+        canvasId={canvasId}
+        downloaderId={downloaderId}
+      />
       <a id={downloaderId} download=""></a>
     </FullscreenWrapper>
   );

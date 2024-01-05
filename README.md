@@ -1,25 +1,29 @@
 
-[![Code and Contributions License](https://img.shields.io/github/license/code-not-art/sketch?color=%230bd611&style=for-the-badge)](https://github.com/code-not-art/sketch/blob/main/LICENSE) [![NPM Version](https://img.shields.io/npm/v/@code-not-art/sketch?color=%23cb3837&style=for-the-badge&logo=npm)](https://github.com/code-not-art/sketch/blob/main/LICENSE) [![Language: TypeScript](https://img.shields.io/badge/language-typescript-blue.svg?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Code and Contributions License](https://img.shields.io/github/license/code-not-art/sketch?color=%230bd611&style=for-the-badge)](https://github.com/code-not-art/sketch/blob/main/LICENSE) [![NPM Version](https://img.shields.io/npm/v/@code-not-art/sketch?color=%23cb3837&style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@code-not-art/sketch) [![Language: TypeScript](https://img.shields.io/badge/language-typescript-blue.svg?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 # Sketch Framework
 
 Framework used to create a hot reloading canvas for art development using the [@code-not-art/core](https://github.com/code-not-art/core) canvas drawing library.
 
 While this runs as a standalone dev environment, it is used as the foundation for [@code-not-art/template](https://github.com/code-not-art/template) which provides a blank canvas to easily make your own generative works. If you are looking to write some code that makes some art, start there instead.
 
-## Quick Start
+## Running the Demo (Quick Start)
+
+This repository is managed with [pnpm](https://pnpm.io/). The following commands will probably work with your preferred package manager (by replacing `pnpm` in these commands with `npm` or `yarn`, as you prefer. 
+
+> Note for Contributers: If submitting changes with with updated dependencies, please install these with pnpm and provide the generated updates for the `pnpm-lock.yaml` file.
 
 1. **Clone** to your computer - [How To](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/adding-and-cloning-repositories/cloning-a-repository-from-github-to-github-desktop)
 
-1. Install dependencies with npm:
+1. Install dependencies with pnpm:
 
    ```
-   npm ci
+   pnpm i
    ```
 
 1. Start development server:
 
    ```
-   npm start
+   pnpm start
    ```
 
    The server will run on `localhost:1234`.

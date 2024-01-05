@@ -1,7 +1,7 @@
 import { Random } from '@code-not-art/core';
-import { PaletteType } from '../../sketch/Config';
-import { Palette } from '../../sketch';
-import phrase from '../../utils/phrase';
+import { PaletteType } from '../../sketch/Config.js';
+import { Palette } from '../../sketch/index.js';
+import phrase from '../../utils/phrase.js';
 
 type ImageStateParams = {
   seed?: string;
@@ -151,7 +151,7 @@ export default class ImageState {
     return this.palette;
   }
 
-  getImageRng(): Random {
+  getRng(): Random {
     return new Random('image rng', this.getImage());
   }
   private getColorRng(): Random {
