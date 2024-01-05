@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import sketch from './demos/sketch.js';
-// import sketch from './demos/loop';
+import sketch from './demos/basic.js';
 import App from './App.js';
 
 const root = document.getElementById('root');

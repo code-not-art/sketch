@@ -23,7 +23,6 @@
     "codenotart",
     "codeart"
   ],
-  "type": "module",
   "author": "Jon Eubank <joneubank@gmail.com>",
   "license": "GPL-3.0-or-later",
   "bugs": {

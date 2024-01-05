@@ -2,6 +2,7 @@ import { Utils, Vec2 } from '@code-not-art/core';
 import { ParameterModel, SketchDraw, SketchInit } from 'sketch/Sketch.js';
 import { PaletteType } from '../sketch/Config.js';
 import { Config, Params, Sketch } from '../sketch/index.js';
+
 const { repeat } = Utils;
 
 const config = Config({
