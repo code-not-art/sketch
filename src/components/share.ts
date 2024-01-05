@@ -1,5 +1,5 @@
 import JSURL from 'jsurl';
-import ImageState from '../state/ImageState.js';
+import ImageState from './state/ImageState.js';
 
 export function buildQueryString(
   state: ImageState,

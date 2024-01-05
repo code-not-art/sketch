@@ -1,8 +1,8 @@
 import { styled } from 'styled-components';
 
 import { ParameterModel, SketchDefinition } from 'sketch/Sketch.js';
-import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants.js';
-import ImageController from './ImageController.js';
+import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
+import SketchController from './SketchController.js';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
@@ -57,7 +57,7 @@ const Page = <Params extends ParameterModel, DataModel extends object>({
           data-canvas-refresh={new Date().toISOString()}
         ></ShadowFrameCanvas>
       </CanvasWrapper>
-      <ImageController
+      <SketchController
         sketch={sketch}
         canvasId={canvasId}
         downloaderId={downloaderId}

@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet';
 
-import Page from './components/page/index.js';
+import { FullPageSketch } from './components/index.js';
 import { ParameterModel, SketchDefinition } from 'sketch/Sketch.js';
 
 const App = <Params extends ParameterModel, DataModel extends object>({
@@ -18,7 +18,7 @@ const App = <Params extends ParameterModel, DataModel extends object>({
         <title>{title}</title>
         <meta name="description" content={description} />
       </Helmet>
-      <Page sketch={sketch}></Page>
+      <FullPageSketch sketch={sketch}></FullPageSketch>
     </>
   );
 };

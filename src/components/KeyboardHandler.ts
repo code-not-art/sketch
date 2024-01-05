@@ -1,5 +1,5 @@
-import ImageState from '../state/ImageState.js';
-import LoopState from '../state/LoopState.js';
+import ImageState from './state/ImageState.js';
+import LoopState from './state/LoopState.js';
 import { shareViaUrl } from './share.js';
 
 const keyActionDescriptions: Record<string, string> = {

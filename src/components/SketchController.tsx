@@ -9,17 +9,17 @@ import {
 } from 'lodash';
 import querystring from 'query-string';
 import React, { useEffect, useState } from 'react';
-import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants.js';
-import { ParameterType } from '../../sketch/Params.js';
-import { ParameterModel, SketchDefinition } from '../../sketch/Sketch.js';
-import { SketchProps } from '../../sketch/index.js';
-import Menu from '../menu/index.js';
-import { ImageState, LoopState } from '../state/index.js';
+import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
+import { ParameterType } from '../sketch/Params.js';
+import { ParameterModel, SketchDefinition } from '../sketch/Sketch.js';
+import { SketchProps } from '../sketch/index.js';
+import Menu from './menu/index.js';
+import { ImageState, LoopState } from './state/index.js';
 import KeyboardHandler from './KeyboardHandler.js';
 import ControlButtons from './controls/index.js';
 import { applyQuery } from './share.js';
 
-type ImageControllerProps<
+type SketchControllerProps<
   Params extends ParameterModel,
   DataModel extends object,
 > = {
@@ -27,14 +27,14 @@ type ImageControllerProps<
   downloaderId: string;
   sketch: SketchDefinition<Params, DataModel>;
 };
-const ImageController = <
+const SketchController = <
   Params extends ParameterModel,
   DataModel extends object,
 >({
   canvasId,
   downloaderId,
   sketch,
-}: ImageControllerProps<Params, DataModel>) => {
+}: SketchControllerProps<Params, DataModel>) => {
   const config = sketch.config;
 
   // Mechanism for triggering react to render via a state change, used for getting our menus to redraw
@@ -365,4 +365,4 @@ const ImageController = <
   );
 };
 
-export default ImageController;
+export default SketchController;

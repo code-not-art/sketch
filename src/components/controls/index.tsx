@@ -10,8 +10,8 @@ import {
   Share2,
 } from 'react-feather';
 import { styled } from 'styled-components';
-import ImageState from '../../state/ImageState.js';
-import LoopState from '../../state/LoopState.js';
+import ImageState from '../state/ImageState.js';
+import LoopState from '../state/LoopState.js';
 import { shareViaUrl } from '../share.js';
 import ControlButton from './ControlButton.js';
 
