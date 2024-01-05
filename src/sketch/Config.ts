@@ -1,4 +1,4 @@
-export type ConfigInput = {
+export type SketchConfigInput = {
   width?: number;
   height?: number;
   seed?: string;
@@ -10,12 +10,16 @@ export type ConfigInput = {
   paletteType?: PaletteType;
 };
 
-export enum PaletteType {
-  Random,
-  Curated,
-}
+export const PaletteType = {
+  Random: 'RANDOM',
+  Curated: 'CURATED',
+} as const;
 
-const Config = ({
+export type PaletteType = typeof PaletteType extends infer T
+  ? T[keyof T]
+  : never;
+
+export const SketchConfig = ({
   width = 1080,
   height = 1080,
   seed,
@@ -23,7 +27,7 @@ const Config = ({
   enableImageControls = true,
   enableLoopControls = false,
   paletteType = PaletteType.Random,
-}: ConfigInput) => {
+}: SketchConfigInput) => {
   return {
     width: width,
     height: height,
@@ -38,5 +42,3 @@ const Config = ({
     paletteType: paletteType,
   };
 };
-
-export default Config;

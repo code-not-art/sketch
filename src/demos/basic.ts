@@ -5,9 +5,9 @@ import {
   SketchLoop,
   SketchReset,
 } from 'sketch/Sketch.js';
-import { Sketch, Params, Config, FrameData } from '../index.js';
+import { FrameData, Params, Sketch, SketchConfig } from '../index.js';
 
-const config = Config({});
+const config = SketchConfig({});
 
 const params = {
   customOptions: Params.header('Custom Options'),

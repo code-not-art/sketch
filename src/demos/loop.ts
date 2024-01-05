@@ -6,7 +6,13 @@ import {
   SketchLoop,
   SketchReset,
 } from 'sketch/Sketch.js';
-import { Config, FrameData, Palette, Params, Sketch } from '../sketch/index.js';
+import {
+  FrameData,
+  Palette,
+  Params,
+  Sketch,
+  SketchConfig,
+} from '../sketch/index.js';
 const { TAU } = Constants;
 const { clamp, repeat } = Utils;
 
@@ -16,7 +22,7 @@ type SketchData = {
   gradient: Gradient;
 };
 
-const config = Config({
+const config = SketchConfig({
   enableLoopControls: true,
   menuDelay: 0,
 });

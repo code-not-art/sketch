@@ -1,7 +1,7 @@
-import { Parameter } from './Params.js';
-import Config, { ConfigInput } from './Config.js';
-import { SketchProps } from './SketchProps.js';
+import { SketchConfig, SketchConfigInput } from './Config.js';
 import { FrameData } from './FrameData.js';
+import { Parameter } from './Params.js';
+import { SketchProps } from './SketchProps.js';
 
 export type ParameterModel = Record<string, Parameter>;
 
@@ -35,7 +35,7 @@ export type SketchDefinition<
   Params extends ParameterModel,
   DataModel extends object,
 > = {
-  config: ReturnType<typeof Config>;
+  config: ReturnType<typeof SketchConfig>;
   params: Params;
   reset: SketchReset<Params, DataModel>;
   init: SketchInit<Params, DataModel>;
@@ -62,7 +62,7 @@ export type SketchInputs<
   Params extends ParameterModel,
   DataModel extends object,
 > = {
-  config?: ConfigInput;
+  config?: SketchConfigInput;
   params: Params;
   init: SketchInit<Params, DataModel>;
   draw?: SketchDraw<Params, DataModel>;
@@ -70,11 +70,11 @@ export type SketchInputs<
   reset?: SketchReset<Params, DataModel>;
 };
 
-function Sketch<Params extends ParameterModel, DataModel extends object>(
+export function Sketch<Params extends ParameterModel, DataModel extends object>(
   definition: SketchInputs<Params, DataModel>,
 ): SketchDefinition<Params, DataModel> {
   return {
-    config: Config(definition.config || {}),
+    config: SketchConfig(definition.config || {}),
     params: definition.params,
     init: definition.init,
     draw: definition.draw || defaultDraw,
@@ -82,5 +82,3 @@ function Sketch<Params extends ParameterModel, DataModel extends object>(
     reset: definition.reset || defaultReset,
   };
 }
-
-export default Sketch;

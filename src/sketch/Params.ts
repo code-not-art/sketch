@@ -193,7 +193,7 @@ const multiselect = (
   };
 };
 
-const Params = {
+export const Params = {
   checkbox,
   color,
   header,
@@ -202,5 +202,3 @@ const Params = {
   range,
   select,
 };
-
-export default Params;
