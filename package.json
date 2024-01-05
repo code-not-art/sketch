@@ -1,9 +1,14 @@
 {
   "name": "@code-not-art/sketch",
-  "version": "0.9.4",
+  "version": "1.0.0",
   "description": "Quick start framework for HTML Canvas sketches",
   "type": "module",
   "exports": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "start": "vite --port 1234",
     "build": "rm -rf ./dist && tsc --project tsconfig.package.json"
