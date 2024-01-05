@@ -1,6 +1,6 @@
 {
   "name": "@code-not-art/sketch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Quick start framework for HTML Canvas sketches",
   "type": "module",
   "exports": "./dist/index.js",
