@@ -28,9 +28,9 @@ This repository is managed with [pnpm](https://pnpm.io/). The following commands
 
    The server will run on `localhost:1234`.
 
-1. The page will render the sketch defined in `src/demos/sketch.ts`. Open this file your editor of choice and write your sketch there. The server will watch for changes to the file, drawing to the canvas on the browser whenever you save your work.
+1. The page will render the sketch defined in [`src/demos/basic.ts`](./src/demos/basic.ts). Open this file your editor of choice and write your sketch there. The server will watch for changes to the file, drawing to the canvas on the browser whenever you save your work.
 
-   Other demo sketches to play with are in that demos folder, but need to be imported into `src/demo.tsx` and added as a prop into the `App` element.
+> Other demo sketches to play with are in that demos folder, but need to be imported into `src/demo.tsx` and passed as a prop into the `App` element.
 
 ## Sketch Interface and Controls
 
