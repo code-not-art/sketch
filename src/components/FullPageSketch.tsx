@@ -1,8 +1,9 @@
 import { styled } from 'styled-components';
 
-import { ParameterModel, SketchDefinition } from 'sketch/Sketch.js';
+import { SketchDefinition } from 'sketch/index.js';
+import type { ControlPanelConfig } from '../control-panel/types/controlPanel.js';
 import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
-import SketchController from './SketchController.js';
+import { SketchController } from './SketchController.js';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
@@ -40,10 +41,13 @@ const ShadowFrameCanvas = styled.canvas`
   box-shadow: 0px 0px 34px 4px rgba(0, 0, 0, 0.7);
 `;
 
-const Page = <Params extends ParameterModel, DataModel extends object>({
+export const FullPageSketch = <
+  TControlPanel extends ControlPanelConfig<any>,
+  DataModel extends object,
+>({
   sketch,
 }: {
-  sketch: SketchDefinition<Params, DataModel>;
+  sketch: SketchDefinition<TControlPanel, DataModel>;
 }) => {
   const canvasId = 'sketch-canvas';
   const downloaderId = 'canvas-downloader';
@@ -66,5 +70,3 @@ const Page = <Params extends ParameterModel, DataModel extends object>({
     </FullscreenWrapper>
   );
 };
-
-export default Page;

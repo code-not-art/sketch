@@ -11,8 +11,11 @@ import ControlPanel, {
 } from 'react-control-panel';
 import { styled } from 'styled-components';
 import { MOBILE_WIDTH_BREAKPOINT } from '../../components/constants.js';
-import { Parameter, ParameterType } from '../../sketch/Params.js';
-import { ParameterModel } from '../../sketch/Sketch.js';
+import {
+  Parameter,
+  ParameterModel,
+  ParameterType,
+} from '../../sketch/params/index.js';
 import ImageState from '../state/ImageState.js';
 import CollapsibleSection from './CollapsibleSection.js';
 import SummarySection from './SummarySection.js';
@@ -81,8 +84,8 @@ const renderParam = (section: string) => (param: Parameter, index: number) => {
         <Interval
           key={elementKey}
           label={param.display}
-          min={param.options.min || Math.min(0, param.values[0])}
-          max={param.options.max || Math.max(1, param.values[1])}
+          min={param.options.min || Math.min(0, param.value[0])}
+          max={param.options.max || Math.max(1, param.value[1])}
           step={param.options.step || 0.01}
         ></Interval>
       );
@@ -94,8 +97,10 @@ const renderParam = (section: string) => (param: Parameter, index: number) => {
           options={param.options || []}
         />
       );
+    case ParameterType.Text:
+      return <Text key={elementKey} label={param.display} />;
     case ParameterType.MultiSelect:
-      const labels = Object.keys(param.values || {});
+      const labels = Object.keys(param.value || {});
       return (
         <Multibox
           key={elementKey}

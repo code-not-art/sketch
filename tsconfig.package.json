@@ -1,6 +1,6 @@
 {
-  "include": ["src"],
-  "exclude": ["./src/demo.tsx", "./src/demos"],
+  "include": ["./src"],
+  "exclude": ["./src/demo.tsx", "./src/demos", "./src/stories", "./src/test"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "compilerOptions": {
     "jsx": "react-jsx",
