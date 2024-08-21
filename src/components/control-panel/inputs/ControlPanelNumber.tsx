@@ -38,7 +38,7 @@ export const ControlPanelNumber = (props: {
           <StyledInput
             className=" w-full mt-1"
             value={internalValue}
-            onChange={(e) => e !== null && changeHandler(e)}
+            onChange={(e) => e.value !== null && changeHandler(e.value)}
             min={parameter.min}
             max={parameter.max}
             step={parameter.step * 5}

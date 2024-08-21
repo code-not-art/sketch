@@ -4,7 +4,7 @@ import {
   SketchInit,
   SketchLoop,
   SketchReset,
-} from 'sketch/Sketch.js';
+} from '../sketch/Sketch.js';
 import { repeat } from '../../../core/dist/utils/arrays.js';
 import { Parameters } from '../control-panel/Parameters.js';
 import type { ControlPanelElement } from '../control-panel/types/controlPanel.js';
@@ -38,7 +38,6 @@ type SketchData = typeof data;
 const init: SketchInit<SketchControls, SketchData> = ({ rng }) => {
   console.log('Initializing Sketch...');
 
-  console.log('init context', rng.getContext().count);
   return {};
 };
 
@@ -64,7 +63,6 @@ const draw: SketchDraw<SketchControls, SketchData> = ({
   rng,
 }) => {
   console.log('Drawing Sketch...');
-  console.log('draw context', rng.getContext(), palette.rng.getContext());
   // Random canvas background color
   canvas.fill('white');
   // canvas.fill(palette.colors[0]);

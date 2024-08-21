@@ -10,7 +10,7 @@ dependencies:
     version: 5.11.0(@types/react@18.2.46)(react-dom@18.2.0)(react@18.2.0)
   '@code-not-art/core':
     specifier: ^1.0.0
-    version: link:../core
+    version: 1.0.0
   jsurl:
     specifier: ^0.1.5
     version: 0.1.5
@@ -66,10 +66,10 @@ devDependencies:
     version: 7.6.7(@types/react-dom@18.2.18)(@types/react@18.2.46)(react-dom@18.2.0)(react@18.2.0)
   '@storybook/react':
     specifier: ^7.6.7
-    version: 7.6.7(react-dom@18.2.0)(react@18.2.0)(typescript@4.9.5)
+    version: 7.6.7(react-dom@18.2.0)(react@18.2.0)(typescript@5.5.4)
   '@storybook/react-vite':
     specifier: ^7.6.7
-    version: 7.6.7(react-dom@18.2.0)(react@18.2.0)(typescript@4.9.5)(vite@5.0.10)
+    version: 7.6.7(react-dom@18.2.0)(react@18.2.0)(typescript@5.5.4)(vite@5.0.10)
   '@storybook/test':
     specifier: ^7.6.7
     version: 7.6.7(vitest@1.1.3)
@@ -99,10 +99,10 @@ devDependencies:
     version: 7.6.7
   ts-node:
     specifier: ^10.9.2
-    version: 10.9.2(@types/node@20.10.6)(typescript@4.9.5)
+    version: 10.9.2(@types/node@20.10.6)(typescript@5.5.4)
   typescript:
-    specifier: ^4.9.5
-    version: 4.9.5
+    specifier: ^5.5.0
+    version: 5.5.4
   vite:
     specifier: ^5.0.10
     version: 5.0.10(@types/node@20.10.6)
@@ -1471,6 +1471,18 @@ packages:
       tslib: 2.6.3
     dev: false
 
+  /@code-not-art/core@1.0.0:
+    resolution: {integrity: sha512-rEUHtWBTOf52JWGcrO1wmo51JjR91pzWtlF+ZUjzuECpZwlCvBEwylOb90F8XV26y32y68OVSt8glP5+IcWOaw==}
+    dependencies:
+      a-set-of-english-words: 1.0.0
+      fractal-noise: 1.2.0
+      lodash: 4.17.21
+      open-simplex-noise: 2.5.0
+      seed-random: 2.2.0
+      tinycolor2: 1.6.0
+      wink-pos-tagger: 2.2.2
+    dev: false
+
   /@colors/colors@1.5.0:
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
     engines: {node: '>=0.1.90'}
@@ -2030,7 +2042,7 @@ packages:
       chalk: 4.1.2
     dev: true
 
-  /@joshwooding/vite-plugin-react-docgen-typescript@0.3.0(typescript@4.9.5)(vite@5.0.10):
+  /@joshwooding/vite-plugin-react-docgen-typescript@0.3.0(typescript@5.5.4)(vite@5.0.10):
     resolution: {integrity: sha512-2D6y7fNvFmsLmRt6UCOFJPvFoPMJGT0Uh1Wg0RaigUp7kdQPs6yYn8Dmx6GZkOH/NW0yMTwRz/p0SRMMRo50vA==}
     peerDependencies:
       typescript: '>= 4.3.x'
@@ -2042,8 +2054,8 @@ packages:
       glob: 7.2.3
       glob-promise: 4.2.2(glob@7.2.3)
       magic-string: 0.27.0
-      react-docgen-typescript: 2.2.2(typescript@4.9.5)
-      typescript: 4.9.5
+      react-docgen-typescript: 2.2.2(typescript@5.5.4)
+      typescript: 5.5.4
       vite: 5.0.10(@types/node@20.10.6)
     dev: true
 
@@ -3053,7 +3065,7 @@ packages:
       - supports-color
     dev: true
 
-  /@storybook/builder-vite@7.6.7(typescript@4.9.5)(vite@5.0.10):
+  /@storybook/builder-vite@7.6.7(typescript@5.5.4)(vite@5.0.10):
     resolution: {integrity: sha512-Sv+0ROFU9k+mkvIPsPHC0lkKDzBeMpvfO9uFRl1RDSsXBfcPPZKNo5YK7U7fOhesH0BILzurGA+U/aaITMSZ9g==}
     peerDependencies:
       '@preact/preset-vite': '*'
@@ -3084,7 +3096,7 @@ packages:
       fs-extra: 11.2.0
       magic-string: 0.30.5
       rollup: 3.29.4
-      typescript: 4.9.5
+      typescript: 5.5.4
       vite: 5.0.10(@types/node@20.10.6)
     transitivePeerDependencies:
       - encoding
@@ -3436,7 +3448,7 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: true
 
-  /@storybook/react-vite@7.6.7(react-dom@18.2.0)(react@18.2.0)(typescript@4.9.5)(vite@5.0.10):
+  /@storybook/react-vite@7.6.7(react-dom@18.2.0)(react@18.2.0)(typescript@5.5.4)(vite@5.0.10):
     resolution: {integrity: sha512-1cBpxVZ4vLO5rGbhTBNR2SjL+ZePCUAEY+I31tbORYFAoOKmlsNef4fRLnXJ9NYUAyjwZpUmbW0cIxxOFk7nGA==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -3444,10 +3456,10 @@ packages:
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
       vite: ^3.0.0 || ^4.0.0 || ^5.0.0
     dependencies:
-      '@joshwooding/vite-plugin-react-docgen-typescript': 0.3.0(typescript@4.9.5)(vite@5.0.10)
+      '@joshwooding/vite-plugin-react-docgen-typescript': 0.3.0(typescript@5.5.4)(vite@5.0.10)
       '@rollup/pluginutils': 5.1.0
-      '@storybook/builder-vite': 7.6.7(typescript@4.9.5)(vite@5.0.10)
-      '@storybook/react': 7.6.7(react-dom@18.2.0)(react@18.2.0)(typescript@4.9.5)
+      '@storybook/builder-vite': 7.6.7(typescript@5.5.4)(vite@5.0.10)
+      '@storybook/react': 7.6.7(react-dom@18.2.0)(react@18.2.0)(typescript@5.5.4)
       '@vitejs/plugin-react': 3.1.0(vite@5.0.10)
       magic-string: 0.30.5
       react: 18.2.0
@@ -3463,7 +3475,7 @@ packages:
       - vite-plugin-glimmerx
     dev: true
 
-  /@storybook/react@7.6.7(react-dom@18.2.0)(react@18.2.0)(typescript@4.9.5):
+  /@storybook/react@7.6.7(react-dom@18.2.0)(react@18.2.0)(typescript@5.5.4):
     resolution: {integrity: sha512-uT9IBPDM1SQg6FglWqb7IemOJ1Z8kYB5rehIDEDToi0u5INihSY8rHd003TxG4Wx4REp6J+rfbDJO2aVui/gxA==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
@@ -3496,7 +3508,7 @@ packages:
       react-element-to-jsx-string: 15.0.0(react-dom@18.2.0)(react@18.2.0)
       ts-dedent: 2.2.0
       type-fest: 2.19.0
-      typescript: 4.9.5
+      typescript: 5.5.4
       util-deprecate: 1.0.2
     transitivePeerDependencies:
       - encoding
@@ -4079,6 +4091,10 @@ packages:
       '@types/emscripten': 1.39.10
       tslib: 1.14.1
     dev: true
+
+  /a-set-of-english-words@1.0.0:
+    resolution: {integrity: sha512-Bif470MjWbHSIvJ1m5+hbNXOWRXOv44+QLW0JPwpXmejjpnNvWZ7INi7EHbAjPOfn80/93NnZmCJlv8JHWdgKg==}
+    dev: false
 
   /accepts@1.3.8:
     resolution: {integrity: sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==}
@@ -5083,7 +5099,6 @@ packages:
 
   /emoji-regex@9.2.2:
     resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
-    dev: true
 
   /encodeurl@1.0.2:
     resolution: {integrity: sha512-TPJXq8JqFaVYm2CWmPvnP2Iyo4ZSM7/QKcSmuMLDObfpH5fi7RUGmd/rTDf+rut/saiDiQEeVTNgAmJEdAOx0w==}
@@ -5493,6 +5508,10 @@ packages:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
     dev: true
+
+  /fractal-noise@1.2.0:
+    resolution: {integrity: sha512-H1B2d45cSDSlIsy+dA5/kpiTsHG4EEGQCt9jlWXj8o4Hq0vMXQ4MEVYHJPTYU4ehaSe9NwX0j1VEMfWCcfS4UA==}
+    dev: false
 
   /fresh@0.5.2:
     resolution: {integrity: sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=}
@@ -6931,6 +6950,10 @@ packages:
       mimic-fn: 4.0.0
     dev: true
 
+  /open-simplex-noise@2.5.0:
+    resolution: {integrity: sha512-co7x8uWxGcgFtsJNBFqI9ylq+5Isotz2hZR7dsD5Sl+RDPGBeMEG41KAfF+5gF10ksi9Pg6DNpMHEoyTKLbejQ==}
+    dev: false
+
   /open@8.4.2:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
@@ -7405,12 +7428,12 @@ packages:
       tween-functions: 1.2.0
     dev: true
 
-  /react-docgen-typescript@2.2.2(typescript@4.9.5):
+  /react-docgen-typescript@2.2.2(typescript@5.5.4):
     resolution: {integrity: sha512-tvg2ZtOpOi6QDwsb3GZhOjDkkX0h8Z2gipvTg6OVMUyoYoURhEiRNePT8NZItTVCDh39JJHnLdfCOkzoLbFnTg==}
     peerDependencies:
       typescript: '>= 4.3.x'
     dependencies:
-      typescript: 4.9.5
+      typescript: 5.5.4
     dev: true
 
   /react-docgen@7.0.1:
@@ -7844,6 +7867,10 @@ packages:
     resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
     dependencies:
       loose-envify: 1.4.0
+
+  /seed-random@2.2.0:
+    resolution: {integrity: sha512-34EQV6AAHQGhoc0tn/96a9Fsi6v2xdqe/dMUwljGRaFOzR3EgRmECvD0O8vi8X+/uQ50LGHfkNu/Eue5TPKZkQ==}
+    dev: false
 
   /semver@5.7.2:
     resolution: {integrity: sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==}
@@ -8308,6 +8335,10 @@ packages:
     resolution: {integrity: sha512-65NKvSuAVDP/n4CqH+a9w2kTlLReS9vhsAP06MWx+/89nMinJyB2icyl58RIcqCmIggpojIGeuJGhjU1aGMBSg==}
     dev: true
 
+  /tinycolor2@1.6.0:
+    resolution: {integrity: sha512-XPaBkWQJdsf3pLKJV9p4qN/S+fm2Oj8AIPo1BTUhg5oxkvm9+SVEGFdhyOz7tTdUTfvxMiAs4sp6/eZO2Ew+pw==}
+    dev: false
+
   /tinypool@0.8.1:
     resolution: {integrity: sha512-zBTCK0cCgRROxvs9c0CGK838sPkeokNGdQVUUwHAbynHFlmyJYj825f/oRs528HaIJ97lo0pLIlDUzwN+IorWg==}
     engines: {node: '>=14.0.0'}
@@ -8357,7 +8388,7 @@ packages:
     engines: {node: '>=6.10'}
     dev: true
 
-  /ts-node@10.9.2(@types/node@20.10.6)(typescript@4.9.5):
+  /ts-node@10.9.2(@types/node@20.10.6)(typescript@5.5.4):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
     hasBin: true
     peerDependencies:
@@ -8383,7 +8414,7 @@ packages:
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.9.5
+      typescript: 5.5.4
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true
@@ -8440,9 +8471,9 @@ packages:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
     dev: true
 
-  /typescript@4.9.5:
-    resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
-    engines: {node: '>=4.2.0'}
+  /typescript@5.5.4:
+    resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
+    engines: {node: '>=14.17'}
     hasBin: true
     dev: true
 
@@ -8860,6 +8891,41 @@ packages:
       siginfo: 2.0.0
       stackback: 0.0.2
     dev: true
+
+  /wink-helpers@2.0.0:
+    resolution: {integrity: sha512-I/ZzXrHcNRXuoeFJmp2vMVqDI6UCK02Tds1WP4kSGAmx520gjL1BObVzF7d2ps24tyHIly9ngdB2jwhlFUjPvg==}
+    dev: false
+
+  /wink-lemmatizer@3.0.4:
+    resolution: {integrity: sha512-EdLJfy1xLF2ze2cp9Z3qiEWjiq+V8ZVRWiWooCXTXR0AyPxY8ezm4E0puJ0yIj5szzED9tcXV2U7RboaGvboFw==}
+    dependencies:
+      wink-lexicon: 2.2.0
+      wink-porter2-stemmer: 2.0.1
+    dev: false
+
+  /wink-lexicon@2.2.0:
+    resolution: {integrity: sha512-QIuHS9r/HV6q3PCCz6pymg4gbsryW9wDk8CHdU+sDn0kJcHpECNDIcdY0Q/mZpqxtFLp9dzIw7pjcStLBbGZGg==}
+    dev: false
+
+  /wink-porter2-stemmer@2.0.1:
+    resolution: {integrity: sha512-0g+RkkqhRXFmSpJQStVXW5N/WsshWpJXsoDRW7DwVkGI2uDT6IBCoq3xdH5p6IHLaC6ygk7RWUsUx4alKxoagQ==}
+    dev: false
+
+  /wink-pos-tagger@2.2.2:
+    resolution: {integrity: sha512-+bhkwqwwChqWR75ksFKVJZQagwu404UmnvFjxr+OWZ02/ZJAv19N/iqDpMeYRQRxatk5N+W9pXIKEDJsVrzGyw==}
+    dependencies:
+      wink-helpers: 2.0.0
+      wink-lemmatizer: 3.0.4
+      wink-lexicon: 2.2.0
+      wink-porter2-stemmer: 2.0.1
+      wink-tokenizer: 5.3.0
+    dev: false
+
+  /wink-tokenizer@5.3.0:
+    resolution: {integrity: sha512-O/yAw0g3FmSgeeQuYAJJfP7fVPB4A6ay0018qASh79aWmIOyPYy4j4r9EQT8xBjicja6lCLvgRVAybmEBaATQA==}
+    dependencies:
+      emoji-regex: 9.2.2
+    dev: false
 
   /wordwrap@1.0.0:
     resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}

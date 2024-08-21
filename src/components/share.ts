@@ -1,9 +1,5 @@
 import JSURL from 'jsurl';
 import ImageState from './state/ImageState.js';
-import type {
-  ControlPanelConfig,
-  ControlPanelParameterValues,
-} from '../control-panel/types/controlPanel.js';
 
 export function buildQueryString(
   state: ImageState,

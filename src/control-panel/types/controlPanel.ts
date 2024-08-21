@@ -25,21 +25,6 @@ export type ControlPanelParameterValue<T extends ControlPanelParameter> =
     ? ControlPanelValueNumber
     : never;
 
-// export type ControlPanelParameterValues<
-//   TSection extends ControlPanelConfig<any>,
-// > = TSection['elements'] extends infer TElements
-//   ? TElements extends Record<string, ControlPanelElement<any>>
-//     ? {
-//         [TKey in keyof TElements]: TElements[TKey] extends infer TValue
-//           ? TValue extends ControlPanelParameter
-//             ? ControlPanelParameterValue<TValue>
-//             : TValue extends ControlPanelConfig<any>
-//             ? ControlPanelParameterValues<TValue>
-//             : never
-//           : never;
-//       }
-//     : never
-//   : never;
 export type ControlPanelParameterValues<
   TSection extends ControlPanelConfig<any>,
 > = {

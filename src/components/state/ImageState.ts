@@ -156,7 +156,6 @@ export default class ImageState {
   }
 
   restartRng(): void {
-    console.log('restart rng');
     this.regenPalette();
     this.regenRng();
   }

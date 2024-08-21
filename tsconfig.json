@@ -1,5 +1,6 @@
 {
-  "references": [{ "path": "./tsconfig.base.json" }],
+  "include": ["./src", "vite.config.ts"],
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
 

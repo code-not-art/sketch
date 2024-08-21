@@ -184,14 +184,6 @@ export const SketchController = <
     //      when this is run, the canvas bitmap content is lost, so do not do this in the resize loop.
     sketchProps.canvas.set.size(config.width, config.height);
 
-    console.log(
-      'Draw sketch with state:',
-      state.getImage(),
-      '-',
-      state.getColor(),
-      params.data,
-    );
-
     state.startRender();
     // Dangerous casting, requires that we are confident the init pass has completed by this point
     sketchData !== undefined &&

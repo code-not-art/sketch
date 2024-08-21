@@ -13,8 +13,6 @@ export const SeedMenu = (props: {
   state: ImageState;
   onChange: (updatedState: { image: string; color: string }) => void;
 }) => {
-  console.log('jno - rendering seedmenu');
-
   const [image, setImage] = useState(props.state.userImageSeed || '');
   const [color, setColor] = useState(props.state.userColorSeed || '');
   const [, _forceUpdate] = useState<void>();

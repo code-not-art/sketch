@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet';
 
-import { SketchDefinition } from 'sketch/index.js';
+import { SketchDefinition } from './sketch/index.js';
 import { FullPageSketch } from './components/index.js';
 import type {
   ControlPanelConfig,

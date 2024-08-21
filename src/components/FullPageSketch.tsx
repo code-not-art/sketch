@@ -1,9 +1,9 @@
 import { styled } from 'styled-components';
 
-import { SketchDefinition } from 'sketch/index.js';
 import type { ControlPanelElement } from '../control-panel/types/controlPanel.js';
 import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
 import { SketchController } from './SketchController.js';
+import type { SketchDefinition } from '../sketch/Sketch.js';
 
 const FullscreenWrapper = styled.div`
   height: 100%;

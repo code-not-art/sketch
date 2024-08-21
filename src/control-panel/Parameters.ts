@@ -6,13 +6,13 @@ import type {
   ControlPanelParameterValues,
 } from './types/controlPanel.js';
 import type {
+  ControlPanelParameter,
   ControlPanelParameterBaseConfig,
   ControlPanelParameterNumber,
   ControlPanelParameterNumberConfig,
   ControlPanelParameterString,
   ControlPanelParameterStringConfig,
   ControlPanelParameterType,
-  ControlPanelParameter,
 } from './types/parameters.js';
 
 const withDefault = <T>(value: T | undefined, defaultValue: T): T =>
