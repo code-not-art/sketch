@@ -1,34 +1,34 @@
 # Sketch Control Panel
 
 - [ ] set of UI input controllers for different value types
-	- [ ] free text
+	- [x] free text
 	- [ ] option selection
 	- [ ] numeric
-		- [ ] free text entry
-		- [ ] incrementing (+/- incremental buttons)
-		- [ ] slider
-			- [ ] min, max, step size
+		- [x] free text entry
+		- [x] incrementing (+/- incremental buttons)
+		- [x] slider
+			- [x] min, max, step size
 			- [ ] interval (high and low selections)
 			- [ ] multiple items on slider, options for maintaining order
 	- [ ] color
 		- [ ] single
 		- [ ] palette
 		- [ ] gradient
-- [ ] parameter definition
-	- [ ] data type
+- [x] parameter definition
+	- [x] data type
 		- this should indicate which ui component to use
 		- it will also define which optional properties are used in the parameter definition, ex. for number it can allow or block free text entry, incrementing buttons, step size of slider, etc.
-	- [ ] optional configurations
-	- [ ] default value
-	- [ ] display information
-		- [ ] label
-		- [ ] description
-- [ ] Context
-	- [ ] input is a data structure which includes the definition of all of the paremeters that it will control, including display structure
-- [ ] Control Panel
+	- [x] optional configurations
+	- [x] default value
+	- [x] display information
+		- [x] label
+		- [x] description
+- [x] Context
+	- [x] input is a data structure which includes the definition of all of the paremeters that it will control, including display structure
+- [x] Control Panel
 	- react component that will render controls for the paremeters defined in context
-	- [ ] The control panel will render all the ui components for the paremeters provided by context
-	- [ ] changes made on the control panel will update the parameter current values in context
+	- [x] The control panel will render all the ui components for the paremeters provided by context
+	- [x] changes made on the control panel will update the parameter current values in context
 	- [ ] Needs hooks for updating/controlling parameters and modifying the controller state
 		- example of this are the image seeds which need to be randomly generated and controlled by keyboard inputs, but can be manually set by the user through the controller as well
 

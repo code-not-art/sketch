@@ -37,8 +37,9 @@ export type ControlPanelParameterString = ParameterTemplate<
 >;
 
 export type ControlPanelParameterNumberConfig = {
-  min?: number;
-  max?: number;
+  min: number;
+  max: number;
+  step: number;
 };
 export type ControlPanelValueNumber = number;
 export type ControlPanelParameterNumber = ParameterTemplate<

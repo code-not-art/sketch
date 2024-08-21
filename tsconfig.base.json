@@ -1,0 +1,33 @@
+{
+  "include": ["./src", "vite.config.ts"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "NodeNext",
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "moduleResolution": "NodeNext",
+    "isolatedModules": true,
+
+    "outDir": "./dist",
+    "declaration": true /* Generates corresponding '.d.ts' file. */,
+    "sourceMap": true,
+
+    "strict": true,
+    "paths": {
+      "react-control-panel": ["./src/types/react-control-panel.d.ts"],
+      "nice-color-palettes/1000": ["./src/types/nice-color-palettes/1000.d.ts"],
+      "jsurl": ["./src/types/jsurl.d.ts"]
+    },
+
+    "esModuleInterop": true,
+
+    /* Advanced Options */
+    "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
+    "resolveJsonModule": true,
+
+    "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
+    "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */
+  }
+}

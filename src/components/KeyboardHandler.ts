@@ -28,12 +28,21 @@ export default function KeyboardHandler(inputs: {
   state: ImageState;
   loopState: LoopState;
   params: Record<string, any>;
+  onStateChange: () => void;
   redraw: () => void;
   download: () => void;
   toggleMenu: () => void;
 }) {
   return function handler(event: KeyboardEvent) {
-    const { state, loopState, params, redraw, download, toggleMenu } = inputs;
+    const {
+      state,
+      loopState,
+      params,
+      onStateChange,
+      redraw,
+      download,
+      toggleMenu,
+    } = inputs;
 
     // This line gets complaints from the TypeScript linter, but runs in the browser without fail.
     if (event.target && (<HTMLElement>event.target).localName === 'input') {
@@ -67,34 +76,41 @@ export default function KeyboardHandler(inputs: {
       case 'Space':
         // Space Bar - Randomize settings and redraw a new image
         state.random();
+        onStateChange();
         redraw();
         break;
       case 'KeyI':
         // I - random image seed
         state.randomImage();
+        onStateChange();
         redraw();
         break;
       case 'KeyC':
         // C - random color seed
         state.randomColor();
+        onStateChange();
         redraw();
         break;
 
       // ===== Arrow keys to navigate through image and color seeds
       case 'ArrowRight':
         state.nextImage();
+        onStateChange();
         redraw();
         break;
       case 'ArrowLeft':
         state.prevImage();
+        onStateChange();
         redraw();
         break;
       case 'ArrowUp':
         state.nextColor();
+        onStateChange();
         redraw();
         break;
       case 'ArrowDown':
         state.prevColor();
+        onStateChange();
         redraw();
         break;
 

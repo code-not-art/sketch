@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 
 import { SketchDefinition } from 'sketch/index.js';
-import type { ControlPanelConfig } from '../control-panel/types/controlPanel.js';
+import type { ControlPanelElement } from '../control-panel/types/controlPanel.js';
 import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
 import { SketchController } from './SketchController.js';
 
@@ -42,12 +42,12 @@ const ShadowFrameCanvas = styled.canvas`
 `;
 
 export const FullPageSketch = <
-  TControlPanel extends ControlPanelConfig<any>,
+  TParameters extends Record<string, ControlPanelElement<any>>,
   DataModel extends object,
 >({
   sketch,
 }: {
-  sketch: SketchDefinition<TControlPanel, DataModel>;
+  sketch: SketchDefinition<TParameters, DataModel>;
 }) => {
   const canvasId = 'sketch-canvas';
   const downloaderId = 'canvas-downloader';

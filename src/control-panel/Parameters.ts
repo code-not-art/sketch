@@ -20,7 +20,8 @@ const withDefault = <T>(value: T | undefined, defaultValue: T): T =>
 
 const stringParameter = (
   config: Identity<
-    ControlPanelParameterStringConfig & ControlPanelParameterBaseConfig<string>
+    Partial<ControlPanelParameterStringConfig> &
+      ControlPanelParameterBaseConfig<string>
   >,
 ): ControlPanelParameterString => {
   return {
@@ -33,14 +34,22 @@ const stringParameter = (
 
 const numberParameter = (
   config: Identity<
-    ControlPanelParameterNumberConfig & ControlPanelParameterBaseConfig<number>
+    Partial<ControlPanelParameterNumberConfig> &
+      ControlPanelParameterBaseConfig<number>
   >,
 ): ControlPanelParameterNumber => {
+  const min = withDefault(config.min, 0);
+  const max = withDefault(config.max, min >= 1 ? min * 10 : 1);
+  const delta = max - min;
+  const step = withDefault(config.step, delta <= 1 ? 1 / 200 : delta / 200);
   return {
     dataType: 'number',
     ...config,
-    editable: withDefault(config?.editable, true),
-    hidden: withDefault(config?.hidden, false),
+    editable: withDefault(config.editable, true),
+    hidden: withDefault(config.hidden, false),
+    min,
+    max,
+    step,
   };
 };
 

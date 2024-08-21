@@ -1,6 +1,5 @@
 import { Constants, Gradient, Utils, Vec2 } from '@code-not-art/core';
 import {
-  ParameterModel,
   SketchDraw,
   SketchInit,
   SketchLoop,
@@ -9,6 +8,7 @@ import {
 import {
   FrameData,
   Palette,
+  ParameterModel,
   Params,
   Sketch,
   SketchConfig,

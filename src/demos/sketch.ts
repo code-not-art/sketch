@@ -1,7 +1,12 @@
 import { Utils, Vec2 } from '@code-not-art/core';
-import { ParameterModel, SketchDraw, SketchInit } from 'sketch/Sketch.js';
+import { SketchDraw, SketchInit } from 'sketch/Sketch.js';
 import { PaletteType } from '../sketch/Config.js';
-import { Params, Sketch, SketchConfig } from '../sketch/index.js';
+import {
+  ParameterModel,
+  Params,
+  Sketch,
+  SketchConfig,
+} from '../sketch/index.js';
 
 const { repeat } = Utils;
 

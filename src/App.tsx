@@ -2,17 +2,20 @@ import { Helmet } from 'react-helmet';
 
 import { SketchDefinition } from 'sketch/index.js';
 import { FullPageSketch } from './components/index.js';
-import type { ControlPanelConfig } from './control-panel/types/controlPanel.js';
+import type {
+  ControlPanelConfig,
+  ControlPanelElement,
+} from './control-panel/types/controlPanel.js';
 
 const App = <
-  TControls extends ControlPanelConfig<any>,
+  TParameters extends Record<string, ControlPanelElement<any>>,
   DataModel extends object,
 >({
   sketch,
   title = 'Code Sketch',
   description = 'HTML Canvas sketch made by code',
 }: {
-  sketch: SketchDefinition<TControls, DataModel>;
+  sketch: SketchDefinition<TParameters, DataModel>;
   title?: string;
   description?: string;
 }) => {

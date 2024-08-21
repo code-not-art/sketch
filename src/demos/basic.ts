@@ -1,18 +1,29 @@
+import { Vec2 } from '@code-not-art/core';
 import {
   SketchDraw,
   SketchInit,
   SketchLoop,
   SketchReset,
 } from 'sketch/Sketch.js';
-import { Sketch, SketchConfig } from '../index.js';
-import { ControlPanel } from '../control-panel/ControlPanel.js';
+import { repeat } from '../../../core/dist/utils/arrays.js';
 import { Parameters } from '../control-panel/Parameters.js';
+import type { ControlPanelElement } from '../control-panel/types/controlPanel.js';
+import { Sketch, SketchConfig } from '../index.js';
 
-const config = SketchConfig({});
+const config = SketchConfig({ menuDelay: 10 });
 
-const controls = ControlPanel('Custom Controls', {
-  test: Parameters.number({ label: 'Test', initialValue: 12 }),
-});
+const controls = {
+  radius: Parameters.number({ label: 'Radius', initialValue: 0.5, min: 0.1 }),
+  offset: Parameters.number({ label: 'Offset' }),
+  alpha: Parameters.number({ label: 'Alpha', initialValue: 0.3 }),
+  circles: Parameters.number({
+    label: 'Circles',
+    initialValue: 5,
+    min: 2,
+    step: 1,
+  }),
+  thing: Parameters.string({ label: 'asdf' }),
+} satisfies Record<string, ControlPanelElement<any>>;
 
 const data = {};
 
@@ -24,8 +35,10 @@ type SketchData = typeof data;
  * This can be used for any programatic setup that needs RNG or other sketch properties and that should only ever be run once.
  * @param sketchProps Access to canvas context, RNG, color pallete, parameter values, and persistent data
  */
-const init: SketchInit<SketchControls, SketchData> = () => {
+const init: SketchInit<SketchControls, SketchData> = ({ rng }) => {
   console.log('Initializing Sketch...');
+
+  console.log('init context', rng.getContext().count);
   return {};
 };
 
@@ -44,13 +57,53 @@ const reset: SketchReset<SketchControls, SketchData> = () => {
  * Runs once for the sketch, after data initialization and before the animation loop begins.
  * @param sketchProps Access to canvas context, RNG, color pallete, parameter values, and persistent data
  */
-const draw: SketchDraw<SketchControls, SketchData> = ({ canvas, palette }) => {
+const draw: SketchDraw<SketchControls, SketchData> = ({
+  canvas,
+  palette,
+  params,
+  rng,
+}) => {
   console.log('Drawing Sketch...');
+  console.log('draw context', rng.getContext(), palette.rng.getContext());
   // Random canvas background color
-  canvas.fill(palette.colors[0]);
+  canvas.fill('white');
+  // canvas.fill(palette.colors[0]);
 
   // Your sketch instructions here:
   // ...
+  const colors = Math.floor(params.circles);
+  repeat(colors, (index) => {
+    canvas.draw.circle({
+      // center: Vec2.zero().add(canvas.get.size().scale(index / 3)),
+      center: canvas.get
+        .center()
+        .add(
+          canvas.get
+            .size()
+            .scale((index - (colors - 1) / 2) / colors)
+            .scale(params.offset),
+        )
+        .add(Vec2.unit().scale(-200)),
+      radius: (params.radius * canvas.get.width()) / 2,
+      fill: palette.rng.color().set.alpha(params.alpha),
+    });
+  });
+  repeat(colors, (index) => {
+    canvas.draw.circle({
+      // center: Vec2.zero().add(canvas.get.size().scale(index / 3)),
+      center: canvas.get
+        .center()
+        .add(
+          canvas.get
+            .size()
+            .scale((index - (colors - 1) / 2) / colors)
+            .scale(params.offset),
+        )
+        .add(Vec2.unit().scale(200)),
+      radius: (params.radius * canvas.get.width()) / 2,
+      fill: rng.color().set.alpha(params.alpha),
+    });
+  });
 };
 
 /**
