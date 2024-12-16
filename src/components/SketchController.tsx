@@ -1,45 +1,66 @@
-import { Canvas, Color, Utils } from '@code-not-art/core';
-import {
-  get,
-  isArray,
-  isBoolean,
-  isNumber,
-  isObjectLike,
-  isString,
-} from 'lodash';
+import { Canvas } from '@code-not-art/core';
+import { debounce } from 'lodash';
 import querystring from 'query-string';
-import React, { useEffect, useState } from 'react';
-import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
-import { ParameterType } from '../sketch/Params.js';
-import { ParameterModel, SketchDefinition } from '../sketch/Sketch.js';
-import { SketchProps } from '../sketch/index.js';
-import Menu from './menu/index.js';
-import { ImageState, LoopState } from './state/index.js';
+import React, { useEffect, useMemo, useState } from 'react';
+import { css } from 'styled-components';
+import { ControlPanel } from '../control-panel/ControlPanel.js';
+import { initialControlPanelValues } from '../control-panel/Parameters.js';
+import type {
+  ControlPanelConfig,
+  ControlPanelElements,
+  ControlPanelParameterValues,
+} from '../control-panel/types/controlPanel.js';
+import { SketchDefinition, SketchProps } from '../sketch/index.js';
 import KeyboardHandler from './KeyboardHandler.js';
+import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
+import { ControlPanelDisplay } from './control-panel/ControlPanelDisplay.js';
+import { FixedPositionWrapper } from './control-panel/FixedPositionWrapper.js';
 import ControlButtons from './controls/index.js';
-import { applyQuery } from './share.js';
+import { SeedMenu } from './seed-menu/SeedMenu.js';
+import {
+  applyQuery,
+  getParamsFromQuery,
+  setUrlQueryFromState,
+} from './share.js';
+import { ImageState, LoopState } from './state/index.js';
+
+// TODO: separate sketch init into a wrapper component so that the sketchData wrapper can be passed as a prop so we are confident we always have data.
+// this allows us to get rid of the `as TDataModel` casting.
+
+const styles = css`
+  .p-inputtext {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    height: 1.6rem;
+    font-family: monospace;
+    background: black;
+    padding: 0.5rem;
+  }
+`;
+
+const DEFAULT_MENU_DELAY = 25;
 
 type SketchControllerProps<
-  Params extends ParameterModel,
-  DataModel extends object,
+  TControlPanel extends ControlPanelElements,
+  TDataModel extends object,
 > = {
   canvasId: string;
   downloaderId: string;
-  sketch: SketchDefinition<Params, DataModel>;
+  sketch: SketchDefinition<TControlPanel, TDataModel>;
 };
-const SketchController = <
-  Params extends ParameterModel,
-  DataModel extends object,
+export const SketchController = <
+  TParameters extends ControlPanelElements,
+  TDataModel extends object,
 >({
   canvasId,
   downloaderId,
   sketch,
-}: SketchControllerProps<Params, DataModel>) => {
+}: SketchControllerProps<TParameters, TDataModel>) => {
   const config = sketch.config;
 
-  // Mechanism for triggering react to render via a state change, used for getting our menus to redraw
-  const [, updateState] = React.useState<{}>(new Date());
-  const forceUpdate = React.useCallback(() => updateState({}), []);
+  const [renderTime, updateState] = React.useState<Date>(new Date());
+  const forceUpdate = React.useCallback(() => updateState(new Date()), []);
 
   const [initialized, setInitialized] = useState<boolean>(false);
   const [showMenu, setShowMenu] = useState<boolean>(true);
@@ -50,18 +71,62 @@ const SketchController = <
   const [state] = useState<ImageState>(
     new ImageState({ seed: config.seed, paletteType: config.paletteType }),
   );
-  const [eventHandlers] = useState<any>({});
-  const [params] = useState<Params>({ ...sketch.params });
-  const [loopState] = useState<LoopState>(new LoopState());
-  const [sketchData, setSketchData] = useState<DataModel>();
 
-  const getSketchProps: () => SketchProps<Params> = () => {
+  const controlsConfig = useMemo(
+    () => ControlPanel('Sketch Parameters', sketch.controls),
+    [],
+  );
+  type ControlValues = ControlPanelParameterValues<typeof controlsConfig>;
+
+  const [eventHandlers] = useState<any>({});
+  const [params, setParams] = useState<{ data: ControlValues }>(() => {
+    const query = querystring.parse(location.search);
+    const queryString = typeof query.p === 'string' ? query.p : '';
+    return {
+      data: {
+        ...initialControlPanelValues(controlsConfig),
+        ...getParamsFromQuery(queryString),
+      },
+    };
+  });
+  const [loopState] = useState<LoopState>(new LoopState());
+
+  const getCanvas = () => {
+    // Grab our canvas
+    const pageCanvas = document.getElementById(canvasId);
+    if (pageCanvas instanceof HTMLCanvasElement) {
+      return new Canvas(pageCanvas);
+    }
+
+    // We did not find a canvas where expected, throw an error instead.
+    // TODO: System to communicate that the canvas was not available to the sketch.
+    if (pageCanvas === null) {
+      throw new Error(
+        `Cannot render Sketch, Canvas with id '${canvasId}' is not found.`,
+      );
+    }
+    throw new Error(
+      `Cannot render Sketch, element with the expected id '${canvasId}' is not an HTML Canvas.`,
+    );
+  };
+
+  const getSketchProps: () => SketchProps<
+    ControlPanelConfig<TParameters>
+  > = () => {
     return {
       canvas: getCanvas(),
-      params,
-      rng: state.getRng(),
       palette: state.getPalette(),
+      params: params.data,
+      rng: state.getRng(),
     };
+  };
+
+  const [sketchData] = useState<{ data: TDataModel | undefined }>({
+    data: undefined,
+  });
+  const setSketchData = (data: TDataModel) => {
+    sketchData.data = data;
+    forceUpdate();
   };
 
   const resize = () => {
@@ -104,43 +169,17 @@ const SketchController = <
    * The react state is forced to update to get the menu to re-render with the new sketch props.
    */
   const redraw = () => {
+    state.restartRng();
     const sketchProps = getSketchProps();
-    if (!sketchData) {
-      console.warn(
-        `This code branch should not be visited regularly - this is emergency handling for a redraw before initial draw. Something may be going wrong if this is occuring on every draw.`,
-      );
-      const updatedSketchData = sketch.reset(
-        sketchProps,
-        sketch.init(sketchProps),
-      );
-      setSketchData(updatedSketchData);
-    } else {
-      const updatedSketchData = sketch.reset(sketchProps, sketchData);
-      setSketchData(updatedSketchData);
-    }
 
-    // setting the initialized sketch data should result in forced use effect run, so commenting the followign out
-    forceUpdate(); // will cause draw in the use effect
-    loopState.restart();
-  };
-
-  const getCanvas = () => {
-    // Grab our canvas
-    const pageCanvas = document.getElementById(canvasId);
-    if (pageCanvas instanceof HTMLCanvasElement) {
-      return new Canvas(pageCanvas);
-    }
-
-    // We did not find a canvas where expected, throw an error instead.
-    // TODO: System to communicate that the canvas was not available to the sketch.
-    if (pageCanvas === null) {
-      throw new Error(
-        `Cannot render Sketch, Canvas with id '${canvasId}' is not found.`,
-      );
-    }
-    throw new Error(
-      `Cannot render Sketch, element with the expected id '${canvasId}' is not an HTML Canvas.`,
+    const updatedSketchData = sketch.reset(
+      sketchProps,
+      sketchData.data as TDataModel, // TODO: check that this isn't undefined
     );
+    setSketchData(updatedSketchData);
+
+    draw();
+    loopState.restart();
   };
 
   const draw = () => {
@@ -151,20 +190,10 @@ const SketchController = <
     //      when this is run, the canvas bitmap content is lost, so do not do this in the resize loop.
     sketchProps.canvas.set.size(config.width, config.height);
 
-    console.log(
-      state.getImage(),
-      '-',
-      state.getColor(),
-      Object.entries(params)
-        .filter(([_key, value]) => value.type !== ParameterType.Header)
-        .reduce<Record<string, any>>((acc, [key, value]) => {
-          acc[key] = get(value, 'value', undefined);
-          return acc;
-        }, {}),
-    );
-
     state.startRender();
-    sketchData !== undefined && sketch.draw(getSketchProps(), sketchData);
+    // Dangerous casting, requires that we are confident the init pass has completed by this point
+    sketchData.data !== undefined &&
+      sketch.draw(getSketchProps(), sketchData.data);
     state.stopRender();
 
     if (loopState.animationFrameRequest) {
@@ -172,10 +201,10 @@ const SketchController = <
     }
 
     const animate = () => {
-      if (loopState.nextFrame() && sketchData !== undefined) {
+      if (loopState.nextFrame()) {
         loopState.finished = sketch.loop(
           getSketchProps(),
-          sketchData,
+          sketchData.data as TDataModel,
           loopState.frameData,
         );
       }
@@ -195,6 +224,12 @@ const SketchController = <
     }
   };
 
+  const onStateChange = () => {
+    state.restartRng();
+    setUrlQueryFromState(state, params.data);
+    // forceUpdate();
+  };
+
   // ===== Event Handlers =====
   // They all need to be removed before being re-attached or crazy duplicates happen
   // They also need to be reattached when the params change since the original listeners have those params in their internal scope
@@ -212,7 +247,8 @@ const SketchController = <
       KeyboardHandler({
         state,
         loopState,
-        params,
+        params: params.data,
+        onStateChange,
         redraw,
         download,
         toggleMenu,
@@ -238,77 +274,21 @@ const SketchController = <
   };
 
   const controlPanelUpdateHandler = (
-    property: string,
-    value: any,
-    _updatedState: Params,
+    _updates: Partial<ControlValues>,
+    newValues: ControlValues,
   ) => {
-    // The menu provides two special inputs for 'image' and 'color'
-    //  which we want to use on the user provided image and color seeds
-    // Every other property gets set in the Params defined by the sketch.
-    switch (property) {
-      case 'image':
-        state.setUserImage(value);
-        break;
-      case 'color':
-        state.setUserColor(value);
-        break;
-      default:
-        // This here is a terrible situation caused by a couple issues with the control panel library.
-        // First, the control panel doesn't differentiate between display labels and property names,
-        //   forcing us to identify the parameter by the display name
-        // Second, the value returned is untyped (consequence of returning an)
-        const param = Object.values(params).find((p) => p.display === property);
-        if (param) {
-          switch (param.type) {
-            case ParameterType.Checkbox:
-              if (isBoolean(value)) {
-                param.value = value;
-              }
-              break;
-            case ParameterType.Color:
-              if (isString(value)) {
-                param.value = new Color(value);
-              }
-              break;
-            case ParameterType.Interval:
-              if (
-                isArray(value) &&
-                value.length === 2 &&
-                value.every((x) => isNumber(x))
-              ) {
-                param.values = value as [number, number];
-              }
-              break;
-            case ParameterType.MultiSelect:
-              if (
-                isObjectLike(value) &&
-                Object.values(value).every((x) => isBoolean(x))
-              ) {
-                param.values = value as Record<string, boolean>;
-              }
-              break;
-            case ParameterType.Range:
-              if (isNumber(value)) {
-                param.value = Utils.clamp(value, param.options);
-              }
-              break;
-            case ParameterType.Select:
-              if (isString(value)) {
-                param.value = value;
-              }
-              break;
-            case ParameterType.Text:
-              if (isString(value)) {
-                param.value = value;
-              }
-              break;
-            default:
-              // do nothing, header param is the only uncontrolled case
-              break;
-          }
-        }
-        break;
-    }
+    params.data = newValues;
+    setUrlQueryFromState(state, params.data);
+    redraw();
+  };
+  const seedMenuUpdateHandler = (updatedState: {
+    image: string;
+    color: string;
+  }): void => {
+    state.setUserImage(updatedState.image);
+    state.setUserColor(updatedState.color);
+    setUrlQueryFromState(state, params.data);
+    state.restartRng();
     redraw();
   };
 
@@ -317,11 +297,8 @@ const SketchController = <
    * This triggers draw, so forcing state update will cause the sketch to draw
    */
   useEffect(() => {
-    // ===== Attach event handlers
+    // ===== Reset event handlers whenever hot load or state change occurs
     resetEventHandlers();
-
-    // ===== Draw Sketch, only after initialization
-    initialized && draw();
 
     // ===== Run once only
     if (!initialized) {
@@ -330,39 +307,54 @@ const SketchController = <
 
       const query = querystring.parse(location.search);
       if (typeof query.p === 'string') {
-        applyQuery(query.p, state, params);
+        applyQuery(query.p, state, params.data);
       }
+      state.restartRng();
 
       resize();
       getCanvas().set.size(config.width, config.height);
       const initData = sketch.init(getSketchProps());
       setSketchData(initData);
       setInitialized(true);
+      redraw();
     }
   });
 
   return (
     <>
-      {showMenu && (
-        <Menu
-          params={params}
-          updateHandler={controlPanelUpdateHandler}
-          debounce={config.menuDelay}
-          imageState={state}
-        />
-      )}
-      {window.innerWidth <= MOBILE_WIDTH_BREAKPOINT && (
-        <ControlButtons
-          state={state}
-          loopState={loopState}
-          params={params}
-          draw={redraw}
-          download={download}
-          videoControls={!!sketch.config.enableLoopControls}
-        />
-      )}
+      <style>{styles.toString()}</style>
+      <FixedPositionWrapper vertical="top" horizontal="right">
+        <SeedMenu state={state} onChange={seedMenuUpdateHandler} />
+        {useMemo(
+          () => (
+            <ControlPanelDisplay
+              config={controlsConfig}
+              initialValues={params.data}
+              updateHandler={debounce(
+                controlPanelUpdateHandler,
+                config.menuDelay !== undefined
+                  ? config.menuDelay
+                  : DEFAULT_MENU_DELAY,
+              )}
+            />
+          ),
+          [],
+        )}
+      </FixedPositionWrapper>
+      {window.innerWidth <= MOBILE_WIDTH_BREAKPOINT &&
+        useMemo(
+          () => (
+            <ControlButtons
+              state={state}
+              loopState={loopState}
+              params={params.data}
+              draw={redraw}
+              download={download}
+              videoControls={!!sketch.config.enableLoopControls}
+            />
+          ),
+          [renderTime],
+        )}
     </>
   );
 };
-
-export default SketchController;

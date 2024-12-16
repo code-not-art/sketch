@@ -152,15 +152,20 @@ export default class ImageState {
   }
 
   getRng(): Random {
-    return new Random('image rng', this.getImage());
+    return this._rng;
   }
-  private getColorRng(): Random {
-    return new Random('color rng', this.getColor());
+
+  restartRng(): void {
+    this.regenPalette();
+    this.regenRng();
   }
   private regenPalette(): void {
     this.palette = new Palette({
-      rng: this.getColorRng(),
+      rng: new Random('color rng', this.getColor()),
       type: this._paletteType,
     });
+  }
+  private regenRng(): void {
+    this._rng = new Random('image rng', this.getImage());
   }
 }

@@ -28,15 +28,26 @@ export function copyUrlToClipboard() {
   navigator.clipboard.writeText(window.location.href);
 }
 
+export function setUrlQueryFromState(
+  state: ImageState,
+  params: Record<string, any>,
+): void {
+  const paramsQuery = buildQueryString(state, params);
+  attachQueryStringToWindow(paramsQuery);
+}
+
 /**
  * Use this to build the params, attach to location, and share
  * @param state
  * @param params
  */
 export function shareViaUrl(state: ImageState, params: Record<string, any>) {
-  const paramsQuery = buildQueryString(state, params);
-  attachQueryStringToWindow(paramsQuery);
+  setUrlQueryFromState(state, params);
   copyUrlToClipboard();
+}
+
+export function getParamsFromQuery(query: string) {
+  return JSURL.parse(query);
 }
 
 export function applyQuery(
@@ -50,4 +61,5 @@ export function applyQuery(
   state.imageSeeds[0] = parsed._i;
   state.colorSeeds[0] = parsed._c;
   state.setActiveColor(0);
+  state.restartRng();
 }

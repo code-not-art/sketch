@@ -10,10 +10,11 @@ const SectionHeader = styled.div`
   height: 20px;
   margin-bottom: 2px;
   margin-top: 12px;
+  font-size: 0.7rem;
 
   :hover {
-    color: rgb(235, 235, 235);
     cursor: pointer;
+    color: rgb(235, 235, 235);
   }
 
   svg.collapsed {
@@ -35,38 +36,37 @@ const CollapsibleWrapper = styled.div`
   }
   div.open {
     overflow-y: show;
-    max-height: 400px;
     transition: max-height 300ms;
   }
 `;
 
-const CollapsibleSection = ({
+export const CollapsibleSection = ({
   title,
-  initialState = false,
+  startCollapsed = false,
   children,
 }: {
   title: string;
-  initialState?: boolean;
+  startCollapsed?: boolean;
   children?: React.ReactNode;
 }) => {
-  const [collapsed, setCollapsed] = useState<boolean>(initialState);
+  const [collapsed, setCollapsed] = useState<boolean>(startCollapsed);
   const toggleState = () => {
     setCollapsed(!collapsed);
   };
   return (
     <CollapsibleWrapper>
       <SectionHeader onClick={toggleState}>
-        {title}
-        <ChevronsDown
-          size={14}
-          style={{ marginBottom: -3 }}
-          className={collapsed ? 'collapsed' : 'open'}
-        />
+        <span>
+          {title}
+          <ChevronsDown
+            size={14}
+            style={{ marginBottom: -3 }}
+            className={collapsed ? 'collapsed' : 'open'}
+          />
+        </span>
       </SectionHeader>
 
       <div className={collapsed ? 'collapsed' : 'open'}>{children}</div>
     </CollapsibleWrapper>
   );
 };
-
-export default CollapsibleSection;
