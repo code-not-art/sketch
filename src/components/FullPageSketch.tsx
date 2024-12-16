@@ -1,9 +1,9 @@
 import { styled } from 'styled-components';
 
-import type { ControlPanelElement } from '../control-panel/types/controlPanel.js';
+import type { ControlPanelElements } from '../control-panel/types/controlPanel.js';
+import type { SketchDefinition } from '../sketch/Sketch.js';
 import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
 import { SketchController } from './SketchController.js';
-import type { SketchDefinition } from '../sketch/Sketch.js';
 
 const FullscreenWrapper = styled.div`
   height: 100%;
@@ -42,7 +42,7 @@ const ShadowFrameCanvas = styled.canvas`
 `;
 
 export const FullPageSketch = <
-  TParameters extends Record<string, ControlPanelElement<any>>,
+  TParameters extends ControlPanelElements,
   DataModel extends object,
 >({
   sketch,

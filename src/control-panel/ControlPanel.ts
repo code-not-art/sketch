@@ -1,14 +1,17 @@
 import type {
   ControlPanelConfig,
-  ControlPanelElement,
+  ControlPanelElements,
 } from './types/controlPanel.js';
 
-export const ControlPanel = <
-  TShape extends Record<string, ControlPanelElement<any>>,
->(
+export const ControlPanel = <TShape extends ControlPanelElements>(
   title: string,
   elements: ControlPanelConfig<TShape>['elements'],
-  options?: { description?: string },
+  options?: { description?: string; collapsed?: boolean },
 ): ControlPanelConfig<TShape> => {
-  return { title, description: options?.description, elements };
+  return {
+    title,
+    description: options?.description,
+    elements,
+    startCollapsed: !!options?.collapsed,
+  };
 };

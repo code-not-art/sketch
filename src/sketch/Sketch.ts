@@ -1,24 +1,24 @@
 import type {
   ControlPanelConfig,
-  ControlPanelElement,
+  ControlPanelElements,
 } from '../control-panel/types/controlPanel.js';
 import { SketchConfig, SketchConfigInput } from './Config.js';
 import { FrameData } from './FrameData.js';
 import { SketchProps } from './SketchProps.js';
 
 export type SketchReset<
-  TParameters extends Record<string, ControlPanelElement<any>>,
+  TParameters extends ControlPanelElements,
   DataModel extends object,
 > = (
   props: SketchProps<ControlPanelConfig<TParameters>>,
   data: DataModel,
 ) => DataModel;
 export type SketchInit<
-  TParameters extends Record<string, ControlPanelElement<any>>,
+  TParameters extends ControlPanelElements,
   DataModel extends object,
 > = (props: SketchProps<ControlPanelConfig<TParameters>>) => DataModel;
 export type SketchDraw<
-  TParameters extends Record<string, ControlPanelElement<any>>,
+  TParameters extends ControlPanelElements,
   DataModel extends object,
 > = (
   props: SketchProps<ControlPanelConfig<TParameters>>,
@@ -30,7 +30,7 @@ export type SketchDraw<
  * @returns Boolean indicating loop is finished. `false` to continue loop. `true` to end loop.
  */
 export type SketchLoop<
-  TParameters extends Record<string, ControlPanelElement<any>>,
+  TParameters extends ControlPanelElements,
   DataModel extends object,
 > = (
   props: SketchProps<ControlPanelConfig<TParameters>>,
@@ -39,7 +39,7 @@ export type SketchLoop<
 ) => boolean;
 
 export type SketchDefinition<
-  TParameters extends Record<string, ControlPanelElement<any>>,
+  TParameters extends ControlPanelElements,
   DataModel extends object,
 > = {
   config: ReturnType<typeof SketchConfig>;
@@ -69,7 +69,7 @@ const defaultReset = <
 };
 
 export type SketchInputs<
-  TParameters extends Record<string, ControlPanelElement<any>>,
+  TParameters extends ControlPanelElements,
   DataModel extends object,
 > = {
   config?: SketchConfigInput;
@@ -81,7 +81,7 @@ export type SketchInputs<
 };
 
 export function Sketch<
-  TParameters extends Record<string, ControlPanelElement<any>>,
+  TParameters extends ControlPanelElements,
   DataModel extends object,
 >(
   definition: SketchInputs<TParameters, DataModel>,

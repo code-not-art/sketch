@@ -1,14 +1,11 @@
 import { Helmet } from 'react-helmet';
 
-import { SketchDefinition } from './sketch/index.js';
 import { FullPageSketch } from './components/index.js';
-import type {
-  ControlPanelConfig,
-  ControlPanelElement,
-} from './control-panel/types/controlPanel.js';
+import type { ControlPanelElements } from './control-panel/types/controlPanel.js';
+import { SketchDefinition } from './sketch/index.js';
 
 const App = <
-  TParameters extends Record<string, ControlPanelElement<any>>,
+  TParameters extends ControlPanelElements,
   DataModel extends object,
 >({
   sketch,

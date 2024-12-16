@@ -1,31 +1,46 @@
 import type { Defined } from '../types/Defined.js';
 import type { Identity } from '../types/Identity.js';
+import { RangeUtils } from './parameterUtils.js';
 import type {
   ControlPanelConfig,
-  ControlPanelElement,
+  ControlPanelElements,
   ControlPanelParameterValues,
 } from './types/controlPanel.js';
 import type {
   ControlPanelParameter,
   ControlPanelParameterBaseConfig,
+  ControlPanelParameterBoolean,
+  ControlPanelParameterBooleanConfig,
+  ControlPanelParameterMultiSelect,
+  ControlPanelParameterMultiSelectConfig,
   ControlPanelParameterNumber,
   ControlPanelParameterNumberConfig,
+  ControlPanelParameterRandomSeed,
+  ControlPanelParameterRandomSeedConfig,
+  ControlPanelParameterRange,
+  ControlPanelParameterRangeConfig,
   ControlPanelParameterString,
   ControlPanelParameterStringConfig,
   ControlPanelParameterType,
+  ControlPanelValueBoolean,
+  ControlPanelValueMultiSelect,
+  ControlPanelValueNumber,
+  ControlPanelValueRandomSeed,
+  ControlPanelValueRange,
+  ControlPanelValueString,
 } from './types/parameters.js';
 
 const withDefault = <T>(value: T | undefined, defaultValue: T): T =>
   value !== undefined ? value : defaultValue;
 
-const stringParameter = (
+const booleanParameter = (
   config: Identity<
-    Partial<ControlPanelParameterStringConfig> &
-      ControlPanelParameterBaseConfig<string>
+    Partial<ControlPanelParameterBooleanConfig> &
+      ControlPanelParameterBaseConfig<ControlPanelValueBoolean>
   >,
-): ControlPanelParameterString => {
+): ControlPanelParameterBoolean => {
   return {
-    dataType: 'string',
+    dataType: 'boolean',
     ...config,
     editable: withDefault(config?.editable, true),
     hidden: withDefault(config?.hidden, false),
@@ -35,13 +50,13 @@ const stringParameter = (
 const numberParameter = (
   config: Identity<
     Partial<ControlPanelParameterNumberConfig> &
-      ControlPanelParameterBaseConfig<number>
+      ControlPanelParameterBaseConfig<ControlPanelValueNumber>
   >,
 ): ControlPanelParameterNumber => {
   const min = withDefault(config.min, 0);
   const max = withDefault(config.max, min >= 1 ? min * 10 : 1);
   const delta = max - min;
-  const step = withDefault(config.step, delta <= 1 ? 1 / 200 : delta / 200);
+  const step = withDefault(config.step, delta <= 2 ? 1 / 200 : 1);
   return {
     dataType: 'number',
     ...config,
@@ -53,9 +68,80 @@ const numberParameter = (
   };
 };
 
+const multiSelectParameter = <TOptions extends string>(
+  config: Identity<
+    Partial<ControlPanelParameterMultiSelectConfig<TOptions>> &
+      ControlPanelParameterBaseConfig<ControlPanelValueMultiSelect<TOptions>>
+  >,
+): ControlPanelParameterMultiSelect<TOptions> => {
+  return {
+    dataType: 'multiSelect',
+    ...config,
+    editable: withDefault(config.editable, true),
+    hidden: withDefault(config.hidden, false),
+    options: withDefault(config.options, []),
+  };
+};
+
+const randomSeedParameter = (
+  config: Identity<
+    Partial<ControlPanelParameterRandomSeedConfig> &
+      ControlPanelParameterBaseConfig<ControlPanelValueRandomSeed>
+  >,
+): ControlPanelParameterRandomSeed => {
+  return {
+    dataType: 'randomSeed',
+    ...config,
+    editable: withDefault(config?.editable, true),
+    hidden: withDefault(config?.hidden, false),
+  };
+};
+const rangeParameter = (
+  config: Identity<
+    Partial<ControlPanelParameterRangeConfig> &
+      ControlPanelParameterBaseConfig<ControlPanelValueRange>
+  >,
+): ControlPanelParameterRange => {
+  const min = withDefault(config.min, 0);
+  const max = withDefault(config.max, min >= 1 ? min * 10 : 1);
+  const delta = max - min;
+  const step = withDefault(config.step, delta <= 2 ? 1 / 200 : 1);
+  return {
+    dataType: 'range',
+    ...config,
+    editable: withDefault(config?.editable, true),
+    hidden: withDefault(config?.hidden, false),
+    min,
+    max,
+    step,
+    startMax: withDefault(config.startMax, max),
+    endMin: withDefault(config.endMin, min),
+    diffMin: withDefault(config.diffMin, 0),
+    diffMax: withDefault(config.diffMax, delta),
+  };
+};
+
+const stringParameter = (
+  config: Identity<
+    Partial<ControlPanelParameterStringConfig> &
+      ControlPanelParameterBaseConfig<ControlPanelValueString>
+  >,
+): ControlPanelParameterString => {
+  return {
+    dataType: 'string',
+    ...config,
+    editable: withDefault(config?.editable, true),
+    hidden: withDefault(config?.hidden, false),
+  };
+};
+
 export const Parameters = {
-  string: stringParameter,
+  boolean: booleanParameter,
+  multiSelect: multiSelectParameter,
   number: numberParameter,
+  randomSeed: randomSeedParameter,
+  range: rangeParameter,
+  string: stringParameter,
 } satisfies Record<
   ControlPanelParameterType,
   (config: any) => ControlPanelParameter
@@ -64,11 +150,21 @@ export const Parameters = {
 /* ******************************** *
  * Initial Parameter Value resolution
  * ******************************** */
-
-export const initialParameterValueString = (
-  config: ControlPanelParameterString,
-): Defined<ControlPanelParameterString['initialValue']> => {
-  return config.initialValue || '';
+export const initialParameterValueBoolean = (
+  config: ControlPanelParameterBoolean,
+): Defined<ControlPanelParameterBoolean['initialValue']> => {
+  return config.initialValue || false;
+};
+export const initialParameterValueMultiSelect = (
+  config: ControlPanelParameterMultiSelect,
+): Defined<ControlPanelParameterMultiSelect['initialValue']> => {
+  const defaultValue = config.options.reduce<
+    Partial<Defined<ControlPanelParameterMultiSelect['initialValue']>>
+  >((acc, option) => {
+    acc[option] = false;
+    return acc;
+  }, {}) as Defined<ControlPanelParameterMultiSelect['initialValue']>;
+  return { ...defaultValue, ...(config.initialValue || {}) };
 };
 export const initialParameterValueNumber = (
   config: ControlPanelParameterNumber,
@@ -81,13 +177,41 @@ export const initialParameterValueNumber = (
     ? config.max
     : 0;
 };
+export const initialParameterValueRandomSeed = (
+  config: ControlPanelParameterRandomSeed,
+): Defined<ControlPanelParameterRandomSeed['initialValue']> => {
+  return config.initialValue || Math.random();
+};
+export const initialParameterValueRange = (
+  config: ControlPanelParameterRange,
+): Defined<ControlPanelParameterRange['initialValue']> => {
+  if (config.initialValue) {
+    return config.initialValue;
+  }
+  let start = withDefault(config.initialStart, config.min);
+  let end = withDefault(config.initialEnd, config.max);
+  if (end - start > config.diffMax) {
+    if (start + config.diffMax < config.endMin) {
+      end = config.endMin;
+      start = config.endMin - config.diffMax;
+    } else {
+      end = start + config.diffMax;
+    }
+  }
+  return [start, end];
+};
+export const initialParameterValueString = (
+  config: ControlPanelParameterString,
+): Defined<ControlPanelParameterString['initialValue']> => {
+  return config.initialValue || '';
+};
 
 const isElementAParameter = (
   input: ControlPanelConfig<any> | ControlPanelParameter,
 ) => input && 'dataType' in input;
 
 export const initialControlPanelValues = <
-  TConfig extends ControlPanelConfig<Record<string, ControlPanelElement<any>>>,
+  TConfig extends ControlPanelConfig<ControlPanelElements>,
 >(
   config: TConfig,
 ): ControlPanelParameterValues<TConfig> => {
@@ -102,12 +226,28 @@ export const initialControlPanelValues = <
   for (const [key, value] of Object.entries(config.elements)) {
     if (isElementAParameter(value)) {
       switch (value.dataType) {
-        case 'string': {
-          collector[key] = initialParameterValueString(value);
+        case 'boolean': {
+          collector[key] = initialParameterValueBoolean(value);
+          break;
+        }
+        case 'multiSelect': {
+          collector[key] = initialParameterValueMultiSelect(value);
           break;
         }
         case 'number': {
           collector[key] = initialParameterValueNumber(value);
+          break;
+        }
+        case 'randomSeed': {
+          collector[key] = initialParameterValueRandomSeed(value);
+          break;
+        }
+        case 'range': {
+          collector[key] = initialParameterValueRange(value);
+          break;
+        }
+        case 'string': {
+          collector[key] = initialParameterValueString(value);
           break;
         }
       }

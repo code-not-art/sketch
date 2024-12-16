@@ -1,21 +1,48 @@
 import { Constants, Gradient, Utils, Vec2 } from '@code-not-art/core';
 import {
+  Parameters,
+  type ControlPanelElements,
+} from '../control-panel/index.js';
+import {
   SketchDraw,
   SketchInit,
   SketchLoop,
   SketchReset,
-} from 'sketch/Sketch.js';
-import {
-  FrameData,
-  Palette,
-  ParameterModel,
-  Params,
-  Sketch,
-  SketchConfig,
-} from '../sketch/index.js';
+} from '../sketch/Sketch.js';
+import { FrameData, Palette, Sketch, SketchConfig } from '../sketch/index.js';
 const { TAU } = Constants;
-const { clamp, repeat } = Utils;
+const { repeat } = Utils;
 
+const controls = {
+  speed: Parameters.number({ label: 'Speed', step: 0.001, max: 10 }),
+  rotationSpeed: Parameters.number({
+    label: 'Rotation Speed',
+    step: 0.001,
+    max: 10,
+  }),
+  dotSize: Parameters.number({
+    label: 'Dot Size',
+    initialValue: 0.04,
+    min: 0.005,
+    max: 0.2,
+  }),
+  dotCount: Parameters.number({
+    label: 'Dot Count',
+    initialValue: 24,
+    min: 1,
+    max: 89,
+    step: 1,
+  }),
+  twists: Parameters.number({
+    label: 'Twists',
+    initialValue: 5,
+    min: 1,
+    max: 8,
+    step: 1,
+  }),
+} satisfies ControlPanelElements;
+
+type CustomControls = typeof controls;
 type SketchData = {
   angle: number;
   absoluteAngle: number;
@@ -24,23 +51,16 @@ type SketchData = {
 
 const config = SketchConfig({
   enableLoopControls: true,
-  menuDelay: 0,
+  menuDelay: 20,
 });
 
 // Warning: Display Names must all be unique
 // TODO: Remove warning once we replace the control panel library
-const params = {
-  speed: Params.range('Speed', 2, [0, 10]),
-  rotationSpeed: Params.range('Rotation Speed', 1, [0, 10]),
-  dotSize: Params.range('Dot Size', 0.04, [0.005, 0.2, 0.001]),
-  dotCount: Params.range('Dot Count', 24, [1, 89, 1]),
-  twists: Params.range('Twists', 5, [1, 8, 1]),
-} satisfies ParameterModel;
 
 const createGradient = (palette: Palette) =>
   new Gradient(palette.colors[1], palette.colors[2]).loop();
 
-const init: SketchInit<typeof params, SketchData> = ({ palette }) => {
+const init: SketchInit<CustomControls, SketchData> = ({ palette }) => {
   const data: SketchData = {
     angle: 0,
     absoluteAngle: 0,
@@ -49,7 +69,7 @@ const init: SketchInit<typeof params, SketchData> = ({ palette }) => {
   return data;
 };
 
-const reset: SketchReset<typeof params, SketchData> = ({ palette }, data) => {
+const reset: SketchReset<CustomControls, SketchData> = ({ palette }, data) => {
   // Keep position of animation, only update color gradient (if changed)
   return { ...data, gradient: createGradient(palette) };
 
@@ -58,31 +78,17 @@ const reset: SketchReset<typeof params, SketchData> = ({ palette }, data) => {
   // Finally, if init is doing some expensive calculations upfront that you don't want to repeat on each draw, you can reference those results here instead of re-computing them.
 };
 
-type DataModel = {
-  gradient?: Gradient;
-  angle: number;
-  absoluteAngle: number;
-};
-const initialData: DataModel = {
-  angle: 0,
-  absoluteAngle: 0,
-};
-
-const draw: SketchDraw<typeof params, SketchData> = ({ canvas }, _data) => {
+const draw: SketchDraw<CustomControls, SketchData> = ({ canvas }, _data) => {
   // One time setup instructions that we don't need to repeat every frame:
   canvas.transform.translate(canvas.get.size().scale(0.5));
 };
 
-const loop: SketchLoop<typeof params, SketchData> = (
+const loop: SketchLoop<CustomControls, SketchData> = (
   { canvas, palette, params },
   data,
   { frameTime }: FrameData,
 ) => {
-  const speed = params.speed.value;
-  const rotationSpeed = params.rotationSpeed.value;
-  const dotSize = params.dotSize.value;
-  const dotCount = params.dotCount.value;
-  const twists = params.twists.value;
+  const { dotCount, dotSize, rotationSpeed, speed, twists } = params;
 
   const gradient = data.gradient;
 
@@ -109,18 +115,22 @@ const loop: SketchLoop<typeof params, SketchData> = (
       .add(spinOffset)
       .rotate(data.absoluteAngle);
 
-    canvas.draw.circle({
-      center: circleOrigin,
-      radius: canvas.get.minDim() * dotSize,
-      fill: gradient.at(i / (dotCount > 1 ? dotCount - 1 : 1)),
-    });
+    canvas.draw.circle(
+      {
+        center: circleOrigin,
+        radius: canvas.get.minDim() * dotSize,
+      },
+      {
+        fill: gradient.at(i / (dotCount > 1 ? dotCount - 1 : 1)),
+      },
+    );
   });
   return false;
 };
 
-const Art = Sketch<typeof params, SketchData>({
+const Art = Sketch<CustomControls, SketchData>({
   config,
-  params,
+  controls,
   draw,
   init,
   loop,

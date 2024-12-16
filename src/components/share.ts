@@ -46,6 +46,10 @@ export function shareViaUrl(state: ImageState, params: Record<string, any>) {
   copyUrlToClipboard();
 }
 
+export function getParamsFromQuery(query: string) {
+  return JSURL.parse(query);
+}
+
 export function applyQuery(
   query: string,
   state: ImageState,

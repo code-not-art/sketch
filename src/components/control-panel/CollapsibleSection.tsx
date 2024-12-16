@@ -36,21 +36,20 @@ const CollapsibleWrapper = styled.div`
   }
   div.open {
     overflow-y: show;
-    max-height: 400px;
     transition: max-height 300ms;
   }
 `;
 
 export const CollapsibleSection = ({
   title,
-  initialState = false,
+  startCollapsed = false,
   children,
 }: {
   title: string;
-  initialState?: boolean;
+  startCollapsed?: boolean;
   children?: React.ReactNode;
 }) => {
-  const [collapsed, setCollapsed] = useState<boolean>(initialState);
+  const [collapsed, setCollapsed] = useState<boolean>(startCollapsed);
   const toggleState = () => {
     setCollapsed(!collapsed);
   };

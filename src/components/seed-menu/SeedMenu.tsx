@@ -6,8 +6,20 @@ import { ControlPanelString } from '../control-panel/inputs/ControlPanelString.j
 import { Parameters } from '../../control-panel/Parameters.js';
 import { InputText } from 'primereact/inputtext';
 import type { ArgumentsType } from 'vitest';
+import { styled } from 'styled-components';
 
 type InputChangeHandler = ArgumentsType<typeof InputText>[0]['onChange'];
+
+const PaletteWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  /* background-color: white; */
+  height: 2rem;
+`;
+const PaletteSwatch = styled.div<{ color: string }>`
+  flex: 1;
+  background-color: ${(props) => props.color};
+`;
 
 export const SeedMenu = (props: {
   state: ImageState;
@@ -30,8 +42,8 @@ export const SeedMenu = (props: {
 
   return (
     <SectionWrapper>
-      <CollapsibleSection title="Seeds">
-        <div>
+      <CollapsibleSection title="Seeds" startCollapsed={true}>
+        <div className={'mb-2'}>
           <label>Image</label>
           <InputText
             value={image}
@@ -46,6 +58,13 @@ export const SeedMenu = (props: {
             placeholder={props.state.getColor()}
             onChange={onColorChange}
           />
+          <PaletteWrapper>
+            <PaletteSwatch color={props.state.palette.colors[0].rgb()} />
+            <PaletteSwatch color={props.state.palette.colors[1].rgb()} />
+            <PaletteSwatch color={props.state.palette.colors[2].rgb()} />
+            <PaletteSwatch color={props.state.palette.colors[3].rgb()} />
+            <PaletteSwatch color={props.state.palette.colors[4].rgb()} />
+          </PaletteWrapper>
         </div>
       </CollapsibleSection>
     </SectionWrapper>

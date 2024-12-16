@@ -1,7 +1,12 @@
 {
+  "include": ["./src"],
   "exclude": ["./src/demo.tsx", "./src/demos", "./src/stories", "./src/test"],
-  "references": [{ "path": "./tsconfig.base.json" }],
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "noUnusedParameters": true /* Report errors on unused parameters. */
+    "noUnusedParameters": true /* Report errors on unused parameters. */,
+
+    "outDir": "./dist",
+    "declaration": true /* Generates corresponding '.d.ts' file. */,
+    "sourceMap": true
   }
 }

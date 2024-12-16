@@ -13,7 +13,7 @@
 // } from '../../control-panel/types/parameters.js';
 
 // type ControlPanelSectionBuilder<
-//   T extends Record<string, ControlPanelElement<any>> = {},
+//   T extends ControlPanelElements = {},
 // > = {
 //   get: (options: { title: string; description?: string }) => ControlPanel<T>;
 
@@ -38,7 +38,7 @@
 // };
 
 // const ControlPanelSectionBuilder = (function (): ControlPanelSectionBuilder {
-//   const builder = <T extends Record<string, ControlPanelElement<any>>>(
+//   const builder = <T extends ControlPanelElements>(
 //     state = {} as T,
 //   ): ControlPanelSectionBuilder<T> => {
 //     const get = (options: { title: string; description?: string }) => ({

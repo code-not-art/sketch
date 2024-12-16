@@ -1,27 +1,28 @@
 import { Canvas } from '@code-not-art/core';
+import { debounce } from 'lodash';
 import querystring from 'query-string';
 import React, { useEffect, useMemo, useState } from 'react';
+import { css } from 'styled-components';
 import { ControlPanel } from '../control-panel/ControlPanel.js';
-import {
-  initialControlPanelValues,
-  Parameters,
-} from '../control-panel/Parameters.js';
+import { initialControlPanelValues } from '../control-panel/Parameters.js';
 import type {
   ControlPanelConfig,
-  ControlPanelElement,
+  ControlPanelElements,
   ControlPanelParameterValues,
 } from '../control-panel/types/controlPanel.js';
 import { SketchDefinition, SketchProps } from '../sketch/index.js';
 import KeyboardHandler from './KeyboardHandler.js';
 import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
 import { ControlPanelDisplay } from './control-panel/ControlPanelDisplay.js';
-import ControlButtons from './controls/index.js';
-import { applyQuery, setUrlQueryFromState } from './share.js';
-import { ImageState, LoopState } from './state/index.js';
-import { debounce, update } from 'lodash';
-import { SeedMenu } from './seed-menu/SeedMenu.js';
 import { FixedPositionWrapper } from './control-panel/FixedPositionWrapper.js';
-import { css } from 'styled-components';
+import ControlButtons from './controls/index.js';
+import { SeedMenu } from './seed-menu/SeedMenu.js';
+import {
+  applyQuery,
+  getParamsFromQuery,
+  setUrlQueryFromState,
+} from './share.js';
+import { ImageState, LoopState } from './state/index.js';
 
 // TODO: separate sketch init into a wrapper component so that the sketchData wrapper can be passed as a prop so we are confident we always have data.
 // this allows us to get rid of the `as TDataModel` casting.
@@ -38,10 +39,10 @@ const styles = css`
   }
 `;
 
-const DEFAULT_MENU_DELAY = 250;
+const DEFAULT_MENU_DELAY = 25;
 
 type SketchControllerProps<
-  TControlPanel extends Record<string, ControlPanelElement<any>>,
+  TControlPanel extends ControlPanelElements,
   TDataModel extends object,
 > = {
   canvasId: string;
@@ -49,7 +50,7 @@ type SketchControllerProps<
   sketch: SketchDefinition<TControlPanel, TDataModel>;
 };
 export const SketchController = <
-  TParameters extends Record<string, ControlPanelElement<any>>,
+  TParameters extends ControlPanelElements,
   TDataModel extends object,
 >({
   canvasId,
@@ -73,17 +74,21 @@ export const SketchController = <
 
   const controlsConfig = useMemo(
     () => ControlPanel('Sketch Parameters', sketch.controls),
-
     [],
   );
   type ControlValues = ControlPanelParameterValues<typeof controlsConfig>;
 
   const [eventHandlers] = useState<any>({});
-  const [params, setParams] = useState<{ data: ControlValues }>(
-    (() => {
-      return { data: initialControlPanelValues(controlsConfig) };
-    })(),
-  );
+  const [params, setParams] = useState<{ data: ControlValues }>(() => {
+    const query = querystring.parse(location.search);
+    const queryString = typeof query.p === 'string' ? query.p : '';
+    return {
+      data: {
+        ...initialControlPanelValues(controlsConfig),
+        ...getParamsFromQuery(queryString),
+      },
+    };
+  });
   const [loopState] = useState<LoopState>(new LoopState());
 
   const getCanvas = () => {
@@ -121,6 +126,7 @@ export const SketchController = <
   });
   const setSketchData = (data: TDataModel) => {
     sketchData.data = data;
+    forceUpdate();
   };
 
   const resize = () => {
@@ -168,7 +174,7 @@ export const SketchController = <
 
     const updatedSketchData = sketch.reset(
       sketchProps,
-      sketchData.data as TDataModel,
+      sketchData.data as TDataModel, // TODO: check that this isn't undefined
     );
     setSketchData(updatedSketchData);
 
@@ -186,8 +192,8 @@ export const SketchController = <
 
     state.startRender();
     // Dangerous casting, requires that we are confident the init pass has completed by this point
-    sketchData !== undefined &&
-      sketch.draw(getSketchProps(), sketchData as TDataModel);
+    sketchData.data !== undefined &&
+      sketch.draw(getSketchProps(), sketchData.data);
     state.stopRender();
 
     if (loopState.animationFrameRequest) {
@@ -198,7 +204,7 @@ export const SketchController = <
       if (loopState.nextFrame()) {
         loopState.finished = sketch.loop(
           getSketchProps(),
-          sketchData as TDataModel,
+          sketchData.data as TDataModel,
           loopState.frameData,
         );
       }
@@ -332,7 +338,7 @@ export const SketchController = <
               )}
             />
           ),
-          [renderTime],
+          [],
         )}
       </FixedPositionWrapper>
       {window.innerWidth <= MOBILE_WIDTH_BREAKPOINT &&
