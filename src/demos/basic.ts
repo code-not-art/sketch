@@ -112,8 +112,6 @@ const draw: SketchDraw<CustomControls, CustomData> = ({ canvas, palette, params,
 	const minDim = canvas.get.minDim();
 	const background = new Color('#111');
 
-	// const baseHue = palette.rng.int(0, 360);
-
 	const shapeColors = [
 		...array(8).map(
 			(index) =>

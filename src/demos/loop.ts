@@ -46,9 +46,6 @@ const config = SketchConfig({
 	menuDelay: 20,
 });
 
-// Warning: Display Names must all be unique
-// TODO: Remove warning once we replace the control panel library
-
 const createGradient = (palette: Palette) => new Gradient(palette.colors[1], palette.colors[2]).loop();
 
 const init: SketchInit<CustomControls, SketchData> = ({ palette }) => {
