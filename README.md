@@ -6,6 +6,8 @@ Framework used to create generative art using pseudo-random and parametric algor
 
 This code base provides a demo environment usable for art development, but it is intended to produce an NPM package with all the React UI components to embed a Sketch into any React based applicaiton. This it is used as the foundation for [@code-not-art/template](https://github.com/code-not-art/template) which provides a blank canvas to easily make your own generative works. If you are looking to write some code that makes some art, start there instead.
 
+![Screenshot of Sketch Web Interface](./docs/sketch-web-screenshot.png)
+
 ## Running the Demo (Quick Start)
 
 This repository is managed with [pnpm](https://pnpm.io/). The following commands will probably work with your preferred package manager (by replacing `pnpm` in these commands with `npm` or `yarn`, as you prefer. 
@@ -32,7 +34,7 @@ This repository is managed with [pnpm](https://pnpm.io/). The following commands
 
 > Other demo sketches to play with are in that demos folder, but need to be imported into `src/demo.tsx` and passed as a prop into the `App` element.
 
-## Sketch Interface and Controls
+## Sketch Web Interface Controls
 
 | **Key** |                                      **Action**                                       |
 | :-----: | :-----------------------------------------------------------------------------------: |
@@ -48,11 +50,11 @@ This repository is managed with [pnpm](https://pnpm.io/). The following commands
 |   `c`   |                     Generate new **color** seed. Draw new image.                      |
 |   `i`   |                     Generate new **image** seed. Draw new image.                      |
 
-## The Sketch Interface (AKA. writing your sketch)
+## The Sketch Interface (AKA. how to code your sketch)
 
 The canvas expects a prop of the [`Sketch`](src/sketch/Sketch.ts) type. This interface allows you to provide configuration details for your sketch (`config`), and interactable parameters that you can update in browser (`params`). There are several methods for available for you to implement that will interact with the canvas and the seeded random generators provided by the framework. The only one of these that are absolutely required to provide is the `draw(props)` method, all others have sensible (mostly empty) defaults.
 
-![Alt text](./docs/sketch-lifecycle.png)
+![Sketch lifecycle function sequence diagram](./docs/sketch-lifecycle.png)
 
 
 
@@ -76,4 +78,19 @@ The [`SketchProps`](src/sketch/SketchProps.ts) are provided provided to every fu
 |   palette    |                             [`Palette`](src/sketch/Palette/index.ts)                              |                 Random Color Palette with 5 randomly selected colors. Changing the color seed will update the colors in the palette without affecting the random seed of the `rng` `Random` generator provided in the `SketchProps`                 |
 |    params    |                                         `StringMap<any>`                                          |                                                The values for the parameters provided in the sketch definition. If these are updated in the UI then this params object will have the updated values.                                                |
 
+### Example Sketch Code
 
+This repository provides a folder with example Sketch files that can be rendered and edited live with the Sketch web components. These demos are located at [./src/demos](./src/demos/).
+
+Each sketch file exports a `Sketch` object. Building this object requires us to prepare a function for each of the Sketch lifecycle stages, as well as define the controls we want to be available for our sketch.
+
+| File | Description | Example |
+| ---- | ---- | --- |
+| [basic.tsx](./src/demos/basic.ts) | Grid of shapes with minor variation. Demonstrates several of the available control menu parameter types, as well as how to use canvas transforms and the rng stack to maintain pseudo-random consistency as parameters change. | ![Basic Sketch Example](./docs/example-images/basic-sketch-example.png) |
+| [basic2.tsx](./src/demos/basic2.ts) | Grid of circles with randomly positioned masks. Another very simple drawing included to show use of the randomly generated color palette. | ![Basic2 Sketch Example](./docs/example-images/basic2-sketch-example.png) |
+| [loop.tsx](./src/demos/loop.ts) | Circles rotating in a spiral. Example demonstrating simple animation through the `loop` function. Control panel can set the update speed. | ![Loop Sketch Example](./docs/example-images/loop-sketch-example.png) |
+
+
+
+> [!TIP]
+> Since this involves quite a bit of boilerplate, when starting a new sketch it is recommended to copy the template sketch located at [./src/demos/template.ts](./src/demos/template.ts).
