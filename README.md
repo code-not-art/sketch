@@ -4,7 +4,9 @@
 
 Framework used to create generative art using pseudo-random and parametric algorithms. This library provides a hot reloading canvas to simplify developer workflow for art development. This is the developer interface for creating art using the tools provided by the [@code-not-art/core](https://github.com/code-not-art/core) canvas drawing library.
 
-This code base provides a demo environment usable for art development, but it is intended to produce an NPM package with all the React UI components to embed a Sketch into any React based applicaiton. This it is used as the foundation for [@code-not-art/template](https://github.com/code-not-art/template) which provides a blank canvas to easily make your own generative works. If you are looking to write some code that makes some art, start there instead.
+This code base provides a demo environment usable for art development, included as a mechanism to test changes to the web component package. This demo setup is used as the foundation for [@code-not-art/template](https://github.com/code-not-art/template) which provides a blank canvas to easily make your own generative works. 
+
+*If you are looking to write some code that makes some art, [head over there](https://github.com/code-not-art/template) to get started immediately.*
 
 ![Screenshot of Sketch Web Interface](./docs/sketch-web-screenshot.png)
 
