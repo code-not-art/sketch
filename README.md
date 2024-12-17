@@ -93,4 +93,4 @@ Each sketch file exports a `Sketch` object. Building this object requires us to 
 
 
 > [!TIP]
-> Since this involves quite a bit of boilerplate, when starting a new sketch it is recommended to copy the template sketch located at [./src/demos/template.ts](./src/demos/template.ts).
+> Since creating a new sketch like these involves writing quite a bit of boilerplate, it is recommended to copy the template sketch located at [./src/demos/template.ts](./src/demos/template.ts) to use for writing your own sketches.
