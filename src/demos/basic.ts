@@ -166,7 +166,7 @@ const draw: SketchDraw<CustomControls, CustomData> = ({ canvas, palette, params,
 					break;
 				}
 				case 'square': {
-					canvas.draw.rect(
+					canvas.draw.rectangle(
 						{
 							corner: Vec2.ones().scale(-radius),
 							height: radius * 2,
