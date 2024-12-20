@@ -45,9 +45,11 @@ const controls = {
 		}),
 	}),
 	markers: ControlPanel('Markers', {
-		scaleRange: Parameters.number({
+		scaleRange: Parameters.range({
 			label: 'Scale Range',
-			initialValue: 0.4,
+			initialValue: [-0.25, 0.25],
+			min: -0.9,
+			max: 0.9,
 		}),
 		fillChance: Parameters.number({
 			label: 'Fill Chance',
@@ -212,7 +214,7 @@ const draw: SketchDraw<CustomControls, CustomData> = ({ canvas, palette, params,
 	shuffledPoints.forEach((tile) => {
 		drawMarker({
 			location: Vec2.ones().scale(tile.uv).scale(canvas.get.size()),
-			scale: rng.fuzzy(1).float(scaleRange),
+			scale: 1+rng.float(...scaleRange),
 		});
 	});
 };
