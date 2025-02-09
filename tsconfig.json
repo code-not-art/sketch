@@ -1,9 +1,0 @@
-{
-  "include": ["./src", "vite.config.ts"],
-  "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "noEmit": true,
-
-    "noErrorTruncation": true
-  }
-}

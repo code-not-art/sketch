@@ -1,0 +1,15 @@
+{
+	"include": ["./src", "vite.config.ts"],
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"jsx": "react-jsx",
+
+		"noErrorTruncation": true,
+
+		"paths": {
+			"nice-color-palettes/1000": ["./src/types/nice-color-palettes/1000.d.ts"],
+			"jsurl": ["./src/types/jsurl.d.ts"]
+		}
+	}
+}
