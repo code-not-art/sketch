@@ -1,0 +1,67 @@
+{
+	"name": "@code-not-art/sketch",
+	"version": "2.0.0-beta.2",
+	"description": "Quick start framework for HTML Canvas sketches",
+	"type": "module",
+	"exports": "./dist/index.js",
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
+	"scripts": {
+		"start": "vite --port 1234",
+		"build": "rm -rf ./dist && tsc --project tsconfig.package.json",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build",
+		"test": "vitest run"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/code-not-art/sketch.git"
+	},
+	"keywords": [
+		"canvas",
+		"generative",
+		"art",
+		"TypeScript",
+		"React",
+		"ReactJS",
+		"makecodenotart",
+		"codenotart",
+		"codeart"
+	],
+	"author": "Jon Eubank <joneubank@gmail.com>",
+	"license": "GPL-3.0-or-later",
+	"bugs": {
+		"url": "https://github.com/code-not-art/sketch/issues"
+	},
+	"homepage": "https://github.com/code-not-art/sketch#readme",
+	"dependencies": {
+		"@code-not-art/core": "workspace:*",
+		"jsurl": "^0.1.5",
+		"lodash": "^4.17.21",
+		"nice-color-palettes": "^3.0.0",
+		"primeflex": "^3.3.1",
+		"primeicons": "^7.0.0",
+		"primereact": "^10.8.5",
+		"query-string": "^7.1.3",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"react-feather": "^2.0.10",
+		"styled-components": "^6.1.13"
+	},
+	"devDependencies": {
+		"@types/lodash": "^4.17.13",
+		"@types/node": "^20.17.10",
+		"@types/react": "^19.0.0",
+		"@types/react-dom": "^19.0.0",
+		"@types/react-helmet": "^6.1.11",
+		"@vitejs/plugin-react": "^4.3.4",
+		"@vitest/coverage-istanbul": "^1.6.0",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.7.2",
+		"vite": "^5.4.11",
+		"vitest": "^1.6.0"
+	}
+}

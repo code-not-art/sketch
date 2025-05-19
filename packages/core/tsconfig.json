@@ -1,0 +1,12 @@
+{
+	"include": ["./src"],
+	"exclude": [],
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"noUnusedParameters": true,
+
+		"outDir": "./dist",
+		"declaration": true,
+		"sourceMap": true
+	}
+}
