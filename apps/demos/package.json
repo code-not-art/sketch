@@ -1,10 +1,10 @@
 {
-	"name": "demos",
+	"name": "@code-not-art/demos",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"dev": "vite",
+		"dev": "concurrently \"vite\" \"nx watch nx --projects=demos --includeDependentProjects -- echo \\$NX_PROJECT_NAME\"",
 		"build": "vite build",
 		"lint": "eslint .",
 		"preview": "vite preview"
@@ -21,6 +21,7 @@
 		"@types/react-dom": "^19.0.3",
 		"@types/react-helmet": "^6.1.11",
 		"@vitejs/plugin-react": "^4.3.4",
+		"concurrently": "^9.1.2",
 		"globals": "^15.14.0",
 		"typescript": "~5.7.2",
 		"typescript-eslint": "^8.22.0",
