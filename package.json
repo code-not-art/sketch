@@ -1,18 +1,19 @@
 {
-  "name": "@code-not-art/monorepo",
-  "private": true,
-  "version": "2.0.0-next.0",
-  "description": "Schema Manager and Validation for Data Dictionaries",
-  "scripts": {
-    "build:all": "pnpm nx run-many --all --target=build"
-  },
-  "keywords": [],
-  "author": "Ontario Institute for Cancer Research",
-  "license": "AGPL-3.0",
-  "devDependencies": {
-    "@types/node": "^20.17.17",
-    "nx": "^16.10.0",
-    "prettier": "^3.4.2",
-    "typescript": "^5.7.3"
-  }
+	"name": "@code-not-art/monorepo",
+	"private": true,
+	"version": "2.0.0-next.0",
+	"description": "Schema Manager and Validation for Data Dictionaries",
+	"scripts": {
+		"build:all": "pnpm nx run-many --all --target=build",
+		"demo": "pnpm nx dev @code-not-art/demos"
+	},
+	"keywords": [],
+	"author": "Ontario Institute for Cancer Research",
+	"license": "AGPL-3.0",
+	"devDependencies": {
+		"@types/node": "^20.17.17",
+		"nx": "^16.10.0",
+		"prettier": "^3.4.2",
+		"typescript": "^5.7.3"
+	}
 }
