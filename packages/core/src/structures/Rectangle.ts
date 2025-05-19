@@ -81,3 +81,39 @@ Rectangle.bounding = (...points: Vec2[]): Rectangle => {
 
 	return Rectangle({ min, max });
 };
+
+/**
+ * Returns a rectangle that defines the region where multiple rectangles all overlap. This works
+ * only for non-rotated rectangles, ie. two rectangles that both align to the cartesian grid.
+ * @param other
+ * @returns A Rectangle with the overlapping region, or undefined if there is no shared overlapping region
+ */
+Rectangle.overlap = (rectangles: Rectangle[]): Rectangle | undefined => {
+	if (rectangles.length === 0) {
+		return undefined;
+	}
+	const greatestMin: Vec2 = rectangles.reduce<Vec2>((acc, rect) => {
+		if (rect.min.x > acc.x) {
+			acc.x = rect.min.x;
+		}
+		if (rect.min.x > acc.x) {
+			acc.x = rect.min.x;
+		}
+		return acc;
+	}, Vec2.from(rectangles[0].min));
+	const leastMax: Vec2 = rectangles.reduce<Vec2>((acc, rect) => {
+		if (rect.max.x < acc.x) {
+			acc.x = rect.max.x;
+		}
+		if (rect.max.x < acc.x) {
+			acc.x = rect.max.x;
+		}
+		return acc;
+	}, Vec2.from(rectangles[0].max));
+
+	if (!greatestMin.within(leastMax)) {
+		return undefined;
+	}
+
+	return Rectangle({ min: leastMax, max: greatestMin });
+};
