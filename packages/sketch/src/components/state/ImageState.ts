@@ -6,8 +6,10 @@ import phrase from '../../utils/phrase.js';
 type ImageStateParams = {
 	seed?: string;
 	imageSeed?: string;
-	paletteSeed?: string;
+	colorSeed?: string;
 	paletteType?: PaletteType;
+	userImageSeed?: string;
+	userPaletteSeed?: string;
 };
 export default class ImageState {
 	_rng: Random;
@@ -29,7 +31,14 @@ export default class ImageState {
 	userImageSeed?: string;
 	userColorSeed?: string;
 
-	constructor({ seed, imageSeed, paletteSeed, paletteType = PaletteType.Random }: ImageStateParams = {}) {
+	constructor({
+		seed,
+		imageSeed,
+		colorSeed: paletteSeed,
+		paletteType = PaletteType.Random,
+		userImageSeed,
+		userPaletteSeed,
+	}: ImageStateParams = {}) {
 		// definte the state from the seed or from the current Date/time
 		this._seed = seed || new Date().toISOString();
 		this._paletteType = paletteType;
@@ -42,6 +51,8 @@ export default class ImageState {
 		// Get the first seeds
 		this.imageSeeds = [];
 		this.colorSeeds = [];
+		this.userColorSeed = userPaletteSeed;
+		this.userImageSeed = userImageSeed;
 		this.activeImage = 0;
 		this.activeColor = 0;
 		this.palette = new Palette({ type: this._paletteType });
@@ -133,8 +144,14 @@ export default class ImageState {
 	getImage(): string {
 		return this.userImageSeed ? this.userImageSeed : this.imageSeeds[this.activeImage];
 	}
+	getUserImage(): string | undefined {
+		return this.userImageSeed;
+	}
 	getColor(): string {
 		return this.userColorSeed ? this.userColorSeed : this.colorSeeds[this.activeColor];
+	}
+	getUserColor(): string | undefined {
+		return this.userColorSeed;
 	}
 	getPalette(): Palette {
 		return this.palette;

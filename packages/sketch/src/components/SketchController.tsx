@@ -59,6 +59,10 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 
 	const config = sketch.config;
 
+	const query = querystring.parse(location.search);
+	const queryString = typeof query.p === 'string' ? query.p : '';
+	const queryStringParamValues = getParamsFromQuery(queryString);
+
 	const [renderTime, updateState] = React.useState<Date>(new Date());
 	const forceUpdate = React.useCallback(() => updateState(new Date()), []);
 
@@ -69,12 +73,15 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 	// All these state variables could just be local references, except they would get wiped during hotload.
 	// By stashing them in state, they keep their values as the developer edits their sketch.
 	const [state] = useState<ImageState>(
-		new ImageState({
-			seed: seeds?.initialSeed || config.seed,
-			imageSeed: seeds?.imageSeed,
-			paletteSeed: seeds?.paletteSeed,
-			paletteType: config.paletteType,
-		}),
+		() =>
+			new ImageState({
+				seed: seeds?.initialSeed || config.seed,
+				imageSeed: seeds?.imageSeed,
+				colorSeed: seeds?.paletteSeed,
+				paletteType: config.paletteType,
+				userImageSeed: queryStringParamValues[QUERY_STRING_USER_IMAGE_SEED],
+				userPaletteSeed: queryStringParamValues[QUERY_STRING_USER_COLOR_SEED],
+			}),
 	);
 
 	const controlsConfig = useMemo(() => ControlPanel('Sketch Parameters', sketch.controls), []);
@@ -88,7 +95,7 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 		return {
 			data: {
 				...initialControlPanelValues(controlsConfig),
-				...getParamsFromQuery(queryString),
+				...queryStringParamValues,
 				...initialParameters,
 			},
 		};

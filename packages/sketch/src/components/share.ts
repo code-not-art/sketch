@@ -1,11 +1,18 @@
 import JSURL from 'jsurl';
 import ImageState from './state/ImageState.js';
 
+export const QUERY_STRING_COLOR_SEED = '_p';
+export const QUERY_STRING_IMAGE_SEED = '_i';
+export const QUERY_STRING_USER_COLOR_SEED = '_up';
+export const QUERY_STRING_USER_IMAGE_SEED = '_ui';
+
 export function buildQueryString(state: ImageState, params: Record<string, any>): string {
 	return JSURL.stringify({
 		...params,
-		_c: state.getColor(),
-		_i: state.getImage(),
+		[QUERY_STRING_COLOR_SEED]: state.getColor(),
+		[QUERY_STRING_IMAGE_SEED]: state.getImage(),
+		[QUERY_STRING_USER_COLOR_SEED]: state.getUserColor(),
+		[QUERY_STRING_USER_IMAGE_SEED]: state.getUserImage(),
 	});
 }
 
