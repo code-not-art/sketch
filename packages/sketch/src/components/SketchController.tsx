@@ -17,7 +17,13 @@ import { ControlPanelDisplay } from './control-panel/ControlPanelDisplay.js';
 import { FixedPositionWrapper } from './control-panel/FixedPositionWrapper.js';
 import ControlButtons from './controls/index.js';
 import { SeedMenu } from './seed-menu/SeedMenu.js';
-import { applyQuery, getParamsFromQuery, setUrlQueryFromState } from './share.js';
+import {
+	applyQuery,
+	getParamsFromQuery,
+	QUERY_STRING_USER_COLOR_SEED,
+	QUERY_STRING_USER_IMAGE_SEED,
+	setUrlQueryFromState,
+} from './share.js';
 import { ImageState, LoopState } from './state/index.js';
 
 // TODO: separate sketch init into a wrapper component so that the sketchData wrapper can be passed as a prop so we are confident we always have data.
@@ -86,12 +92,15 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 
 	const controlsConfig = useMemo(() => ControlPanel('Sketch Parameters', sketch.controls), []);
 	type ControlValues = ControlPanelParameterValues<typeof controlsConfig>;
+	type EventHandlers = Partial<{
+		resize: (this: Window, ev: UIEvent) => any;
+		keydown: (event: KeyboardEvent) => void;
+		touchend: (event: TouchEvent) => void;
+	}>;
 
-	const [eventHandlers] = useState<any>({}); // TODO: strictly type the handlers
+	const [eventHandlers] = useState<EventHandlers>({}); // TODO: strictly type the handlers
 
 	const [params, setParams] = useState<{ data: ControlValues }>(() => {
-		const query = querystring.parse(location.search);
-		const queryString = typeof query.p === 'string' ? query.p : '';
 		return {
 			data: {
 				...initialControlPanelValues(controlsConfig),
@@ -234,15 +243,16 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 	// They all need to be removed before being re-attached or crazy duplicates happen
 	// They also need to be reattached when the params change since the original listeners have those params in their internal scope
 	const resetEventHandlers = () => {
+		// ===== Remove previous hanndlers
+		removeEventHandlers;
+
 		// ===== Window Resize
-		window.removeEventListener('resize', eventHandlers.resize);
 		eventHandlers.resize = function () {
 			resize();
 		};
 		window.addEventListener('resize', eventHandlers.resize, true);
 
 		// ===== Keydown
-		document.removeEventListener('keydown', eventHandlers.keydown);
 		if (enableControls) {
 			eventHandlers.keydown = (event: KeyboardEvent) => {
 				KeyboardHandler({
@@ -259,7 +269,6 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 		}
 
 		// ===== Touch Screen Press on Canvas
-		document.removeEventListener('touchend', eventHandlers.touchend);
 		if (enableControls) {
 			eventHandlers.touchend = (event: TouchEvent) => {
 				if (event.target && (event.target as HTMLElement).localName !== 'canvas') {
@@ -271,6 +280,12 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 			};
 			document.addEventListener('touchend', eventHandlers.touchend, false);
 		}
+	};
+
+	const removeEventHandlers = () => {
+		eventHandlers.resize && window.removeEventListener('resize', eventHandlers.resize);
+		eventHandlers.keydown && document.removeEventListener('keydown', eventHandlers.keydown);
+		eventHandlers.touchend && document.removeEventListener('touchend', eventHandlers.touchend);
 	};
 
 	const controlPanelUpdateHandler = (_updates: Partial<ControlValues>, newValues: ControlValues) => {
@@ -312,6 +327,9 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 			setInitialized(true);
 			redraw();
 		}
+		return () => {
+			removeEventHandlers();
+		};
 	});
 
 	return (
