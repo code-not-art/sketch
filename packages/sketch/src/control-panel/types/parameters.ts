@@ -2,6 +2,7 @@ import type { Identity } from '../../types/Identity.js';
 
 export const ControlPanelParameterTypes = [
 	'boolean',
+	'select',
 	'multiSelect',
 	'number',
 	'randomSeed',
@@ -37,11 +38,20 @@ export type ControlPanelParameterBoolean = ParameterTemplate<
 	ControlPanelParameterBooleanConfig
 >;
 
+export type ControlPanelParameterSelectConfig<TOptions extends string> = {
+	options: ReadonlyArray<TOptions>;
+};
+export type ControlPanelValueSelect<TOptions extends string> = TOptions;
+export type ControlPanelParameterSelect<TOptions extends string = string> = ParameterTemplate<
+	'select',
+	ControlPanelValueSelect<TOptions>,
+	ControlPanelParameterSelectConfig<TOptions>
+>;
 export type ControlPanelParameterMultiSelectConfig<TOptions extends string> = {
 	options: ReadonlyArray<TOptions>;
 };
 export type ControlPanelValueMultiSelect<TOptions extends string> = {
-	[Key in TOptions]: boolean;
+	[Key in TOptions[number]]: boolean;
 };
 export type ControlPanelParameterMultiSelect<TOptions extends string = string> = ParameterTemplate<
 	'multiSelect',
@@ -97,6 +107,7 @@ export type ControlPanelParameterString = ParameterTemplate<
 
 export type ControlPanelParameter<TOptions extends string = string> =
 	| ControlPanelParameterBoolean
+	| ControlPanelParameterSelect<TOptions>
 	| ControlPanelParameterMultiSelect<TOptions>
 	| ControlPanelParameterNumber
 	| ControlPanelParameterRandomSeed

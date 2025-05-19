@@ -2,7 +2,6 @@ import { useState } from 'react';
 import type { ControlPanelParameterMultiSelect } from '../../../control-panel/types/parameters.js';
 
 import { ToggleButton, type ToggleButtonChangeEvent } from 'primereact/togglebutton';
-import { Column } from 'primereact/column';
 import { styled } from 'styled-components';
 
 const StyledToggleButton = styled(ToggleButton)`
@@ -35,8 +34,6 @@ export const ControlPanelMultiSelect = <TOptions extends string>(props: {
 									props.onChange(internalState.value);
 								};
 								return (
-									// <div key={index} className="">
-									//   {/* <label>{key}</label> */}
 									<StyledToggleButton
 										key={index}
 										invalid
@@ -48,7 +45,6 @@ export const ControlPanelMultiSelect = <TOptions extends string>(props: {
 										onChange={onChange}
 										className="p-0 m-1 flex-1"
 									/>
-									// </div>
 								);
 							})
 					) : (

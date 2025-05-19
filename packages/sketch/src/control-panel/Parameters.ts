@@ -7,6 +7,8 @@ import type {
 	ControlPanelParameterBaseConfig,
 	ControlPanelParameterBoolean,
 	ControlPanelParameterBooleanConfig,
+	ControlPanelParameterSelect,
+	ControlPanelParameterSelectConfig,
 	ControlPanelParameterMultiSelect,
 	ControlPanelParameterMultiSelectConfig,
 	ControlPanelParameterNumber,
@@ -24,9 +26,11 @@ import type {
 	ControlPanelValueRandomSeed,
 	ControlPanelValueRange,
 	ControlPanelValueString,
+	ControlPanelValueSelect,
 } from './types/parameters.js';
 
 const withDefault = <T>(value: T | undefined, defaultValue: T): T => (value !== undefined ? value : defaultValue);
+const withSelectDefault = <T>(value: T | undefined, defaultValue: T): T => (value !== undefined ? value : defaultValue);
 
 const booleanParameter = (
 	config: Identity<
@@ -61,9 +65,22 @@ const numberParameter = (
 	};
 };
 
+const selectParameter = <TOptions extends string>(
+	config: Identity<
+		ControlPanelParameterSelectConfig<TOptions> & ControlPanelParameterBaseConfig<ControlPanelValueSelect<TOptions>>
+	>,
+): ControlPanelParameterSelect<TOptions> => {
+	return {
+		dataType: 'select',
+		...config,
+		editable: withDefault(config.editable, true),
+		hidden: withDefault(config.hidden, false),
+	};
+};
+
 const multiSelectParameter = <TOptions extends string>(
 	config: Identity<
-		Partial<ControlPanelParameterMultiSelectConfig<TOptions>> &
+		ControlPanelParameterMultiSelectConfig<TOptions> &
 			ControlPanelParameterBaseConfig<ControlPanelValueMultiSelect<TOptions>>
 	>,
 ): ControlPanelParameterMultiSelect<TOptions> => {
@@ -125,6 +142,7 @@ const stringParameter = (
 
 export const Parameters = {
 	boolean: booleanParameter,
+	select: selectParameter,
 	multiSelect: multiSelectParameter,
 	number: numberParameter,
 	randomSeed: randomSeedParameter,
@@ -139,6 +157,11 @@ export const initialParameterValueBoolean = (
 	config: ControlPanelParameterBoolean,
 ): Defined<ControlPanelParameterBoolean['initialValue']> => {
 	return config.initialValue || false;
+};
+export const initialParameterValueSelect = (
+	config: ControlPanelParameterSelect,
+): ControlPanelParameterSelect['initialValue'] => {
+	return config.initialValue;
 };
 export const initialParameterValueMultiSelect = (
 	config: ControlPanelParameterMultiSelect,
@@ -158,10 +181,10 @@ export const initialParameterValueNumber = (
 	return config.initialValue !== undefined
 		? config.initialValue
 		: config.min !== undefined
-		? config.min
-		: config.max !== undefined
-		? config.max
-		: 0;
+			? config.min
+			: config.max !== undefined
+				? config.max
+				: 0;
 };
 export const initialParameterValueRandomSeed = (
 	config: ControlPanelParameterRandomSeed,
@@ -208,6 +231,10 @@ export const initialControlPanelValues = <TConfig extends ControlPanelConfig<Con
 			switch (value.dataType) {
 				case 'boolean': {
 					collector[key] = initialParameterValueBoolean(value);
+					break;
+				}
+				case 'select': {
+					collector[key] = initialParameterValueSelect(value);
 					break;
 				}
 				case 'multiSelect': {

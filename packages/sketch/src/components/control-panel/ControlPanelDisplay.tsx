@@ -1,4 +1,8 @@
+import 'primeflex/primeflex.css';
+import 'primeicons/primeicons.css';
 import { PrimeReactProvider } from 'primereact/api';
+import 'primereact/resources/primereact.min.css';
+import 'primereact/resources/themes/lara-dark-amber/theme.css';
 import { useState } from 'react';
 import {
 	type ControlPanelConfig,
@@ -6,19 +10,14 @@ import {
 	type ControlPanelParameterValues,
 } from '../../control-panel/types/controlPanel.js';
 import { CollapsibleSection } from './CollapsibleSection.js';
-import { ControlPanelNumber } from './inputs/ControlPanelNumber.js';
-import { ControlPanelString } from './inputs/ControlPanelString.js';
-
-import 'primeflex/primeflex.css';
-import 'primeicons/primeicons.css';
-import 'primereact/resources/primereact.min.css';
-import 'primereact/resources/themes/lara-dark-amber/theme.css';
 import { SectionWrapper } from './SectionWrapper.js';
-import { ControlPanelMultiSelect } from './inputs/ControlPanelMultiSelect.js';
-import type { ControlPanelParameterNumber } from '../../control-panel/index.js';
-import { ControlPanelRandomSeed } from './inputs/ControlPanelRandomSeed.js';
 import { ControlPanelBoolean } from './inputs/ControlPanelBoolean.js';
+import { ControlPanelMultiSelect } from './inputs/ControlPanelMultiSelect.js';
+import { ControlPanelNumber } from './inputs/ControlPanelNumber.js';
+import { ControlPanelRandomSeed } from './inputs/ControlPanelRandomSeed.js';
 import { ControlPanelRange } from './inputs/ControlPanelRange.js';
+import { ControlPanelSelect } from './inputs/ControlPanelSelect.js';
+import { ControlPanelString } from './inputs/ControlPanelString.js';
 
 export const ControlPanelDisplay = <TPanel extends ControlPanelConfig<ControlPanelElements>>(props: {
 	config: TPanel;
@@ -48,6 +47,25 @@ export const ControlPanelDisplay = <TPanel extends ControlPanelConfig<ControlPan
 							case 'boolean': {
 								return (
 									<ControlPanelBoolean
+										key={key}
+										parameter={element}
+										value={value}
+										onChange={(updatedValue) => {
+											valueWrapper.values = {
+												...valueWrapper.values,
+												[key]: updatedValue,
+											};
+											recursiveProps.updateHandler(
+												{ [key]: updatedValue } as Partial<ControlPanelParameterValues<TPanel>>,
+												valueWrapper.values,
+											);
+										}}
+									/>
+								);
+							}
+							case 'select': {
+								return (
+									<ControlPanelSelect
 										key={key}
 										parameter={element}
 										value={value}

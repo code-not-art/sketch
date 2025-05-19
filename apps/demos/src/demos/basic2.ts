@@ -41,6 +41,12 @@ const controls = {
 		}),
 	}),
 
+	background: Parameters.select<'Black' | 'White' | 'Palette' | 'None'>({
+		label: 'Background Style',
+		options: ['Black', 'White', 'Palette', 'None'] as const,
+		initialValue: 'Black',
+	}),
+
 	masks: ControlPanel('Mask Layer', {
 		chanceHidden: Parameters.number({
 			label: 'Chance Hidden',
@@ -59,7 +65,9 @@ const controls = {
 		positionExponent: Parameters.number({
 			label: 'Circle Position Spread',
 			initialValue: 1,
-			max: 5,
+			min: 0.01,
+			max: 2,
+			step: 0.01,
 		}),
 	}),
 } satisfies ControlPanelElements;
@@ -70,11 +78,28 @@ type SketchData = {};
 const draw: SketchDraw<CustomControls, SketchData> = ({ canvas, rng, palette, params }, _data) => {
 	const {
 		sizes: { canvasFill, circleFill, gridWidth },
+		background,
 		masks: { chanceHidden, chanceNoMask, darkenRange, lightenRange, positionExponent },
 	} = params;
 
 	// Background
-	canvas.fill(palette.colors[0]);
+	switch (background) {
+		case 'Black': {
+			canvas.fill('black');
+			break;
+		}
+		case 'White': {
+			canvas.fill('white');
+			break;
+		}
+		case 'Palette': {
+			canvas.fill(palette.colors[0]);
+			break;
+		}
+		case 'None': {
+			break;
+		}
+	}
 
 	// Put origin at center of canvas:
 	canvas.transform.translate(new Vec2(canvas.get.width() / 2, canvas.get.height() / 2));

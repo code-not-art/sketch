@@ -1,11 +1,13 @@
 import type {
 	ControlPanelParameter,
 	ControlPanelParameterMultiSelect,
+	ControlPanelParameterSelect,
 	ControlPanelValueBoolean,
 	ControlPanelValueMultiSelect,
 	ControlPanelValueNumber,
 	ControlPanelValueRandomSeed,
 	ControlPanelValueRange,
+	ControlPanelValueSelect,
 	ControlPanelValueString,
 } from './parameters.js';
 
@@ -18,33 +20,31 @@ export type ControlPanelConfig<TElements extends ControlPanelElements> = {
 	elements: TElements;
 };
 
-export type ControlPanelElement<TElements extends ControlPanelElements | void = void> = TElements extends Record<
-	string,
-	any
->
-	? ControlPanelConfig<TElements>
-	: ControlPanelParameter;
+export type ControlPanelElement<TElements extends ControlPanelElements | void = void> =
+	TElements extends Record<string, any> ? ControlPanelConfig<TElements> : ControlPanelParameter;
 
 export type ControlPanelParameterValue<T extends ControlPanelParameter> = T['dataType'] extends 'boolean'
 	? ControlPanelValueBoolean
 	: T['dataType'] extends 'number'
-	? ControlPanelValueNumber
-	: T extends ControlPanelParameterMultiSelect<infer TOptions>
-	? ControlPanelValueMultiSelect<TOptions>
-	: T['dataType'] extends 'randomSeed'
-	? ControlPanelValueRandomSeed
-	: T['dataType'] extends 'range'
-	? ControlPanelValueRange
-	: T['dataType'] extends 'string'
-	? ControlPanelValueString
-	: never;
+		? ControlPanelValueNumber
+		: T extends ControlPanelParameterSelect<infer TOptions>
+			? ControlPanelValueSelect<TOptions>
+			: T extends ControlPanelParameterMultiSelect<infer TOptions>
+				? ControlPanelValueMultiSelect<TOptions>
+				: T['dataType'] extends 'randomSeed'
+					? ControlPanelValueRandomSeed
+					: T['dataType'] extends 'range'
+						? ControlPanelValueRange
+						: T['dataType'] extends 'string'
+							? ControlPanelValueString
+							: never;
 
 export type ControlPanelParameterValues<TSection extends ControlPanelConfig<any>> = {
 	[TKey in keyof TSection['elements']]: TSection['elements'][TKey] extends infer TValue
 		? TValue extends ControlPanelParameter
 			? ControlPanelParameterValue<TValue>
 			: TValue extends ControlPanelConfig<any>
-			? ControlPanelParameterValues<TValue>
-			: never
+				? ControlPanelParameterValues<TValue>
+				: never
 		: never;
 };
