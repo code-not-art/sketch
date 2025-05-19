@@ -3,6 +3,8 @@
 	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
 		"jsx": "react-jsx",
+		"moduleResolution": "bundler",
+		"module": "ESNext",
 
 		"noEmit": true,
 

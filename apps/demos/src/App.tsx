@@ -1,7 +1,7 @@
 import { FullPageSketchCanvas, ControlPanelElements, SketchDefinition } from '@code-not-art/sketch';
 import { Helmet } from 'react-helmet';
 
-import sketch from './demos/basic.js';
+import sketch from './demos/basic';
 
 const App = <TParameters extends ControlPanelElements, DataModel extends object>() => (
 	<>

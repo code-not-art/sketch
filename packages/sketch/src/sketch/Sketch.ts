@@ -1,4 +1,5 @@
 import type { ControlPanelConfig, ControlPanelElements } from '../control-panel/types/controlPanel.js';
+import { Identity } from '../types/Identity.js';
 import { createSketchConfig, SketchConfig, SketchConfigInput } from './Config.js';
 import { FrameData } from './FrameData.js';
 import { SketchProps } from './SketchProps.js';
@@ -59,7 +60,7 @@ export type SketchInputs<SketchParameters extends ControlPanelElements, SketchDa
 };
 
 export function createSketch<SketchParameters extends ControlPanelElements, SketchData extends object>(
-	definition: SketchInputs<SketchParameters, SketchData>,
+	definition: Identity<SketchInputs<SketchParameters, SketchData>>,
 ): SketchDefinition<SketchParameters, SketchData> {
 	return {
 		config: createSketchConfig(definition.config || {}),
