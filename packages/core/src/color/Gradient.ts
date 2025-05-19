@@ -38,17 +38,19 @@ class Gradient {
 			case 0:
 				return new Color({ h: 0, s: 0, v: 0, a: 1 });
 			case 1:
-				return this.colors.entries().next().value;
+				const color = this.colors.entries().next().value;
+				return color ? color[1] : new Color({ h: 0, s: 0, v: 0, a: 1 });
 			default:
 				// const values = this.colors.values();
-				if (this.cache.has(clampedPosition)) {
-					return <Color>this.cache.get(clampedPosition);
+				const cachedValue = this.cache.get(clampedPosition);
+				if (cachedValue) {
+					return cachedValue;
 				}
 
-				if (this.colors.has(clampedPosition)) {
-					const output = <Color>this.colors.get(clampedPosition);
-					this.cache.set(clampedPosition, output);
-					return output;
+				const actualValue = this.colors.get(clampedPosition);
+				if (actualValue) {
+					this.cache.set(clampedPosition, actualValue);
+					return actualValue;
 				}
 
 				// No exact match found, need to calculate a mix from the boundary colours
