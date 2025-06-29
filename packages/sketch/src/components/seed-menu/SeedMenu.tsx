@@ -25,8 +25,8 @@ export const SeedMenu = (props: {
 	state: ImageState;
 	onChange: (updatedState: { image: string; color: string }) => void;
 }) => {
-	const [image, setImage] = useState(props.state.userImageSeed || '');
-	const [color, setColor] = useState(props.state.userColorSeed || '');
+	const [image, setImage] = useState(props.state.getImage());
+	const [color, setColor] = useState(props.state.getColor());
 	const [, _forceUpdate] = useState<void>();
 
 	const onImageChange: InputChangeHandler = (e) => {

@@ -41,13 +41,13 @@ class Color {
 		} else if (typeof options === 'string') {
 			this._color = tinycolor(options);
 		} else {
-			this.seed = options.seed || new Random(`Random Color Seed`).next().toString();
-			const _rng = options.rng || new Random(`Color ${this.seed}`, this.seed);
+			this.seed = options.seed ?? new Random(`Random Color Seed`).next().toString();
+			const _rng = options.rng ?? new Random(`Color ${this.seed}`, this.seed);
 
-			const _h = options.h || _rng.float(0, 360);
-			const _s = options.s || _rng.float(0, 100);
-			const _v = options.v || _rng.float(0, 100);
-			const _a = options.a || 1;
+			const _h = options.h ?? _rng.float(0, 360);
+			const _s = options.s ?? _rng.float(0, 100);
+			const _v = options.v ?? _rng.float(0, 100);
+			const _a = options.a ?? 1;
 			const hsv = `hsva(${clamp(_h, { min: 0, max: 360 })}, ${clamp(_s, {
 				min: 0,
 				max: 100,
