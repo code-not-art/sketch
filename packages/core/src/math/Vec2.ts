@@ -97,7 +97,7 @@ class Vec2 {
 	/* ===== Modify ===== */
 	/**
 	 * Vec2 Modulus works by applying modulus operator for both dimensions of the input vector.
-	 * For all positive values this is akin to habing the vector wrap around (like asteroids game)
+	 * For all positive values this is akin to having the vector wrap around (like asteroids game)
 	 * the bounds of a box with the size of the modulus.
 	 */
 	mod(modulus: Vec2): Vec2 {
