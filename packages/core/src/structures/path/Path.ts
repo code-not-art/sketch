@@ -36,6 +36,10 @@ export class Path {
 			});
 			return Rectangle({ min, max });
 		},
+		size: (): Vec2 => {
+			const bounds = this.get.bounds();
+			return bounds.max.diff(bounds.min);
+		},
 		end: (): Vec2 => this.end,
 		length: (): number =>
 			this.segments.reduce((acc, segment) => {
@@ -184,7 +188,7 @@ export class Path {
 			this.segments = this.segments.map((segment) => segment.transform.translate(translation));
 			return this;
 		},
-		map: (divisions: number, transform: (point: Vec2, index: number, ratio: number, path: Path) => Vec2) => {
+		map: (divisions: number, transform: (point: Vec2, index: number, ratio: number, path: Path) => Vec2): Path => {
 			const positions = ratioArray(divisions);
 			const mappedPositions = positions.map((position, index) =>
 				transform(this.get.point(position), index, position, this),
