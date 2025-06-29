@@ -10,7 +10,7 @@ import { words } from './words/index.js';
 
 export class Random {
 	_contexts: RandomContext[] = [];
-	constructor(context: string, seed?: string) {
+	constructor(context: string, seed?: string | number) {
 		const _seed = `${seed ? seed : Math.random()}`;
 		this._contexts.push(this.createContext(context, _seed, Uniform));
 	}
