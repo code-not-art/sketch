@@ -95,6 +95,14 @@ class Vec2 {
 	}
 
 	/* ===== Modify ===== */
+	/**
+	 * Vec2 Modulus works by applying modulus operator for both dimensions of the input vector.
+	 * For all positive values this is akin to habing the vector wrap around (like asteroids game)
+	 * the bounds of a box with the size of the modulus.
+	 */
+	mod(modulus: Vec2): Vec2 {
+		return new Vec2(this.x % modulus.x, this.y % modulus.y);
+	}
 	normalize(): Vec2 {
 		const M = this.magnitude();
 		return new Vec2(this.x / M, this.y / M);
@@ -160,18 +168,40 @@ class Vec2 {
 
 	/**
 	 * Vec2 of size 1 along the first (x) axis. Shortcut for `new Vec2(1, 0)`.
+	 * Optionally, you can scale and rotate the returned vector using the options object.
 	 * @returns {vec2} (1, 0)
 	 */
-	static unit(): Vec2 {
-		return new Vec2(1, 0);
+	static unit(options?: { scale?: number; angle?: number }): Vec2 {
+		let output = new Vec2(1, 0);
+		if (!options) {
+			return output;
+		}
+		if (options.scale) {
+			output = output.scale(options.scale);
+		}
+		if (options.angle) {
+			output = output.rotate(options.angle);
+		}
+		return output;
 	}
 
 	/**
 	 * Vec2 of all 1's. Shortcut for `new Vec2(1, 1)`
-	 * @returns {Vec2} (0, 0)
+	 * Optionally, you can scale and rotate the returned vector using the options object.
+	 * @returns {Vec2} (1, 1)
 	 */
-	static ones(): Vec2 {
-		return new Vec2(1, 1);
+	static ones(options?: { scale?: number; angle?: number }): Vec2 {
+		let output = new Vec2(1, 1);
+		if (!options) {
+			return output;
+		}
+		if (options.scale) {
+			output = output.scale(options.scale);
+		}
+		if (options.angle) {
+			output = output.rotate(options.angle);
+		}
+		return output;
 	}
 
 	/**
