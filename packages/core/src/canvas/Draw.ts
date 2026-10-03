@@ -35,7 +35,7 @@ export type Stroke = {
 	cap?: 'round' | 'butt' | 'square';
 };
 
-type Styles = {
+export type DrawStyles = {
 	fill?: FillSelection;
 	stroke?: Stroke;
 	brush?: Brush;
@@ -99,7 +99,7 @@ export class Draw {
 	}
 
 	// -- Different geometries below
-	circle(circle: Circle, styles: Styles) {
+	circle(circle: Circle, styles: DrawStyles) {
 		this.context.beginPath();
 		this.context.arc(circle.center.x, circle.center.y, circle.radius, 0, TAU);
 		this.context.closePath();
@@ -108,7 +108,7 @@ export class Draw {
 	}
 
 	// TODO: Expand rectangle to also handle rounded corners. Probably want to take advantage of Path API once written.
-	rectangle(rectangleConfig: Rectangle | RectangleConfig, styles: Styles) {
+	rectangle(rectangleConfig: Rectangle | RectangleConfig, styles: DrawStyles) {
 		const rectangle = Rectangle(rectangleConfig);
 		// Map all corners except the start
 		const corners = [
@@ -128,7 +128,7 @@ export class Draw {
 		styles.brush && styles.brush({ path: Path.fromRectangle(rectangleConfig), draw: this });
 	}
 
-	line(line: Line, styles: Styles) {
+	line(line: Line, styles: DrawStyles) {
 		const { start, end } = line;
 		const { stroke, fill, brush } = styles;
 		this.context.beginPath();
@@ -138,7 +138,7 @@ export class Draw {
 		brush && brush({ path: Path.fromLine(line), draw: this });
 	}
 
-	bezier2(inputs: Bezier2 & Styles) {
+	bezier2(inputs: Bezier2 & DrawStyles) {
 		const { start, control, end, stroke, fill } = inputs;
 		this.context.beginPath();
 		this.context.moveTo(start.x, start.y);
@@ -147,7 +147,7 @@ export class Draw {
 		inputs.brush && inputs.brush({ path: Path.fromBez2(inputs), draw: this });
 	}
 
-	bezier3(inputs: Bezier3 & Styles) {
+	bezier3(inputs: Bezier3 & DrawStyles) {
 		const { start, control1, control2, end, stroke, fill } = inputs;
 		this.context.beginPath();
 		this.context.moveTo(start.x, start.y);
@@ -160,7 +160,7 @@ export class Draw {
 		path: Path,
 		config: {
 			close?: boolean;
-		} & Styles,
+		} & DrawStyles,
 	) {
 		const { fill, stroke, close = false } = config;
 		this.context.beginPath();
