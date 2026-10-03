@@ -96,6 +96,14 @@ export class Random {
 		return this.next(distribution) <= chance;
 	}
 
+	/**
+	 * Generate a random integer. The value is inclusive of the min and the max.
+	 * Set min=1 and max=20 to get a number from 1-20 (Like a 20 sided die).
+	 * @param min
+	 * @param max
+	 * @param distribution
+	 * @returns
+	 */
 	int(min: number, max: number, distribution?: Distribution): number {
 		return Math.floor(this.next(distribution) * (max - min + 1) + min);
 	}
@@ -201,6 +209,43 @@ export class Random {
 		return items[this.int(0, items.length - 1)];
 	}
 
+	/**
+	 * Choose one value from a list of weighted options. Options with a higher weight
+	 * are proportionally more likely to be selected. If all weights are 0, falls back
+	 * to an unweighted random choice among the values.
+	 *
+	 * Weights are not normalized and can be of any arbitrary school. Selection probability
+	 * is based on the relative weights. For Example:
+	 * [{ value: 'A', weight: 2}, { value: 'B', weight: 3}] - 2/5 chance for A, 3/5 for B
+	 * @param choices {Array} list of `{ value, weight }` pairs to choose from
+	 * @returns the selected value
+	 */
+	chooseOneWeighted<T>(choices: Array<{ value: T; weight: number }>): T {
+		const totalWeight = choices.reduce((sum, choice) => sum + choice.weight, 0);
+		if (totalWeight === 0) {
+			return this.chooseOne(choices.map((choice) => choice.value));
+		}
+		const threshold = this.next() * totalWeight;
+
+		let sum = 0;
+		for (const choice of choices) {
+			sum += choice.weight;
+			if (sum > threshold) {
+				return choice.value;
+			}
+		}
+
+		// should never happen, but just in case:
+		return choices[choices.length - 1].value;
+	}
+
+	/**
+	 * Choose multiple items from a list.
+	 * @param items - list to choose from
+	 * @param count - number of items to select. If `allowDuplicates` is false and `count` exceeds `items.length`, the result is capped at `items.length`.
+	 * @param allowDuplicates - when `true` (default), each pick is independent and the same item can be chosen more than once. When `false`, each item can be selected at most once. If the count is greater than the number of items, all items will be returned.
+	 * @returns array of `count` selected items
+	 */
 	choose<T>(items: T[], count: number, allowDuplicates: boolean = true): T[] {
 		const output: T[] = [];
 		if (allowDuplicates) {
@@ -209,11 +254,13 @@ export class Random {
 			});
 		} else {
 			// No Duplicates version
-			const _count = count > items.length ? items.length : count;
-			let options = array(_count);
-			repeat(_count, () => {
-				const selection = this.int(0, options.length);
-				output.push(items[selection]);
+			if (count > items.length) {
+				return [...items];
+			}
+			let options = new Array(...items);
+			repeat(count, () => {
+				const selection = this.int(0, options.length - 1);
+				output.push(options[selection]);
 				// Remove selection from options list
 				options = options.slice(0, selection).concat(options.splice(selection + 1));
 			});
