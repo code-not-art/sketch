@@ -1,4 +1,3 @@
 export * from './grid.js';
-export * from './path/Path.js';
-export * from './path/PathSegment.js';
+export * from './path/index.js';
 export * from './Rectangle.js';

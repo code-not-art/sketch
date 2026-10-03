@@ -9,7 +9,7 @@ import { Bezier2Segment } from './Bezier2Segment.js';
 import { Bezier3Segment } from './Bezier3Segment.js';
 import { LineSegment } from './LineSegment.js';
 import { MoveSegment } from './MoveSegment.js';
-import { type PathSegment } from './PathSegment.js';
+import { SegmentTypes, type PathSegment } from './PathSegment.js';
 
 export class Path {
 	private start: Vec2;
@@ -135,6 +135,40 @@ export class Path {
 			return this.segments[this.segments.length - 1];
 		},
 		segments: () => [...this.segments],
+		/**
+		 * Return a new path that traces this path between two points.
+		 * @param props
+		 * @returns
+		 */
+		slice: (props: { start: number; end: number; steps: number }): Path => {
+			const pointRatios = ratioArray(props.steps).map((ratio) => ratio * (props.end - props.start) + props.start);
+			const slicePoints = pointRatios.map((ratio) => this.get.point(ratio));
+			return Path.fromPoints(slicePoints);
+		},
+		/**
+		 * Return an array of Paths that include all segments from this path split on MoveSegments.
+		 * If a path has n MoveSegments, the returned array will have n+1 Paths.
+		 */
+		splits: (): Path[] => {
+			const output: Path[] = [];
+			let activePath: Path | undefined;
+			this.segments.forEach((segment) => {
+				if (activePath === undefined) {
+					activePath = new Path(segment.start);
+				}
+				if (segment.type === SegmentTypes.Move) {
+					if (activePath.get.length() > 0) {
+						output.push(activePath);
+					}
+					activePath = undefined;
+				}
+				activePath?.add(segment);
+			});
+			if (activePath && activePath.get.length() > 0) {
+				output.push(activePath);
+			}
+			return output;
+		},
 		start: (): Vec2 => Vec2.from(this.start),
 		tangent: (position: number): Vec2 => {
 			const clampedPosition = clamp(position, { max: 1, min: 0 });
@@ -171,22 +205,19 @@ export class Path {
 
 	transform = {
 		scale: (factor: number | Vec2, center = Vec2.zero()): Path => {
-			this.start = this.start.scale(factor, center);
-			this.end = this.end.scale(factor, center);
-			this.segments = this.segments.map((segment) => segment.transform.scale(factor, center));
-			return this;
+			const output = new Path(this.start.scale(factor, center));
+			this.segments.forEach((segment) => output.add(segment.transform.scale(factor, center)));
+			return output;
 		},
 		rotate: (angle: number, pivot = Vec2.zero()): Path => {
-			this.start = this.start.rotate(angle, pivot);
-			this.end = this.end.rotate(angle, pivot);
-			this.segments = this.segments.map((segment) => segment.transform.rotate(angle, pivot));
-			return this;
+			const output = new Path(this.start.rotate(angle, pivot));
+			this.segments.forEach((segment) => output.add(segment.transform.rotate(angle, pivot)));
+			return output;
 		},
 		translate: (translation: Vec2): Path => {
-			this.start = this.start.add(translation);
-			this.end = this.end.add(translation);
-			this.segments = this.segments.map((segment) => segment.transform.translate(translation));
-			return this;
+			const output = new Path(this.start.add(translation));
+			this.segments.forEach((segment) => output.add(segment.transform.translate(translation)));
+			return output;
 		},
 		map: (divisions: number, transform: (point: Vec2, index: number, ratio: number, path: Path) => Vec2): Path => {
 			const positions = ratioArray(divisions);
@@ -194,6 +225,22 @@ export class Path {
 				transform(this.get.point(position), index, position, this),
 			);
 			return Path.fromPoints(mappedPositions);
+		},
+		/**
+		 * Transform path into many line segments. This will remove all arcs and bezier curves, but move gaps will be kept.
+		 * @param divisions
+		 */
+		linearize: (divisions: number): Path => {
+			const totalLength = this.get.length();
+			const paths = this.get.splits();
+			const output = new Path(this.start);
+			paths.forEach((path) => {
+				const pathLength = path.get.length();
+				const pathDivisions = Math.floor((pathLength / totalLength) * divisions);
+				const linearPath = path.transform.map(pathDivisions, (point) => point);
+				output.join(linearPath);
+			});
+			return output;
 		},
 	};
 
@@ -233,6 +280,28 @@ export class Path {
 	add(segment: PathSegment): this {
 		this.segments.push(segment);
 		this.end = segment.end;
+		return this;
+	}
+
+	/**
+	 * Combine another path with this one. This will move the path to the start of the other path and then add all
+	 * segments from that path onto this path.
+	 * @param path
+	 * @returns
+	 */
+	join(path: Path, options?: { connect?: boolean }): this {
+		if (!(path.start.x === this.start.x && path.start.y === this.start.y)) {
+			if (options?.connect) {
+				this.line(path.start);
+			} else {
+				this.move(path.start);
+			}
+		}
+		if (path.segments) {
+			path.segments.forEach((segment) => {
+				this.add(segment);
+			});
+		}
 		return this;
 	}
 
