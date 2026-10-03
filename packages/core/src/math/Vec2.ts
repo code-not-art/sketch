@@ -87,7 +87,7 @@ class Vec2 {
 	 */
 	within(max: Vec2, min?: Vec2): boolean {
 		const _min = min || Vec2.origin();
-		return this.x < max.x && this.y < max.y && this.x > _min.x && this.y > _min.y;
+		return this.x <= max.x && this.y <= max.y && this.x >= _min.x && this.y >= _min.y;
 	}
 
 	distance(value: Vec2 | number): number {
