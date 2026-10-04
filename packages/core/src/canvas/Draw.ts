@@ -9,6 +9,7 @@ import { Brush } from './Brush.js';
 import { Canvas } from './Canvas.js';
 import { SegmentTypes } from '../structures/path/PathSegment.js';
 import { Rectangle, RectangleConfig } from '../structures/Rectangle.js';
+import { type Bezier2, type Bezier3, type Circle, type Line } from '../structures/shapes.js';
 
 export type ColorSelection = Color | string | tinycolor.Instance;
 export type FillSelection = ColorSelection | CanvasGradient | CanvasPattern;
@@ -39,29 +40,6 @@ export type DrawStyles = {
 	fill?: FillSelection;
 	stroke?: Stroke;
 	brush?: Brush;
-};
-
-export type Bezier2 = {
-	start: Vec2;
-	control: Vec2;
-	end: Vec2;
-};
-
-export type Bezier3 = {
-	start: Vec2;
-	control1: Vec2;
-	control2: Vec2;
-	end: Vec2;
-};
-
-export type Circle = {
-	center: Vec2;
-	radius: number;
-};
-
-export type Line = {
-	start: Vec2;
-	end: Vec2;
 };
 
 export class Draw {

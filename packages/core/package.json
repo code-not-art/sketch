@@ -3,7 +3,10 @@
 	"version": "2.0.0-beta.3",
 	"description": "HTML 5 Canvas Drawing Library",
 	"type": "module",
-	"exports": "./dist/index.js",
+	"exports": {
+		".": "./dist/index.js",
+		"./plotter": "./dist/plotterExports.js"
+	},
 	"typings": "./dist/index.d.ts",
 	"files": [
 		"dist",
@@ -38,6 +41,7 @@
 		"@types/node": "^16.7.1",
 		"@types/seed-random": "^2.2.1",
 		"@types/tinycolor2": "^1.4.3",
+		"csstype": "^3.2.3",
 		"ts-node": "^10.2.1",
 		"typescript": "^4.3.5"
 	},
