@@ -33,7 +33,10 @@ const penOptions = Object.values(pens);
  * with the Export menu (SVG button) or Shift+S.
  */
 const draw: SketchDraw<CustomControls, CustomData> = async ({ canvas, palette, params, rng }) => {
-	canvas.fill('#111');
+	// Able to interact with canvas before and after drawign an svg
+	// drawing to canvas does not impact the svg created when it is exported.
+	// An svg drawn to a canvas WILL be part of the png image created when the canvas image is exported.
+	canvas.fill('#555');
 	const randomPen = () => palette.rng.chooseOne(penOptions);
 
 	const size = PAGE_SIZE.A4;
