@@ -1,7 +1,10 @@
+/**
+ * strokeWidth - in mm
+ */
 export type Pen = {
 	name: string;
-	brand: string;
-	colorDescription: string;
+	brand?: string;
+	colorDescription?: string;
 
 	color: string;
 	strokeWidth: number;

@@ -1,4 +1,5 @@
-import { createSvgCircle, createSvgRectangle, Rectangle, Vec2, type SvgNode } from '@code-not-art/core';
+import { Constants, Utils, Vec2 } from '@code-not-art/core';
+import { createPen, PAGE_SIZE, Pen, PlotterSvg } from '@code-not-art/core/plotter';
 import {
 	createSketch,
 	createSketchConfig,
@@ -7,7 +8,10 @@ import {
 	type SketchDraw,
 } from '@code-not-art/sketch';
 
-const config = createSketchConfig({ menuDelay: 5 });
+const { repeat } = Utils;
+const { ISO_PAPER_ASPECT_RATIO } = Constants;
+
+const config = createSketchConfig({ menuDelay: 5, width: 1000, height: 1000 * ISO_PAPER_ASPECT_RATIO });
 
 const controls = {
 	count: Parameters.number({ label: 'Circles', initialValue: 60, min: 1, max: 300, step: 1 }),
@@ -16,36 +20,33 @@ const controls = {
 type CustomControls = typeof controls;
 type CustomData = {};
 
+const pens: Record<string, Pen> = {
+	black: createPen({ brand: 'NoName', color: '#000000', strokeWidth: 0.75, colorDescription: 'Black' }),
+	red: createPen({ brand: 'NoName', color: '#FF0000', strokeWidth: 0.75, colorDescription: 'Red' }),
+	green: createPen({ brand: 'NoName', color: '#00FF00', strokeWidth: 0.75, colorDescription: 'Green' }),
+	blue: createPen({ brand: 'NoName', color: '#0000FF', strokeWidth: 0.75, colorDescription: 'Blue' }),
+};
+const penOptions = Object.values(pens);
+
 /**
  * Draws random circles as an SVG. The SVG is rendered onto the canvas and can be exported
  * with the Export menu (SVG button) or Shift+S.
  */
 const draw: SketchDraw<CustomControls, CustomData> = async ({ canvas, palette, params, rng }) => {
 	canvas.fill('#111');
+	const randomPen = () => palette.rng.chooseOne(penOptions);
 
-	const size = canvas.get.size();
-	const nodes: SvgNode[] = [
-		createSvgRectangle(Rectangle({ corner: Vec2.zero(), width: size.x, height: size.y }), {
-			styles: { fill: 'none', stroke: palette.colors[0].rgb(), strokeWidth: 8 },
-		}),
-	];
+	const size = PAGE_SIZE.A4;
+	const plot = new PlotterSvg(size);
 
-	for (let count = 0; count < params.count; count++) {
-		nodes.push(
-			createSvgCircle(
-				{ center: new Vec2(rng.float(0, size.x), rng.float(0, size.y)), radius: rng.float(10, size.x / 10) },
-				{
-					styles: {
-						fill: 'none',
-						stroke: palette.rng.chooseOne(palette.colors).rgb(),
-						strokeWidth: 3,
-					},
-				},
-			),
-		);
-	}
+	repeat(params.count, () => {
+		plot.addCircle(randomPen(), {
+			center: new Vec2(rng.float(0, size.x), rng.float(0, size.y)),
+			radius: rng.float(10, size.x / 10),
+		});
+	});
 
-	await canvas.svg.draw(nodes);
+	await canvas.svg.draw(plot.serialize());
 };
 
 export default createSketch<CustomControls, CustomData>({
