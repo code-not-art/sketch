@@ -6,7 +6,7 @@ import { Pane } from 'tweakpane';
 import type { ControlPanelConfig, ControlPanelElements } from '../../control-panel/types/controlPanel.js';
 import { addControlPanelElements, type SectionValues } from './buildPane.js';
 import { addExportFolder, type ExportFolderHandle } from './exportFolder.js';
-import { addSeedFolder, type SeedDisplay, type SeedFolderHandle } from './seedFolder.js';
+import { addSeedFolder, type SeedDisplay, type SeedEdit, type SeedFolderHandle } from './seedFolder.js';
 
 /**
  * Hosts the Tweakpane pane. The `--tp-*` variables restyle Tweakpane to the dark, amber accented look used by the
@@ -51,6 +51,28 @@ const ThemedPaneHost = styled.div`
 		color: rgb(170, 170, 170);
 		line-height: 1.3;
 	}
+	.sketch-seed-value {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+	.sketch-lock {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		color: rgb(110, 110, 110);
+		input {
+			position: absolute;
+			opacity: 0;
+			pointer-events: none;
+		}
+		input:checked + span {
+			color: #fbbf24;
+		}
+		input:focus-visible + span {
+			outline: 1px solid #fbbf24;
+		}
+	}
 	.sketch-swatches {
 		display: flex;
 		height: 2rem;
@@ -80,8 +102,8 @@ export type TweakpaneControlPanelProps = {
 	onParametersChange: (values: SectionValues) => void;
 	/** The seeds and palette to display. The panel updates to match whenever these change. */
 	seeds: SeedDisplay;
-	/** Called when the user edits the image or color seed. */
-	onSeedsChange: (seeds: { image: string; color: string }) => void;
+	/** Called when the user edits an image or color seed, or toggles its lock. */
+	onSeedsChange: (edit: SeedEdit) => void;
 	/** Whether the sketch has drawn an SVG that can be exported. */
 	hasSvg: boolean;
 	/** Called when the user presses the PNG export button. */
@@ -119,7 +141,7 @@ export const TweakpaneControlPanel = (props: TweakpaneControlPanelProps): ReactE
 		pane.registerPlugin(EssentialsPlugin);
 
 		const current = latestProps.current;
-		seedFolderRef.current = addSeedFolder(pane, current.seeds, (seeds) => latestProps.current.onSeedsChange(seeds));
+		seedFolderRef.current = addSeedFolder(pane, current.seeds, (edit) => latestProps.current.onSeedsChange(edit));
 		exportFolderRef.current = addExportFolder(
 			pane,
 			current.hasSvg,

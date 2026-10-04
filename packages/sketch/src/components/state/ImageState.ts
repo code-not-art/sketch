@@ -3,13 +3,19 @@ import { PaletteType } from '../../sketch/Config.js';
 import { Palette } from '../../sketch/index.js';
 import phrase from '../../utils/phrase.js';
 
-type ImageStateParams = {
+export type ImageStateParams = {
 	seed?: string;
 	imageSeed?: string;
 	colorSeed?: string;
 	paletteType?: PaletteType;
-	userImageSeed?: string;
-	userPaletteSeed?: string;
+	/** Seed to show initially, instead of a randomly generated image seed. */
+	currentImageSeed?: string;
+	/** Seed to show initially, instead of a randomly generated color seed. */
+	currentColorSeed?: string;
+	/** When `true`, the image seed is locked from the start. */
+	imageLocked?: boolean;
+	/** When `true`, the color seed is locked from the start. */
+	colorLocked?: boolean;
 };
 export default class ImageState {
 	_rng: Random;
@@ -28,16 +34,20 @@ export default class ImageState {
 	_renderStop?: number;
 	renderCount: number;
 
-	userImageSeed?: string;
-	userColorSeed?: string;
+	/** A locked image seed does not change when randomized or navigated. */
+	imageLocked: boolean;
+	/** A locked color seed does not change when randomized or navigated. */
+	colorLocked: boolean;
 
 	constructor({
 		seed,
 		imageSeed,
 		colorSeed: paletteSeed,
 		paletteType = PaletteType.Random,
-		userImageSeed,
-		userPaletteSeed,
+		currentImageSeed,
+		currentColorSeed,
+		imageLocked = false,
+		colorLocked = false,
 	}: ImageStateParams = {}) {
 		// definte the state from the seed or from the current Date/time
 		this._seed = seed || new Date().toISOString();
@@ -51,12 +61,25 @@ export default class ImageState {
 		// Get the first seeds
 		this.imageSeeds = [];
 		this.colorSeeds = [];
-		this.userColorSeed = userPaletteSeed;
-		this.userImageSeed = userImageSeed;
+		this.imageLocked = false;
+		this.colorLocked = false;
 		this.activeImage = 0;
 		this.activeColor = 0;
 		this.palette = new Palette({ type: this._paletteType });
-		this.random();
+		if (currentImageSeed) {
+			this.imageSeeds.push(currentImageSeed);
+		} else {
+			this.randomImage();
+		}
+		if (currentColorSeed) {
+			this.colorSeeds.push(currentColorSeed);
+			this.regenPalette();
+		} else {
+			this.randomColor();
+		}
+		// Locks are applied last so that the initial seeds can be generated
+		this.imageLocked = imageLocked;
+		this.colorLocked = colorLocked;
 
 		this.renderCount = 0;
 	}
@@ -81,6 +104,9 @@ export default class ImageState {
 	}
 
 	setActiveColor(index: number) {
+		if (this.colorLocked) {
+			return;
+		}
 		this.activeColor = index;
 		if (this.activeColor >= this.colorSeeds.length) {
 			// random color runs setActiveColor, so dont need to do the palette creation and assignment
@@ -95,11 +121,17 @@ export default class ImageState {
 	}
 
 	randomImage() {
+		if (this.imageLocked) {
+			return;
+		}
 		const imageSeed = phrase(this._imageSeedGenerator);
 		this.imageSeeds.push(imageSeed);
 		this.activeImage = this.imageSeeds.length - 1;
 	}
 	randomColor() {
+		if (this.colorLocked) {
+			return;
+		}
 		const colorSeed = phrase(this._colorSeedGenerator);
 		this.colorSeeds.push(colorSeed);
 		this.setActiveColor(this.colorSeeds.length - 1);
@@ -111,12 +143,18 @@ export default class ImageState {
 	}
 
 	nextImage() {
+		if (this.imageLocked) {
+			return;
+		}
 		this.activeImage += 1;
 		if (this.activeImage === this.imageSeeds.length) {
 			this.randomImage();
 		}
 	}
 	prevImage() {
+		if (this.imageLocked) {
+			return;
+		}
 		this.activeImage -= 1;
 		if (this.activeImage < 0) {
 			this.activeImage = 0;
@@ -129,12 +167,38 @@ export default class ImageState {
 		this.setActiveColor(this.activeColor - 1);
 	}
 
-	setUserImage(seed: string): void {
-		this.userImageSeed = seed;
+	/**
+	 * Sets a specific image seed and locks it. Does nothing if `seed` is empty.
+	 */
+	setImage(seed: string): void {
+		if (!seed) {
+			return;
+		}
+		if (seed !== this.getImage()) {
+			this.imageSeeds.push(seed);
+			this.activeImage = this.imageSeeds.length - 1;
+		}
+		this.imageLocked = true;
 	}
-	setUserColor(seed: string): void {
-		this.userColorSeed = seed;
-		this.regenPalette();
+	/**
+	 * Sets a specific color seed and locks it. Does nothing if `seed` is empty.
+	 */
+	setColor(seed: string): void {
+		if (!seed) {
+			return;
+		}
+		if (seed !== this.getColor()) {
+			this.colorSeeds.push(seed);
+			this.activeColor = this.colorSeeds.length - 1;
+			this.regenPalette();
+		}
+		this.colorLocked = true;
+	}
+	setImageLocked(locked: boolean): void {
+		this.imageLocked = locked;
+	}
+	setColorLocked(locked: boolean): void {
+		this.colorLocked = locked;
 	}
 	setPaletteType(type: PaletteType): void {
 		this._paletteType = type;
@@ -142,16 +206,10 @@ export default class ImageState {
 	}
 
 	getImage(): string {
-		return this.userImageSeed ? this.userImageSeed : this.imageSeeds[this.activeImage];
-	}
-	getUserImage(): string | undefined {
-		return this.userImageSeed;
+		return this.imageSeeds[this.activeImage];
 	}
 	getColor(): string {
-		return this.userColorSeed ? this.userColorSeed : this.colorSeeds[this.activeColor];
-	}
-	getUserColor(): string | undefined {
-		return this.userColorSeed;
+		return this.colorSeeds[this.activeColor];
 	}
 	getPalette(): Palette {
 		return this.palette;

@@ -13,16 +13,11 @@ import KeyboardHandler from './KeyboardHandler.js';
 import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
 import { exportFilename, exportPng, exportSvg } from './export.js';
 import type { SectionValues } from './control-panel/buildPane.js';
+import type { SeedEdit } from './control-panel/seedFolder.js';
 import { FixedPositionWrapper } from './control-panel/FixedPositionWrapper.js';
 import { TweakpaneControlPanel } from './control-panel/TweakpaneControlPanel.js';
 import ControlButtons from './controls/index.js';
-import {
-	applyQuery,
-	getParamsFromQuery,
-	QUERY_STRING_USER_COLOR_SEED,
-	QUERY_STRING_USER_IMAGE_SEED,
-	setUrlQueryFromState,
-} from './share.js';
+import { getParamsFromQuery, getSeedsFromQuery, setUrlQueryFromState } from './share.js';
 import { ImageState, LoopState } from './state/index.js';
 
 // TODO: separate sketch init into a wrapper component so that the sketchData wrapper can be passed as a prop so we are confident we always have data.
@@ -71,8 +66,7 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 				imageSeed: seeds?.imageSeed,
 				colorSeed: seeds?.paletteSeed,
 				paletteType: config.paletteType,
-				userImageSeed: queryStringParamValues[QUERY_STRING_USER_IMAGE_SEED],
-				userPaletteSeed: queryStringParamValues[QUERY_STRING_USER_COLOR_SEED],
+				...getSeedsFromQuery(queryString),
 			}),
 	);
 
@@ -195,6 +189,8 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 
 	const runRedraw = async (): Promise<void> => {
 		state.restartRng();
+		// Keep the URL in step with what is rendered, so that a refresh shows the same image
+		setUrlQueryFromState(state, params.data);
 		const sketchProps = getSketchProps();
 
 		const updatedSketchData = await sketch.reset(
@@ -258,8 +254,6 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 
 	const onStateChange = () => {
 		state.restartRng();
-		setUrlQueryFromState(state, params.data);
-		// forceUpdate();
 	};
 
 	// ===== Event Handlers =====
@@ -316,14 +310,20 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 		// The control panel builds its values from `controlsConfig` and starts from `params.data`, so they have the shape
 		// of `ControlValues`. TypeScript cannot see this through the untyped Tweakpane bindings.
 		params.data = newValues as ControlValues;
-		setUrlQueryFromState(state, params.data);
 		redraw();
 	};
-	const seedMenuUpdateHandler = (updatedState: { image: string; color: string }): void => {
-		state.setUserImage(updatedState.image);
-		state.setUserColor(updatedState.color);
-		setUrlQueryFromState(state, params.data);
-		state.restartRng();
+	const seedMenuUpdateHandler = (edited: SeedEdit): void => {
+		// Typing a new seed locks it, otherwise the lock checkbox decides
+		if (edited.image !== state.getImage()) {
+			state.setImage(edited.image);
+		} else {
+			state.setImageLocked(edited.imageLocked);
+		}
+		if (edited.color !== state.getColor()) {
+			state.setColor(edited.color);
+		} else {
+			state.setColorLocked(edited.colorLocked);
+		}
 		redraw();
 	};
 
@@ -340,10 +340,6 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 			console.log('### ===== Sketch! ===== ###');
 			// ===== Initialize Sketch
 
-			const query = querystring.parse(location.search);
-			if (typeof query.p === 'string') {
-				applyQuery(query.p, state, params.data);
-			}
 			state.restartRng();
 
 			resize();
@@ -371,6 +367,8 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 						seeds={{
 							image: state.getImage(),
 							color: state.getColor(),
+							imageLocked: state.imageLocked,
+							colorLocked: state.colorLocked,
 							swatches: state.palette.colors.slice(0, 5).map((color) => color.rgb()),
 						}}
 						onSeedsChange={seedMenuUpdateHandler}
