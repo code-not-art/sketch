@@ -36,8 +36,47 @@ const ThemedPaneHost = styled.div`
 	--tp-monitor-background-color: black;
 	--tp-monitor-foreground-color: rgb(170, 170, 170);
 	--tp-groove-foreground-color: rgba(255, 255, 255, 0.1);
-	--tp-blade-value-width: 55%;
+	/* The label column keeps a fixed width, so width added to the panel goes to the value column. */
+	--tp-blade-value-width: calc(100% - 132px);
 
+	/* Folders are not indented. Each nested level is marked by a lighter background instead, which stacks because the
+	   backgrounds are translucent. */
+	.tp-fldv_c {
+		padding-left: 0;
+	}
+	.tp-fldv_c > .tp-cntv {
+		margin-left: 0;
+	}
+	.tp-fldv_i {
+		display: none;
+	}
+	.tp-fldv_c .tp-fldv > .tp-fldv_c {
+		background-color: rgba(255, 255, 255, 0.035);
+	}
+	/* Number fields keep a fixed width, so width added to the panel goes to the sliders. */
+	.tp-sldtxtv_s,
+	.tp-rsltxtv_s {
+		flex: 1;
+	}
+	.tp-sldtxtv_t {
+		flex: 0 0 52px;
+	}
+	/* Range sliders show the min field to the left of the slider and the max field to the right. The wrappers around the
+	   two fields are removed from the layout so the fields can be ordered around the slider. */
+	.tp-rsltxtv {
+		gap: 4px;
+	}
+	.tp-rsltxtv_t,
+	.tp-rsltxtv .tp-pndtxtv {
+		display: contents;
+	}
+	.tp-rsltxtv .tp-pndtxtv_a {
+		flex: 0 0 38px;
+		margin-left: 0;
+	}
+	.tp-rsltxtv .tp-pndtxtv_a:first-child {
+		order: -1;
+	}
 	.tp-fldv_b {
 		text-transform: uppercase;
 		font-size: 0.7rem;
