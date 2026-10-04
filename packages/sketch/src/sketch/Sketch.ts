@@ -7,14 +7,14 @@ import { SketchProps } from './SketchProps.js';
 export type SketchReset<SketchParameters extends ControlPanelElements, SketchData extends object> = (
 	props: SketchProps<ControlPanelConfig<SketchParameters>>,
 	data: SketchData,
-) => SketchData;
+) => SketchData | Promise<SketchData>;
 export type SketchInit<SketchParameters extends ControlPanelElements, SketchData extends object> = (
 	props: SketchProps<ControlPanelConfig<SketchParameters>>,
 ) => SketchData;
 export type SketchDraw<SketchParameters extends ControlPanelElements, SketchData extends object> = (
 	props: SketchProps<ControlPanelConfig<SketchParameters>>,
 	data: SketchData,
-) => void;
+) => void | Promise<void>;
 /**
  * Function representing an animation loop. This will be run every frame by the Sketch Canvas.
  * This will continue to run until the funciton returns `true`. The return value is an indication if the animation is complete.

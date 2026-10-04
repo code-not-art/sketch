@@ -53,7 +53,6 @@ export const FullPageSketchCanvas = <TParameters extends ControlPanelElements, D
 	sketch: SketchDefinition<TParameters, DataModel>;
 }) => {
 	const canvasId = 'sketch-canvas';
-	const downloaderId = 'canvas-downloader';
 
 	return (
 		<FullscreenWrapper>
@@ -64,12 +63,7 @@ export const FullPageSketchCanvas = <TParameters extends ControlPanelElements, D
 					data-canvas-refresh={new Date().toISOString()}
 				></ShadowFrameCanvas>
 			</CanvasWrapper>
-			<SketchController
-				config={{ downloaderId, enableControls: true, showControlPanel: true }}
-				sketch={sketch}
-				canvasId={canvasId}
-			/>
-			<a id={downloaderId} download=""></a>
+			<SketchController config={{ enableControls: true, showControlPanel: true }} sketch={sketch} canvasId={canvasId} />
 		</FullscreenWrapper>
 	);
 };

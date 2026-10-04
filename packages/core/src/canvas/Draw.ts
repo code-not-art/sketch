@@ -228,4 +228,51 @@ export class Draw {
 		this.context.setTransform(storedTransform);
 		this.context.globalCompositeOperation = tempBlend;
 	}
+
+	/**
+	 * Rasterize an SVG string onto the canvas. The current transform is ignored; the image is placed in canvas pixel
+	 * coordinates.
+	 *
+	 * The SVG must declare a `width` and `height` (or a `viewBox`), otherwise browsers may render it at an arbitrary size.
+	 * The `size` option stretches the image to the given dimensions.
+	 *
+	 * @param source SVG document as a string
+	 * @param options.position top-left corner of the image on the canvas. Defaults to the canvas origin.
+	 * @param options.size dimensions to draw the image at. Defaults to the full canvas size.
+	 * @param options.blendMode blend mode used for drawing. Defaults to the default blend mode.
+	 * @returns Promise that resolves once the SVG has been drawn.
+	 * @throws Rejects if the browser fails to load the SVG, for example if the string is not valid SVG.
+	 */
+	async svg(source: string, options: { position?: Vec2; size?: Vec2; blendMode?: BlendMode } = {}): Promise<void> {
+		const { position, size, blendMode } = options;
+
+		const url = URL.createObjectURL(new Blob([source], { type: 'image/svg+xml;charset=utf-8' }));
+		try {
+			const image = new Image();
+			await new Promise<void>((resolve, reject) => {
+				image.onload = () => resolve();
+				image.onerror = () => reject(new Error('Failed to load SVG as an image'));
+				image.src = url;
+			});
+
+			// State is captured after the image loads, since the context may have changed while waiting.
+			const storedBlendMode = this.context.globalCompositeOperation;
+			const storedTransform = this.context.getTransform();
+
+			this.context.globalCompositeOperation = blendMode || BlendMode.default;
+			this.context.resetTransform();
+			this.context.drawImage(
+				image,
+				position ? position.x : 0,
+				position ? position.y : 0,
+				size ? size.x : this.context.canvas.width,
+				size ? size.y : this.context.canvas.height,
+			);
+
+			this.context.setTransform(storedTransform);
+			this.context.globalCompositeOperation = storedBlendMode;
+		} finally {
+			URL.revokeObjectURL(url);
+		}
+	}
 }

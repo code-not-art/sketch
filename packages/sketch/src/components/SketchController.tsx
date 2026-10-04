@@ -1,7 +1,7 @@
 import { Canvas } from '@code-not-art/core';
 import { debounce } from 'lodash';
 import querystring from 'query-string';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { css } from 'styled-components';
 import { ControlPanel } from '../control-panel/ControlPanel.js';
 import { initialControlPanelValues } from '../control-panel/Parameters.js';
@@ -13,6 +13,8 @@ import type {
 import { SketchDefinition, SketchProps } from '../sketch/index.js';
 import KeyboardHandler from './KeyboardHandler.js';
 import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
+import { exportFilename, exportPng, exportSvg } from './export.js';
+import { ExportMenu } from './export-menu/ExportMenu.js';
 import { ControlPanelDisplay } from './control-panel/ControlPanelDisplay.js';
 import { FixedPositionWrapper } from './control-panel/FixedPositionWrapper.js';
 import ControlButtons from './controls/index.js';
@@ -49,7 +51,6 @@ type SketchControllerProps<TControlPanel extends ControlPanelElements, TDataMode
 	initialParameters?: Partial<NoInfer<TDataModel>>;
 	seeds?: Partial<{ initialSeed: string; imageSeed: string; paletteSeed: string }>;
 	config?: Partial<{
-		downloaderId: string;
 		enableControls: boolean;
 		showControlPanel: boolean;
 	}>;
@@ -61,7 +62,7 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 	seeds,
 	config: controlllerConfig,
 }: SketchControllerProps<TParameters, TDataModel>) => {
-	const { downloaderId, enableControls, showControlPanel } = controlllerConfig || {};
+	const { enableControls, showControlPanel } = controlllerConfig || {};
 
 	const config = sketch.config;
 
@@ -111,11 +112,21 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 	});
 	const [loopState] = useState<LoopState>(new LoopState());
 
-	const getCanvas = () => {
+	// Redraw bookkeeping, see `redraw`
+	const redrawCount = useRef<number>(0);
+	const pendingRedraw = useRef<Promise<void>>(Promise.resolve());
+
+	// The Canvas wrapper is reused so that state it holds, such as the SVG source available for export, persists.
+	const canvasWrapper = useRef<Canvas | undefined>(undefined);
+
+	const getCanvas = (): Canvas => {
 		// Grab our canvas
 		const pageCanvas = document.getElementById(canvasId);
 		if (pageCanvas instanceof HTMLCanvasElement) {
-			return new Canvas(pageCanvas);
+			if (canvasWrapper.current?.canvas !== pageCanvas) {
+				canvasWrapper.current = new Canvas(pageCanvas);
+			}
+			return canvasWrapper.current;
 		}
 
 		// We did not find a canvas where expected, throw an error instead.
@@ -180,21 +191,40 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 	 * This runs the sketch.reset() code before the draw() function. It also restarts the animation loop.
 	 * The react state is forced to update to get the menu to re-render with the new sketch props.
 	 */
-	const redraw = () => {
+	const redraw = async (): Promise<void> => {
+		// Sketch reset and draw may be async (e.g. rendering an SVG). Redraws run one at a time, so a slow draw can never
+		// paint onto the canvas after a newer redraw has cleared it. If more redraws are requested while one is running,
+		// only the most recent one runs.
+		redrawCount.current += 1;
+		const redrawId = redrawCount.current;
+		await pendingRedraw.current;
+		if (redrawId !== redrawCount.current) {
+			return;
+		}
+
+		pendingRedraw.current = runRedraw().catch((error) => {
+			console.error('Sketch failed to render', error);
+		});
+		await pendingRedraw.current;
+	};
+
+	const runRedraw = async (): Promise<void> => {
 		state.restartRng();
 		const sketchProps = getSketchProps();
 
-		const updatedSketchData = sketch.reset(
+		const updatedSketchData = await sketch.reset(
 			sketchProps,
 			sketchData.data as TDataModel, // TODO: check that this isn't undefined
 		);
 		setSketchData(updatedSketchData);
 
-		draw();
+		await draw();
 		loopState.restart();
+		// Re-render so the export menu reflects whether this draw produced an SVG
+		forceUpdate();
 	};
 
-	const draw = () => {
+	const draw = async (): Promise<void> => {
 		// Set dimensions for window
 		resize();
 		const sketchProps = getSketchProps();
@@ -203,9 +233,14 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 		sketchProps.canvas.set.size(config.width, config.height);
 
 		state.startRender();
-		// Dangerous casting, requires that we are confident the init pass has completed by this point
-		sketchData.data !== undefined && sketch.draw(getSketchProps(), sketchData.data);
-		state.stopRender();
+		try {
+			// Dangerous casting, requires that we are confident the init pass has completed by this point
+			if (sketchData.data !== undefined) {
+				await sketch.draw(getSketchProps(), sketchData.data);
+			}
+		} finally {
+			state.stopRender();
+		}
 
 		if (loopState.animationFrameRequest) {
 			window.cancelAnimationFrame(loopState.animationFrameRequest);
@@ -221,16 +256,19 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 	};
 
 	const download = () => {
-		const saveas = `${state.getImage()} - ${state.getColor()}.png`;
-		if (downloaderId) {
-			const downloadLink = document.getElementById(downloaderId);
-			if (downloadLink) {
-				const image = getCanvas().canvas.toDataURL('image/png');
-				downloadLink.setAttribute('href', image);
-				downloadLink.setAttribute('download', saveas);
-				downloadLink.click();
-			}
+		const filename = exportFilename({ image: state.getImage(), color: state.getColor(), extension: 'png' });
+		exportPng(getCanvas().canvas, filename).catch((error) => {
+			console.error('Failed to export PNG', error);
+		});
+	};
+
+	const downloadSvg = () => {
+		const svg = getCanvas().svg.source();
+		if (svg === undefined) {
+			console.log('No SVG to export, the sketch has not drawn an SVG.');
+			return;
 		}
+		exportSvg(svg, exportFilename({ image: state.getImage(), color: state.getColor(), extension: 'svg' }));
 	};
 
 	const onStateChange = () => {
@@ -262,6 +300,7 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 					onStateChange,
 					redraw,
 					download,
+					downloadSvg,
 					toggleMenu,
 				})(event);
 			};
@@ -339,6 +378,11 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 				{showControlPanel && (
 					<>
 						<SeedMenu state={state} onChange={seedMenuUpdateHandler} />
+						<ExportMenu
+							hasSvg={canvasWrapper.current?.svg.source() !== undefined}
+							onExportPng={download}
+							onExportSvg={downloadSvg}
+						/>
 						{useMemo(
 							() => (
 								<ControlPanelDisplay

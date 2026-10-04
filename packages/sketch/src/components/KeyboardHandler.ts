@@ -3,7 +3,7 @@ import LoopState from './state/LoopState.js';
 import { shareViaUrl } from './share.js';
 
 const keyActionDescriptions: Record<string, string> = {
-	KeyS: 'Saving Image',
+	KeyS: 'Saving Image (Shift saves SVG)',
 
 	Space: 'Randomizing all seeds',
 	KeyI: 'Randomizing Image seed',
@@ -31,10 +31,11 @@ export default function KeyboardHandler(inputs: {
 	onStateChange: () => void;
 	redraw: () => void;
 	download: () => void;
+	downloadSvg: () => void;
 	toggleMenu: () => void;
 }) {
 	return function handler(event: KeyboardEvent) {
-		const { state, loopState, params, onStateChange, redraw, download, toggleMenu } = inputs;
+		const { state, loopState, params, onStateChange, redraw, download, downloadSvg, toggleMenu } = inputs;
 
 		// This line gets complaints from the TypeScript linter, but runs in the browser without fail.
 		if (event.target && (<HTMLElement>event.target).localName === 'input') {
@@ -55,8 +56,12 @@ export default function KeyboardHandler(inputs: {
 		switch (event.code) {
 			// ===== Save
 			case 'KeyS':
-				// S - Save current image
-				download();
+				// S - Save current image as PNG, Shift+S - Save the sketch's SVG
+				if (event.shiftKey) {
+					downloadSvg();
+				} else {
+					download();
+				}
 				break;
 
 			// ===== Share

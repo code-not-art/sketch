@@ -1,7 +1,7 @@
 import JSURL from 'jsurl';
 import ImageState from './state/ImageState.js';
 
-export const QUERY_STRING_COLOR_SEED = '_p';
+export const QUERY_STRING_COLOR_SEED = '_c';
 export const QUERY_STRING_IMAGE_SEED = '_i';
 export const QUERY_STRING_USER_COLOR_SEED = '_up';
 export const QUERY_STRING_USER_IMAGE_SEED = '_ui';
@@ -50,8 +50,8 @@ export function applyQuery(query: string, state: ImageState, params: Record<stri
 	const parsed = JSURL.parse(query);
 
 	Object.assign(params, parsed);
-	state.imageSeeds[0] = parsed._i;
-	state.colorSeeds[0] = parsed._c;
+	state.imageSeeds[0] = parsed[QUERY_STRING_IMAGE_SEED];
+	state.colorSeeds[0] = parsed[QUERY_STRING_COLOR_SEED];
 	state.setActiveColor(0);
 	state.restartRng();
 }
