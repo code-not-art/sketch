@@ -1,5 +1,7 @@
 import Vec2 from '../math/Vec2.js';
 import { BlendMode } from './BlendMode.js';
+import { serializeSvg } from '../svg/serializeSvg.js';
+import { SvgNode } from '../svg/SvgNode.js';
 import { Draw, FillSelection } from './Draw.js';
 
 export type CanvasTransform = {
@@ -20,6 +22,7 @@ export class Canvas {
 	draw: Draw;
 
 	private _transforms: DOMMatrix[] = [];
+	private _svgSource: string | undefined;
 
 	constructor(canvas: HTMLCanvasElement) {
 		this.canvas = canvas;
@@ -106,6 +109,7 @@ export class Canvas {
 		size: (width: number, height: number) => {
 			this.canvas.height = height;
 			this.canvas.width = width;
+			this._svgSource = undefined;
 		},
 		blendMode: (mode: BlendMode) => {
 			this.context.globalCompositeOperation = mode;
@@ -122,6 +126,33 @@ export class Canvas {
 	 */
 	clear = () => {
 		this.context.clearRect(0, 0, this.get.width(), this.get.height());
+		this._svgSource = undefined;
+	};
+
+	svg = {
+		/**
+		 * Render an SVG onto the canvas, covering the full canvas area. The SVG is also remembered so it can be
+		 * retrieved with `canvas.svg.source()`, for example to export it. Drawing an SVG replaces the remembered SVG
+		 * but does not clear the canvas. To layer several SVGs, combine them into one `SvgNode[]` or one SVG string.
+		 *
+		 * @param svg Either SVG nodes, which are serialized at the canvas width and height, or a complete SVG document
+		 * string. A string should declare its own `width` and `height` so that it is drawn at the intended size.
+		 * @returns Promise that resolves once the SVG has been drawn. Must be awaited before the drawing is complete.
+		 * @throws Rejects if the SVG cannot be loaded as an image.
+		 */
+		draw: async (svg: SvgNode[] | string): Promise<void> => {
+			const source =
+				typeof svg === 'string' ? svg : serializeSvg(svg, { width: this.get.width(), height: this.get.height() });
+			await this.draw.svg(source);
+			this._svgSource = source;
+		},
+		/**
+		 * The SVG most recently drawn with `canvas.svg.draw`.
+		 *
+		 * @returns The SVG document string, or `undefined` if no SVG has been drawn since the canvas was last cleared or
+		 * resized.
+		 */
+		source: (): string | undefined => this._svgSource,
 	};
 
 	/**

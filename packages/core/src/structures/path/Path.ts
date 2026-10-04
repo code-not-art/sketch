@@ -1,9 +1,9 @@
-import { Bezier2, Bezier3, Circle, Line } from '../../canvas/index.js';
 import { TAU } from '../../constants.js';
 import Vec2 from '../../math/Vec2.js';
 import { ratioArray } from '../../utils/arrays.js';
 import { clamp } from '../../utils/numeric.js';
 import { Rectangle, type RectangleConfig } from '../Rectangle.js';
+import { type Bezier2, type Bezier3, type Circle, type Line } from '../shapes.js';
 import { ArcSegment } from './ArcSegment.js';
 import { Bezier2Segment } from './Bezier2Segment.js';
 import { Bezier3Segment } from './Bezier3Segment.js';

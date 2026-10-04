@@ -32,7 +32,6 @@ export const SketchCanvas = <TParameters extends ControlPanelElements, DataModel
 	params?: Partial<DataModel>;
 }) => {
 	const canvasId = 'sketch-canvas';
-	const downloaderId = 'canvas-downloader';
 
 	return (
 		<>
