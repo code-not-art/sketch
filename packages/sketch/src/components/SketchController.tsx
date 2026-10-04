@@ -1,8 +1,6 @@
 import { Canvas } from '@code-not-art/core';
-import { debounce } from 'lodash';
 import querystring from 'query-string';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { css } from 'styled-components';
 import { ControlPanel } from '../control-panel/ControlPanel.js';
 import { initialControlPanelValues } from '../control-panel/Parameters.js';
 import type {
@@ -14,11 +12,10 @@ import { SketchDefinition, SketchProps } from '../sketch/index.js';
 import KeyboardHandler from './KeyboardHandler.js';
 import { MOBILE_WIDTH_BREAKPOINT } from './constants.js';
 import { exportFilename, exportPng, exportSvg } from './export.js';
-import { ExportMenu } from './export-menu/ExportMenu.js';
-import { ControlPanelDisplay } from './control-panel/ControlPanelDisplay.js';
+import type { SectionValues } from './control-panel/buildPane.js';
 import { FixedPositionWrapper } from './control-panel/FixedPositionWrapper.js';
+import { TweakpaneControlPanel } from './control-panel/TweakpaneControlPanel.js';
 import ControlButtons from './controls/index.js';
-import { SeedMenu } from './seed-menu/SeedMenu.js';
 import {
 	applyQuery,
 	getParamsFromQuery,
@@ -30,18 +27,6 @@ import { ImageState, LoopState } from './state/index.js';
 
 // TODO: separate sketch init into a wrapper component so that the sketchData wrapper can be passed as a prop so we are confident we always have data.
 // this allows us to get rid of the `as TDataModel` casting.
-
-const styles = css`
-	.p-inputtext {
-		width: 100%;
-		margin-top: 0.25rem;
-		font-size: 0.75rem;
-		height: 1.6rem;
-		font-family: monospace;
-		background: black;
-		padding: 0.5rem;
-	}
-`;
 
 const DEFAULT_MENU_DELAY = 25;
 
@@ -327,8 +312,10 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 		eventHandlers.touchend && document.removeEventListener('touchend', eventHandlers.touchend);
 	};
 
-	const controlPanelUpdateHandler = (_updates: Partial<ControlValues>, newValues: ControlValues) => {
-		params.data = newValues;
+	const controlPanelUpdateHandler = (newValues: SectionValues) => {
+		// The control panel builds its values from `controlsConfig` and starts from `params.data`, so they have the shape
+		// of `ControlValues`. TypeScript cannot see this through the untyped Tweakpane bindings.
+		params.data = newValues as ControlValues;
 		setUrlQueryFromState(state, params.data);
 		redraw();
 	};
@@ -373,30 +360,24 @@ export const SketchController = <TParameters extends ControlPanelElements, TData
 
 	return (
 		<>
-			<style>{styles.toString()}</style>
 			<FixedPositionWrapper vertical="top" horizontal="right">
 				{showControlPanel && (
-					<>
-						<SeedMenu state={state} onChange={seedMenuUpdateHandler} />
-						<ExportMenu
-							hasSvg={canvasWrapper.current?.svg.source() !== undefined}
-							onExportPng={download}
-							onExportSvg={downloadSvg}
-						/>
-						{useMemo(
-							() => (
-								<ControlPanelDisplay
-									config={controlsConfig}
-									initialValues={params.data}
-									updateHandler={debounce(
-										controlPanelUpdateHandler,
-										config.menuDelay !== undefined ? config.menuDelay : DEFAULT_MENU_DELAY,
-									)}
-								/>
-							),
-							[],
-						)}
-					</>
+					<TweakpaneControlPanel
+						config={controlsConfig}
+						initialValues={params.data}
+						visible={showMenu}
+						changeDelay={config.menuDelay !== undefined ? config.menuDelay : DEFAULT_MENU_DELAY}
+						onParametersChange={controlPanelUpdateHandler}
+						seeds={{
+							image: state.getImage(),
+							color: state.getColor(),
+							swatches: state.palette.colors.slice(0, 5).map((color) => color.rgb()),
+						}}
+						onSeedsChange={seedMenuUpdateHandler}
+						hasSvg={canvasWrapper.current?.svg.source() !== undefined}
+						onExportPng={download}
+						onExportSvg={downloadSvg}
+					/>
 				)}
 			</FixedPositionWrapper>
 			{window.innerWidth <= MOBILE_WIDTH_BREAKPOINT &&

@@ -21,5 +21,5 @@ export const MultiSelectUtils = {
 
 export const RangeUtils = {
 	diff: (range: [number, number]) => range[1] - range[0],
-	mid: (range: [number, number]) => range[1] + range[0] / 2,
+	mid: (range: [number, number]) => (range[0] + range[1]) / 2,
 };

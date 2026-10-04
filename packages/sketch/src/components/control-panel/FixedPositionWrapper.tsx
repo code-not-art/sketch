@@ -18,10 +18,6 @@ const FixedPositionDiv = styled.div<{
 		width: 100%;
 		max-height: 50%;
 		overflow: auto;
-
-		.control-panel {
-			width: 100% !important;
-		}
 	}
 `;
 
