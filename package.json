@@ -4,7 +4,7 @@
 	"version": "2.0.0-next.0",
 	"description": "Schema Manager and Validation for Data Dictionaries",
 	"scripts": {
-		"build:all": "pnpm nx run-many --all --target=build",
+		"build:all": "NX_TUI=false pnpm nx affected -t build --output-style=static",
 		"demo": "pnpm nx dev @code-not-art/demos"
 	},
 	"keywords": [],

@@ -11,17 +11,13 @@ const FixedPositionDiv = styled.div<{
 	${(props) => (props.$horizontal === 'left' ? 'left: 0px;' : 'right: 0px;')}
 	max-height: 100%;
 	overflow-y: auto;
-	width: 20%;
-	min-width: 300px;
+	width: 22%;
+	min-width: 330px;
 
 	@media only screen and (max-width: ${MOBILE_WIDTH_BREAKPOINT}px) {
 		width: 100%;
 		max-height: 50%;
 		overflow: auto;
-
-		.control-panel {
-			width: 100% !important;
-		}
 	}
 `;
 

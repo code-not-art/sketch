@@ -161,7 +161,7 @@ export const initialParameterValueBoolean = (
 export const initialParameterValueSelect = (
 	config: ControlPanelParameterSelect,
 ): ControlPanelParameterSelect['initialValue'] => {
-	return config.initialValue;
+	return config.initialValue !== undefined ? config.initialValue : config.options[0];
 };
 export const initialParameterValueMultiSelect = (
 	config: ControlPanelParameterMultiSelect,

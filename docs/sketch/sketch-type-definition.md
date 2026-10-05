@@ -30,7 +30,7 @@ Draw the image.
 
 This is run one time, before the `loop` phase begins to draw frame by frame. If you want to draw a background that the loop will iterate on top of, this is a good place to run that one time canvas drawing function.
 
-`draw` and `reset` may be `async`. This is needed to render an SVG with `await canvas.svg.draw(...)`. The animation loop does not start until `draw` has finished. An SVG drawn this way can be exported from the control panel's Export menu, or with Shift+S.
+`draw` and `reset` may be `async`. This is needed to render an SVG with `await canvas.svg.draw(...)`. The animation loop does not start until `draw` has finished.
 
 **Returns:** `void` Nothing is returned.
 
