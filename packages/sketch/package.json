@@ -59,7 +59,7 @@
 		"@vitest/coverage-istanbul": "^1.6.0",
 		"jsdom": "^24",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.7.2",
+		"typescript": "^7.0.2",
 		"vitest": "^1.6.0"
 	}
 }

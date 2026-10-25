@@ -58,10 +58,10 @@ const controls = {
 		}),
 		darkenRange: Parameters.number({
 			label: 'Darken Masks',
-			initialValue: 5,
-			max: 20,
+			initialValue: 0.05,
+			max: 0.2,
 		}),
-		lightenRange: Parameters.number({ label: 'Lighten Masks', max: 20 }),
+		lightenRange: Parameters.number({ label: 'Lighten Masks', max: 0.2 }),
 		positionExponent: Parameters.number({
 			label: 'Circle Position Spread',
 			initialValue: 1,

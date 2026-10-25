@@ -1,4 +1,4 @@
-import tinycolor from 'tinycolor2';
+import type { Colord } from 'colord';
 
 import { Color } from '../color/index.js';
 import { TAU } from '../constants.js';
@@ -11,7 +11,7 @@ import { SegmentTypes } from '../structures/path/PathSegment.js';
 import { Rectangle, RectangleConfig } from '../structures/Rectangle.js';
 import { type Bezier2, type Bezier3, type Circle, type Line } from '../structures/shapes.js';
 
-export type ColorSelection = Color | string | tinycolor.Instance;
+export type ColorSelection = Color | string | Colord;
 export type FillSelection = ColorSelection | CanvasGradient | CanvasPattern;
 
 function resolveColorSelection(selection: ColorSelection) {
